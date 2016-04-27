@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="google-site-verification" content="5_8DTmIiEq4gFvNAfxAD6TsGOgrMAjp8lQFQvfA6zZc" />
-  <title>Django generic FormViews for objects &mdash; /var/</title>
+  <title>Understanding nested list comprehension syntax in Python &mdash; /var/</title>
   <meta name="author" content="Serafeim Papastefanos">
 
 
@@ -43,7 +43,7 @@
       <li >
         <a href="http://spapas.github.io/category/css.html">Css</a>
       </li>
-      <li class="active">
+      <li >
         <a href="http://spapas.github.io/category/django.html">Django</a>
       </li>
       <li >
@@ -58,7 +58,7 @@
       <li >
         <a href="http://spapas.github.io/category/pelican.html">Pelican</a>
       </li>
-      <li >
+      <li class="active">
         <a href="http://spapas.github.io/category/python.html">Python</a>
       </li>
       <li >
@@ -73,157 +73,64 @@
 <div>
   <article class="hentry" role="article">
 <header>
-      <h1 class="entry-title">Django generic FormViews for objects</h1>
+      <h1 class="entry-title">Understanding nested list comprehension syntax in Python</h1>
     <p class="meta">
-<time datetime="2014-04-11T10:23:00+03:00" pubdate>Παρ 11 Απρίλιος 2014</time>    </p>
+<time datetime="2016-04-27T11:20:00+03:00" pubdate>Τετ 27 Απρίλιος 2016</time>    </p>
 </header>
 
-  <div class="entry-content"><div class="contents topic" id="contents">
-<p class="topic-title first">Contents</p>
-<ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
-<li><a class="reference internal" href="#a-quick-introduction-to-the-formview" id="id2">A quick introduction to the <tt class="docutils literal">FormView</tt></a></li>
-<li><a class="reference internal" href="#a-quick-introduction-to-the-singleobjectmixin" id="id3">A quick introduction to the <tt class="docutils literal">SingleObjectMixin</tt></a></li>
-<li><a class="reference internal" href="#being-generic-and-dry" id="id4">Being generic and <span class="caps">DRY</span></a></li>
-<li><a class="reference internal" href="#being-more-generic-and-dry" id="id5">Being more generic and <span class="caps">DRY</span></a></li>
-<li><a class="reference internal" href="#other-options" id="id6">Other&nbsp;options</a></li>
-</ul>
-</div>
-<div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id1">Introduction</a></h2>
-<p>We recently needed to create a number of views for changing the status of an Application model instance for our organization.
-An Application model instance can be filled and then cancelled, submitted, acceptted etc - for each of these status changes a form should be
-presented to the user. When the user submits the form the status of the Application will be&nbsp;changed.</p>
-<p>To implement the above requirement we created a generic FormView that acts on the specific model instance. This
-used two basic <span class="caps">CBV</span> components: The <tt class="docutils literal">FormView</tt> for the form manipulation and the <tt class="docutils literal">SingleObjectMixing</tt> for the
-object&nbsp;handling.</p>
-<p>Django <a class="reference external" href="https://docs.djangoproject.com/en/1.6/topics/class-based-views/">Class Based Views</a> (CBVs) can be used to create reusable Views using normal class inheritance. Most
-people use the well-known <tt class="docutils literal">CreateView</tt>, <tt class="docutils literal">UpdateView</tt>, <tt class="docutils literal">DetailView</tt> and <tt class="docutils literal">ListView</tt>, however, as we
-will see below, the <tt class="docutils literal">FormView</tt> will help us write <span class="caps">DRY</span>&nbsp;code.</p>
-<p>I have to notice here that an invaluable tool to help you understanding CBVs is the <a class="reference external" href="http://ccbv.co.uk/"><span class="caps">CBV</span> inspector</a> which
-has a nice web interface for browsing the <span class="caps">CBV</span> hierarchies, attributes and&nbsp;methods.</p>
-</div>
-<div class="section" id="a-quick-introduction-to-the-formview">
-<h2><a class="toc-backref" href="#id2">A quick introduction to the <tt class="docutils literal">FormView</tt></a></h2>
-<p>A simple <tt class="docutils literal">FormView</tt> can be defined like this (<a class="reference external" href="http://ccbv.co.uk/projects/Django/1.6/django.views.generic.edit/FormView/"><span class="caps">CBV</span> FormView</a>):</p>
-<pre class="code literal-block">
-class MyFormView(FormView):
-  form_class = forms.MyFormView
-  template_name = 'my_template.html'
-</pre>
-<p>The above can be used in urls.py like&nbsp;this:</p>
-<pre class="code literal-block">
-urlpatterns = patterns('',
-  url(r'^my_formview/$', views.MyFormView.as_view() , name='my_formview' ),
-</pre>
-<p>This will present a form to the user when he visits the <tt class="docutils literal">my_formview</tt>  url &#8212; however this form won&#8217;t do anything. To allow
-the form to actually do something when it&#8217;s been submitted we need to override the <tt class="docutils literal">form_valid</tt> method.</p>
-<pre class="code literal-block">
-def form_valid(self, form):
-    value = form.cleaned_data['value']
-    messages.info(self.request, &quot;MyForm submitted with value {0}!&quot;.format(value) )
-    return HttpResponseRedirect( reverse('my_formview') )
-</pre>
-<p>As you can see the submitted form is passed in the method and can be used to receive its <tt class="docutils literal">cleaned_data</tt>. The <tt class="docutils literal">FormView</tt>
-has various other options for instance a <tt class="docutils literal">form_invalid</tt> method, an <tt class="docutils literal">initial</tt> attribute to set the initial values for the form&nbsp;etc.</p>
-</div>
-<div class="section" id="a-quick-introduction-to-the-singleobjectmixin">
-<h2><a class="toc-backref" href="#id3">A quick introduction to the <tt class="docutils literal">SingleObjectMixin</tt></a></h2>
-<p>A <tt class="docutils literal">SingleObjectMixin</tt> adds a number of attributes <span class="amp">&amp;</span> methods to a view that can be used for object manipulation. The
-most important ones is the <tt class="docutils literal">model</tt> and <tt class="docutils literal">queryset</tt> attributes and the <tt class="docutils literal">get_queryset</tt> and <tt class="docutils literal">get_object()</tt>. To use
-the <tt class="docutils literal">SingleObjectMixin</tt> in your <span class="caps">CBV</span> just add it to the list of the classes to inherit from and define either the
-<tt class="docutils literal">model</tt> or the <tt class="docutils literal">queryset</tt> attribute. After that you may pass a <tt class="docutils literal">pk</tt> parameter to your view and you will get an
-<tt class="docutils literal">object</tt> context variable in the template with the selected&nbsp;object!</p>
-</div>
-<div class="section" id="being-generic-and-dry">
-<h2><a class="toc-backref" href="#id4">Being generic and <span class="caps">DRY</span></a></h2>
-<p>We can more or less now understand how we should use <tt class="docutils literal">FormView</tt> and <tt class="docutils literal">SingleObjectMixin</tt> to generate our
-generic <tt class="docutils literal">FormView</tt> for acting on objects: Our <tt class="docutils literal">FormView</tt> should <em>get</em> the object using the <tt class="docutils literal">SingleObjectMixin</tt>
-and change it when the form is submitted using the values from the form. A first implementation would be the&nbsp;following:</p>
-<pre class="code literal-block">
-class GenericObjectFormView1(FormView, SingleObjectMixin):
-
-    def form_valid(self, form):
-        obj = self.get_object()
-        obj.change_status(form)
-        return HttpResponseRedirect( obj.get_absolute_url() )
-</pre>
-<p>So our <tt class="docutils literal">GenericObjectFormView1</tt> class inherits from <tt class="docutils literal">FormView</tt> and <tt class="docutils literal">SingleObjectMixin</tt>. The only thing that we have
-to assure is that the Model we want to act on needs to implement a <tt class="docutils literal">change_status</tt> method which gets the <tt class="docutils literal">form</tt> and
-changes the status of that object based on its value. For instance, two implementations can be the&nbsp;following:</p>
-<pre class="code literal-block">
-class CancelObjectFormView(GenericObjectFormView1):
-    template_name = 'cancel.html'
-    form_class = forms.CancelForm
-    model = models.Application
-
-class SubmitObjectFormView(GenericObjectFormView1):
-    template_name = 'submit.html'
-    form_class = forms.SubmitForm
-    model = models.Application
-</pre>
-</div>
-<div class="section" id="being-more-generic-and-dry">
-<h2><a class="toc-backref" href="#id5">Being more generic and <span class="caps">DRY</span></a></h2>
-<p>The previous implementation has two&nbsp;problems:</p>
-<ul class="simple">
-<li>What happens if the status of the object should not be changed even if the form <em>is</em>&nbsp;valid?</li>
-<li>We shouldn&#8217;t need to create a new template for every new <tt class="docutils literal">GenericObjectFormView</tt> since all these templates will just output the object information, ask a question for the status change and output the&nbsp;form.</li>
-</ul>
-<p>Let&#8217;s write a new version of our GenericObjectFormView that actually resolves&nbsp;these:</p>
-<pre class="code literal-block">
-class GenericObjectFormView2(FormView, SingleObjectMixin):
-    template_name = 'generic_formview.html'
-    ok_message = ''
-    not_ok_message = ''
-    title = ''
-    question =''
-
-    def form_valid(self, form):
-        obj = self.get_object()
-        r = obj.change_status(form)
-        if r:
-            messages.info(self.request, self.yes_message)
-        else:
-            messages.info(self.request, self.not_ok_message)
-        return HttpResponseRedirect( obj.get_absolute_url() )
-
-    def get_context_data(self, **kwargs):
-        context = super(GenericYesNoFormView, self).get_context_data(**kwargs)
-        context['title'] = self.title
-        context['question'] = self.question
-        return context
-</pre>
-<p>The above adds an ok and not ok message which will be outputed if the status can or cannot be changed. To accomplish this,
-the <tt class="docutils literal">change_status</tt> method should now return a boolean value to mark if the action was ok or not. Also, a generic template
-will now be used. This template has two placeholders: One for the title of the page (<tt class="docutils literal">title</tt> attribute) and one for the
-question asked to the user (<tt class="docutils literal">question</tt> attribute). Now we can use it like&nbsp;this:</p>
-<pre class="code literal-block">
-class CancelObjectFormView(GenericObjectFormView2):
-    form_class = forms.CancelForm
-    model = models.Application
-    ok_message = 'Cancel success!'
-    not_ok_message = 'Not able to cancel!'
-    title = 'Cancel an object'
-    question = 'Do you want to cancel this object?'
-
-class SubmitObjectFormView(GenericObjectFormView2):
-    form_class = forms.SubmitForm
-    model = models.Application
-    ok_message = 'Submit  ok'
-    not_ok_message = 'Cannot submit!'
-    title = 'Submit an object'
-    question ='Do you want to submit this object?'
-</pre>
-</div>
-<div class="section" id="other-options">
-<h2><a class="toc-backref" href="#id6">Other&nbsp;options</a></h2>
-<p>We&#8217;ve just got a glimpse of how we can use CBVs to increase the DRYness of our Django applications. There are various
-extra things that we can add to our <tt class="docutils literal">GenericObjectFormView2</tt> as attributes which will be defined by inheriting
-classes. Some ideas is to check if the current user actually has access to modify the object (hint: override the
-<tt class="docutils literal">get_object</tt> method of <tt class="docutils literal">SingleObjectMixin</tt>) or render the form diffirently depending on the current user (hint:
-override the <tt class="docutils literal">get_form_kwargs</tt> method of <tt class="docutils literal">FormView</tt>).</p>
-</div>
+  <div class="entry-content"><p>List comprehensions are one of the really nice and powerful features of Python. It
+is actually a smart way to introduce new users to functional programming concepts
+(after all a list comprehension is just a combination of map and filter) and compact&nbsp;statements.</p>
+<p>However, one thing that always troubled me when using list comprehensions is their
+non intuitive syntax when nesting was needed. For example, let&#8217;s say that we just
+want to flatten a list of lists using a nested list&nbsp;comprehension:</p>
+<div class="highlight"><pre><span class="n">non_flat</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span> <span class="p">]</span>
+</pre></div>
+<p>To write that, somebody would think: For a simple list
+comprehension I need to
+write <tt class="docutils literal">[ x for x in non_flat ]</tt> to get all its items - however I want to retrieve each element of the <tt class="docutils literal">x</tt> list so I&#8217;ll write something like&nbsp;this:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+</pre></div>
+<p>Well duh! At this time I&#8217;d need research google for a working list comprehension syntax and adjust it to my needs (or give up and write it as a double for&nbsp;loop).</p>
+<p>Here&#8217;s the correct nested list comprehension people&nbsp;wondering:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+</pre></div>
+<p>What if I wanted to add a third level of nesting or an if? Well I&#8217;d just bite the bullet and use for&nbsp;loops!</p>
+<p>However, if you take a look at the document describing list comprehensions in python (<cite><span class="caps">PEP</span> 202</cite>) you&#8217;ll see
+the following&nbsp;phrase:</p>
+<blockquote>
+It is proposed to allow conditional construction of list literals
+using for and if clauses. <strong>They would nest in the same way for
+loops and if statements nest now.</strong></blockquote>
+<p>This statement explains everything! <em>Just think in for-loops syntax</em>. So, If I used for loops for the previous flattening, I&#8217;d do something&nbsp;like:</p>
+<div class="highlight"><pre><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+        <span class="n">y</span>
+</pre></div>
+<p>which, if <cite>y</cite> is moved to the front and joined in one line would be the correct nested list&nbsp;comprehension!</p>
+<p>So that&#8217;s the way&#8230; What If I wanted to include only lists with more than 2 elements in the flattening
+(so <cite>[7,8]</cite> should not be included)? I&#8217;ll write it with for loops&nbsp;first:</p>
+<div class="highlight"><pre><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+            <span class="n">y</span>
+</pre></div>
+<p>so by convering this to list comprehension we&nbsp;get:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="p">[</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span> <span class="p">]</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+</pre></div>
+<p>Success!</p>
+<p>One final, more complex example: Let&#8217;s say that we have a list
+of lists of words and we want to get a list of all the letters of these words
+along with the index of the list they belong to
+but only for words with more than two characters. Using the same
+for-loop syntax for the nested list comprehensions we&#8217;ll&nbsp;get:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="s">&#39;foo&#39;</span><span class="p">,</span> <span class="s">&#39;bar&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;baz&#39;</span><span class="p">,</span> <span class="s">&#39;taz&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="s">&#39;koko&#39;</span><span class="p">]</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">[</span> <span class="p">(</span><span class="n">letter</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">lst</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span> <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">word</span><span class="p">]</span>
+<span class="p">[(</span><span class="s">&#39;f&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+</pre></div>
 </div>
     <footer>
 <p class="meta">
@@ -232,13 +139,13 @@ override the <tt class="docutils literal">get_form_kwargs</tt> method of <tt cla
         Serafeim Papastefanos
     </span>
   </span>
-<time datetime="2014-04-11T10:23:00+03:00" pubdate>Παρ 11 Απρίλιος 2014</time>  <span class="categories">
-    <a class='category' href='http://spapas.github.io/category/django.html'>django</a>
+<time datetime="2016-04-27T11:20:00+03:00" pubdate>Τετ 27 Απρίλιος 2016</time>  <span class="categories">
+    <a class='category' href='http://spapas.github.io/category/python.html'>python</a>
   </span>
   <span class="categories">
-    <a class="category" href="http://spapas.github.io/tag/django.html">django</a>,    <a class="category" href="http://spapas.github.io/tag/python.html">python</a>,    <a class="category" href="http://spapas.github.io/tag/cbv.html">cbv</a>,    <a class="category" href="http://spapas.github.io/tag/class-based-views.html">class-based-views</a>  </span>
+    <a class="category" href="http://spapas.github.io/tag/python.html">python</a>,    <a class="category" href="http://spapas.github.io/tag/debug.html">debug</a>,    <a class="category" href="http://spapas.github.io/tag/404.html">404</a>,    <a class="category" href="http://spapas.github.io/tag/error.html">error</a>,    <a class="category" href="http://spapas.github.io/tag/python.html">python</a>  </span>
 </p><div class="sharing">
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/" data-via="" data-counturl="http://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://spapas.github.io/2016/04/27/python-nested-list-comprehensions/" data-via="" data-counturl="http://spapas.github.io/2016/04/27/python-nested-list-comprehensions/" >Tweet</a>
 </div>    </footer>
   </article>
 
@@ -318,9 +225,9 @@ override the <tt class="docutils literal">get_form_kwargs</tt> method of <tt cla
     </script>
   <script type="text/javascript">
     var disqus_shortname = 'spapas-github-io';
-    var disqus_identifier = '/2014/04/11/django-generic-formviews-for-objects/';
-    var disqus_url = 'http://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/';
-    var disqus_title = 'Django generic FormViews for&nbsp;objects';
+    var disqus_identifier = '/2016/04/27/python-nested-list-comprehensions/';
+    var disqus_url = 'http://spapas.github.io/2016/04/27/python-nested-list-comprehensions/';
+    var disqus_title = 'Understanding nested list comprehension syntax in&nbsp;Python';
     (function() {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
       dsq.src = "//" + disqus_shortname + '.disqus.com/embed.js';

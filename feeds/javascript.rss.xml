@@ -778,7 +778,7 @@ as a different module. Let&amp;#8217;s start reviewing the code of the &lt;tt cl
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The &lt;tt class="docutils literal"&gt;notification&lt;/tt&gt; and &lt;cite&gt;ui&lt;/cite&gt; are two sub-reducers that control the state of the notification popup and if
-the application is loading / is submitting. I won&amp;#8217;t go into much detal about
+the application is loading / is submitting. I won&amp;#8217;t go into much detail about
 them, they are really simple. However, notice that they both create a new state object
 for each of their actions. To achieve this, the &lt;tt class="docutils literal"&gt;Object.assign()&lt;/tt&gt; method is used.
 This method is defined like this:
