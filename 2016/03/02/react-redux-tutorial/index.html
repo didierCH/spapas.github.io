@@ -130,9 +130,11 @@
 <li><a class="reference internal" href="#components-authorform" id="id34">components/AuthorForm</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#conclusion" id="id35">Conclusion</a></li>
+<li><a class="reference internal" href="#changing-the-ui-when-the-data-is-changed" id="id35">Changing the <span class="caps">UI</span> when the data is&nbsp;changed</a></li>
+<li><a class="reference internal" href="#conclusion" id="id36">Conclusion</a></li>
 </ul>
 </div>
+<p><strong>Update 10/05/2016</strong>: Add a section on how to update the <span class="caps">UI</span> when the data in the database is changed without using the <span class="caps">UI</span>.</p>
 <div class="section" id="introduction">
 <h2><a class="toc-backref" href="#id2">Introduction</a></h2>
 <p>Continuing the series of React-related articles, we&#8217;ll try to make a comprehensive
@@ -2207,8 +2209,51 @@ of each author. I won&#8217;t go into more detail about this
 component since everything must be clear by&nbsp;now.</p>
 </div>
 </div>
+<div class="section" id="changing-the-ui-when-the-data-is-changed">
+<h2><a class="toc-backref" href="#id35">Changing the <span class="caps">UI</span> when the data is&nbsp;changed</a></h2>
+<p>Commenter Tomas Jacobsen asked for a tutorial on <a class="reference external" href="http://spapas.github.io/2015/09/08/more-complex-react-flux-example/#comment-2667922265">how the <span class="caps">UI</span> will be updated when the data is changed in a different window</a>. Well,
+requirements like this is actually the reason for using react and redux I decided to add that capability to this application. If you want
+to check it out, please <tt class="docutils literal">git checkout</tt> the tag <tt class="docutils literal"><span class="pre">react-redux-poll-update</span></tt> of the same repository (<a class="reference external" href="https://github.com/spapas/react-tutorial/">https://github.com/spapas/react-tutorial/</a>).</p>
+<p>This extra functionality simply checks (using polling) every few seconds if the number of authors has changed and if it has, it will reload the authors
+and dispaly a notification. Beyond the <span class="caps">ES6</span> code, I&#8217;ve added a small <span class="caps">REST</span> <span class="caps">API</span> view that returns the number of authors in the database (it just
+returns a number) and a django management command that adds an author. So, to test the new functionality, run
+the django application and thhen run <tt class="docutils literal">python manage.py add_author</tt> in a different window - after a few seconds you should see that the
+authors have been updated along with a&nbsp;notification.</p>
+<p>To implement the <span class="caps">UI</span> update in <span class="caps">ES6</span>, I&#8217;ve added a file named <tt class="docutils literal">scheduler.js</tt> with the following&nbsp;contents:</p>
+<div class="highlight"><pre><span class="kr">import</span> <span class="nx">store</span> <span class="nx">from</span> <span class="s1">&#39;./store&#39;</span>
+<span class="kr">import</span> <span class="p">{</span><span class="nx">loadAuthors</span><span class="p">,</span> <span class="nx">showSuccessNotification</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./actions&#39;</span><span class="p">;</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Starting scheduler&quot;</span><span class="p">)</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">setInterval</span><span class="p">(</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+
+        <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:8000/api/authors/get_author_number/&#39;</span><span class="p">;</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">realAuthorNumber</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">authorNumber</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">authors</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">authorNumber</span><span class="o">!=</span><span class="nx">realAuthorNumber</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">showSuccessNotification</span><span class="p">(</span><span class="s2">&quot;Authors have changed - reloading ...&quot;</span><span class="p">));</span>
+                <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadAuthors</span><span class="p">());</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+
+    <span class="p">},</span> <span class="mi">2000</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+<p>and then just import the default function from <tt class="docutils literal">main.js</tt> and call&nbsp;it:</p>
+<div class="highlight"><pre><span class="kr">import</span> <span class="nx">schedule</span> <span class="nx">from</span> <span class="s1">&#39;./scheduler&#39;</span><span class="p">;</span>
+
+<span class="nx">schedule</span><span class="p">();</span>
+</pre></div>
+<p>So, we can see that every 2 seconds we retrieve (using Ajax) the number of authors and,
+if their number is different than the current number of authors in the <span class="caps">UI</span> (which we retrieve from
+the store using its <tt class="docutils literal">getState</tt> method) display the notification and reload the authors (by
+dispatching two actions (which are created through the corresponding actions creators)! That&#8217;s
+all that is needed to update the <span class="caps">UI</span>!</p>
+<p>Notice that, although I&#8217;ve used ajax and polling to find out when the <span class="caps">UI</span> needs to be updated
+you could instead use whatever different method you like, for example&nbsp;WebSockets.</p>
+</div>
 <div class="section" id="conclusion">
-<h2><a class="toc-backref" href="#id35">Conclusion</a></h2>
+<h2><a class="toc-backref" href="#id36">Conclusion</a></h2>
 <p>In the above sections we presented and explained
 a more or less complete single page react / redux
 application, <em>almost</em> ready to be deployed to production.

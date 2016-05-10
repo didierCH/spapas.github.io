@@ -51,9 +51,11 @@
 &lt;li&gt;&lt;a class="reference internal" href="#components-authorform" id="id34"&gt;components/AuthorForm&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a class="reference internal" href="#conclusion" id="id35"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#changing-the-ui-when-the-data-is-changed" id="id35"&gt;Changing the &lt;span class="caps"&gt;UI&lt;/span&gt; when the data is&amp;nbsp;changed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#conclusion" id="id36"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Update 10/05/2016&lt;/strong&gt;: Add a section on how to update the &lt;span class="caps"&gt;UI&lt;/span&gt; when the data in the database is changed without using the &lt;span class="caps"&gt;UI&lt;/span&gt;.&lt;/p&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id2"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Continuing the series of React-related articles, we&amp;#8217;ll try to make a comprehensive
@@ -2128,8 +2130,51 @@ of each author. I won&amp;#8217;t go into more detail about this
 component since everything must be clear by&amp;nbsp;now.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;div class="section" id="changing-the-ui-when-the-data-is-changed"&gt;
+&lt;h2&gt;&lt;a class="toc-backref" href="#id35"&gt;Changing the &lt;span class="caps"&gt;UI&lt;/span&gt; when the data is&amp;nbsp;changed&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Commenter Tomas Jacobsen asked for a tutorial on &lt;a class="reference external" href="http://spapas.github.io/2015/09/08/more-complex-react-flux-example/#comment-2667922265"&gt;how the &lt;span class="caps"&gt;UI&lt;/span&gt; will be updated when the data is changed in a different window&lt;/a&gt;. Well,
+requirements like this is actually the reason for using react and redux I decided to add that capability to this application. If you want
+to check it out, please &lt;tt class="docutils literal"&gt;git checkout&lt;/tt&gt; the tag &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;react-redux-poll-update&lt;/span&gt;&lt;/tt&gt; of the same repository (&lt;a class="reference external" href="https://github.com/spapas/react-tutorial/"&gt;https://github.com/spapas/react-tutorial/&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;This extra functionality simply checks (using polling) every few seconds if the number of authors has changed and if it has, it will reload the authors
+and dispaly a notification. Beyond the &lt;span class="caps"&gt;ES6&lt;/span&gt; code, I&amp;#8217;ve added a small &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt; view that returns the number of authors in the database (it just
+returns a number) and a django management command that adds an author. So, to test the new functionality, run
+the django application and thhen run &lt;tt class="docutils literal"&gt;python manage.py add_author&lt;/tt&gt; in a different window - after a few seconds you should see that the
+authors have been updated along with a&amp;nbsp;notification.&lt;/p&gt;
+&lt;p&gt;To implement the &lt;span class="caps"&gt;UI&lt;/span&gt; update in &lt;span class="caps"&gt;ES6&lt;/span&gt;, I&amp;#8217;ve added a file named &lt;tt class="docutils literal"&gt;scheduler.js&lt;/tt&gt; with the following&amp;nbsp;contents:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./store&amp;#39;&lt;/span&gt;
+&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nx"&gt;loadAuthors&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;showSuccessNotification&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./actions&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kr"&gt;export&lt;/span&gt; &lt;span class="k"&gt;default&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Starting scheduler&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="nb"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;setInterval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+
+        &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;url&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;http://127.0.0.1:8000/api/authors/get_author_number/&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;realAuthorNumber&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;authorNumber&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;getState&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="nx"&gt;authors&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;rows&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;authorNumber&lt;/span&gt;&lt;span class="o"&gt;!=&lt;/span&gt;&lt;span class="nx"&gt;realAuthorNumber&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+                &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;showSuccessNotification&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Authors have changed - reloading ...&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+                &lt;span class="nx"&gt;store&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;loadAuthors&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+            &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="p"&gt;});&lt;/span&gt;
+
+    &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;2000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;and then just import the default function from &lt;tt class="docutils literal"&gt;main.js&lt;/tt&gt; and call&amp;nbsp;it:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kr"&gt;import&lt;/span&gt; &lt;span class="nx"&gt;schedule&lt;/span&gt; &lt;span class="nx"&gt;from&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;./scheduler&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="nx"&gt;schedule&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So, we can see that every 2 seconds we retrieve (using Ajax) the number of authors and,
+if their number is different than the current number of authors in the &lt;span class="caps"&gt;UI&lt;/span&gt; (which we retrieve from
+the store using its &lt;tt class="docutils literal"&gt;getState&lt;/tt&gt; method) display the notification and reload the authors (by
+dispatching two actions (which are created through the corresponding actions creators)! That&amp;#8217;s
+all that is needed to update the &lt;span class="caps"&gt;UI&lt;/span&gt;!&lt;/p&gt;
+&lt;p&gt;Notice that, although I&amp;#8217;ve used ajax and polling to find out when the &lt;span class="caps"&gt;UI&lt;/span&gt; needs to be updated
+you could instead use whatever different method you like, for example&amp;nbsp;WebSockets.&lt;/p&gt;
+&lt;/div&gt;
 &lt;div class="section" id="conclusion"&gt;
-&lt;h2&gt;&lt;a class="toc-backref" href="#id35"&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
+&lt;h2&gt;&lt;a class="toc-backref" href="#id36"&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;In the above sections we presented and explained
 a more or less complete single page react / redux
 application, &lt;em&gt;almost&lt;/em&gt; ready to be deployed to production.
