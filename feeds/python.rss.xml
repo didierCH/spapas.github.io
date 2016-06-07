@@ -1,5 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>http://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="http://spapas.github.io/feeds/python.rss.xml" rel="self"></atom:link><lastBuildDate>Wed, 27 Apr 2016 11:20:00 +0300</lastBuildDate><item><title>Understanding nested list comprehension syntax in Python</title><link>http://spapas.github.io/2016/04/27/python-nested-list-comprehensions/</link><description>&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>http://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="http://spapas.github.io/feeds/python.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 07 Jun 2016 10:40:00 +0300</lastBuildDate><item><title>Using Werkzeug debugger with Django</title><link>http://spapas.github.io/2016/06/07/django-werkzeug-debugger/</link><description>&lt;div class="section" id="introduction"&gt;
+&lt;h2&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive
+debugger - what this means is that when your python application throws an exception,
+Werkzeug will display the exception stacktrace in the browser (that&amp;#8217;s not a big deal)
+and allow you to write python commands interactively wherever you want in that stacktrace
+(that&amp;#8217;s the important&amp;nbsp;stuff).&lt;/p&gt;
+&lt;p&gt;Now, the even more important stuff is that you can &lt;em&gt;abuse&lt;/em&gt; the above feature by adding
+code that will throw an exception in various parts of your application and, as a result
+get an interactive python prompt at &lt;em&gt;specific&lt;/em&gt; parts of your application (for example,
+before validating your form, or when a method in your model is executed). All this,
+without the need to use a specific &lt;span class="caps"&gt;IDE&lt;/span&gt; to add&amp;nbsp;breakpoints!&lt;/p&gt;
+&lt;p&gt;This is an old trick however some people don&amp;#8217;t use it and make their work more
+difficult. Actually, this one of the first things I learned when starting with django
+and use it all the time since then - I am writing this post mainly to emphasize
+its usefulness and to urge more people to use it. If you don&amp;#8217;t already use it please try
+it (and thank me&amp;nbsp;later).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="configuration"&gt;
+&lt;h2&gt;Configuration&lt;/h2&gt;
+&lt;p&gt;There are two components you need to install in your django project to use the
+above&amp;nbsp;technique:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://github.com/django-extensions/django-extensions"&gt;django-extensions&lt;/a&gt;: a swiss army knife toolset for django - beyond other useful tools it includes a management command (&lt;tt class="docutils literal"&gt;runserver_plus&lt;/tt&gt;) to start the Werkzeug interactive debugger with your&amp;nbsp;project&lt;/li&gt;
+&lt;li&gt;werkzeug: the werkzeug utility&amp;nbsp;library&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Both of these can just be installed with pip (even on windows). After installing them, add &lt;tt class="docutils literal"&gt;django_extensions&lt;/tt&gt; to your &lt;tt class="docutils literal"&gt;INSTALLED_APPS&lt;/tt&gt; setting to enable
+the management&amp;nbsp;command.&lt;/p&gt;
+&lt;p&gt;After that, you can just run &lt;tt class="docutils literal"&gt;python manage.py runserver_plus&lt;/tt&gt; - if everything was installed successfully you should see something like this (in windows at&amp;nbsp;least):&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+(venv) C:\progr\py\werkzeug\testdebug&amp;gt;python manage.py runserver_plus
+ * Restarting with stat
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+Django version 1.9.7, using settings 'testdebug.settings'
+Development server is running at http://127.0.0.1:8000/
+Using the Werkzeug debugger (http://werkzeug.pocoo.org/)
+Quit the server with CTRL-BREAK.
+ * Debugger is active!
+ * Debugger pin code: 143-738-172
+ * Debugger is active!
+ * Debugger pin code: 174-740-467
+ * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
+&lt;/pre&gt;
+&lt;p&gt;Now, the &amp;quot;debugger pin&amp;quot; you see is a way to protect your interactive debugger (i.e it asks for the pin
+before allowing you to enter the interactive prompt). Since this feature should &lt;em&gt;only&lt;/em&gt; be used in your
+local development system I recommend to just disable it by setting the &lt;tt class="docutils literal"&gt;WERKZEUG_DEBUG_PIN&lt;/tt&gt; environment
+variable to &lt;tt class="docutils literal"&gt;off&lt;/tt&gt; (i.e &lt;tt class="docutils literal"&gt;set WERKZEUG_DEBUG_PIN=off&lt;/tt&gt; in windows). After that you should see the message
+&amp;#8220; * Debugger pin disabled.  &lt;span class="caps"&gt;DEBUGGER&lt;/span&gt; &lt;span class="caps"&gt;UNSECURED&lt;/span&gt;!&amp;#8220;. Please be careful with the interactive debugger
+and  &lt;em&gt;never, ever use it in a production deployment&lt;/em&gt; even with the debug pin enabled. I also recommend to
+use it &lt;em&gt;only&lt;/em&gt; on a local development server (i.e the server must be run on 127.0.0.1/local &lt;span class="caps"&gt;IP&lt;/span&gt; and not
+allow remote&amp;nbsp;connections).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="usage"&gt;
+&lt;h2&gt;Usage&lt;/h2&gt;
+&lt;p&gt;Now its time for the magic: Let&amp;#8217;s add a django view that throws an exception, like&amp;nbsp;this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+def test(request):
+    a+=1
+&lt;/pre&gt;
+&lt;p&gt;to your urls.py ( &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;url(r'^test/',&lt;/span&gt; test )&lt;/tt&gt; ) and after you visit &lt;cite&gt;test&lt;/cite&gt; you should see something like&amp;nbsp;this:&lt;/p&gt;
+&lt;img alt="Werkzeug debugger" src="/images/werkzeug.png" style="width: 800px;" /&gt;
+&lt;p&gt;Since the &lt;tt class="docutils literal"&gt;a&lt;/tt&gt; variable was not defined you&amp;#8217;ll get an exception when you try to increaseit.
+Now, notice the console icon in the lower right corner - when you click it you&amp;#8217;ll get the interactive debugger!
+Now you can enter python commands exactly where the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;a+=1&lt;/span&gt;&lt;/tt&gt; code was. For example, you can see what are the
+attributes of the &lt;tt class="docutils literal"&gt;request&lt;/tt&gt; object you receive (for example, just enter &lt;tt class="docutils literal"&gt;request.&lt;span class="caps"&gt;GET&lt;/span&gt;&lt;/tt&gt; to output the &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;GET&lt;/span&gt;&lt;/tt&gt;
+dictionary to the interactive&amp;nbsp;console).&lt;/p&gt;
+&lt;p&gt;Notice that you can get interactive consoles wherever you want in the stacktrace, i.e I could get a console at line 147
+of &lt;cite&gt;django.core.handlers.base&lt;/cite&gt; module on the &lt;tt class="docutils literal"&gt;get_response&lt;/tt&gt; method &amp;#8212; this is needed sometimes especially when you
+want to see how your code is called by other&amp;nbsp;modules.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As you can see, using the presented technique you can really quickly start an interactive console wherever you
+want and start entering commands. I use it whenever I need to write anything non trivial (or even trivial stuff -
+I sometimes prefer opening and interactive debugger to find out by trial and error how should I write a django
+&lt;span class="caps"&gt;ORM&lt;/span&gt; query than open models.py) and really miss it on other environments&amp;nbsp;(Java).&lt;/p&gt;
+&lt;p&gt;The above technique should also work with few modifications with other python web frameworks so it&amp;#8217;s not&amp;nbsp;django-only.&lt;/p&gt;
+&lt;p&gt;Finally, please notice that both Werkzeug and django-extensions offer many more tools beyond the interactive debugger presented here -
+I encourage you to research them since - if you follow my advice - you&amp;#8217;ll integrate these to &lt;em&gt;all&lt;/em&gt; your django&amp;nbsp;projects!&lt;/p&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 07 Jun 2016 10:40:00 +0300</pubDate><guid>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</guid><category>django</category><category>debug</category><category>python</category><category>werkzeug</category><category>django-extensions</category></item><item><title>Understanding nested list comprehension syntax in Python</title><link>http://spapas.github.io/2016/04/27/python-nested-list-comprehensions/</link><description>&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
 is actually a smart way to introduce new users to functional programming concepts
 (after all a list comprehension is just a combination of map and filter) and compact&amp;nbsp;statements.&lt;/p&gt;
 &lt;p&gt;However, one thing that always troubled me when using list comprehensions is their
