@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>http://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="http://spapas.github.io/feeds%5Cserafeim-papastefanos.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 07 Jun 2016 10:40:00 +0300</lastBuildDate><item><title>Using Werkzeug debugger with Django</title><link>http://spapas.github.io/2016/06/07/django-werkzeug-debugger/</link><description>&lt;div class="section" id="introduction"&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds%5Cserafeim-papastefanos.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 07 Jun 2016 10:40:00 +0300</lastBuildDate><item><title>Using Werkzeug debugger with Django</title><link>https://spapas.github.io/2016/06/07/django-werkzeug-debugger/</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive
 debugger - what this means is that when your python application throws an exception,
@@ -82,7 +82,7 @@ I sometimes prefer opening and interactive debugger to find out by trial and err
 &lt;p&gt;Finally, please notice that both Werkzeug and django-extensions offer many more tools beyond the interactive debugger presented here -
 I encourage you to research them since - if you follow my advice - you&amp;#8217;ll integrate these to &lt;em&gt;all&lt;/em&gt; your django&amp;nbsp;projects!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 07 Jun 2016 10:40:00 +0300</pubDate><guid>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</guid><category>django</category><category>debug</category><category>python</category><category>werkzeug</category><category>django-extensions</category></item><item><title>Understanding nested list comprehension syntax in Python</title><link>http://spapas.github.io/2016/04/27/python-nested-list-comprehensions/</link><description>&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 07 Jun 2016 10:40:00 +0300</pubDate><guid>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</guid><category>django</category><category>debug</category><category>python</category><category>werkzeug</category><category>django-extensions</category></item><item><title>Understanding nested list comprehension syntax in Python</title><link>https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/</link><description>&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
 is actually a smart way to introduce new users to functional programming concepts
 (after all a list comprehension is just a combination of map and filter) and compact&amp;nbsp;statements.&lt;/p&gt;
 &lt;p&gt;However, one thing that always troubled me when using list comprehensions is their
@@ -135,7 +135,7 @@ for-loop syntax for the nested list comprehensions we&amp;#8217;ll&amp;nbsp;get:
 &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;letter&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 27 Apr 2016 11:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</guid><category>python</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Configuring Spring Boot</title><link>http://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 27 Apr 2016 11:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</guid><category>python</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Configuring Spring Boot</title><link>https://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -464,7 +464,7 @@ advanced profiles techniques (multiple profiles, profile enabled
 some really complex configurations! Finally, you&amp;#8217;ll be able to really
 quickly deploy the resulting jar as an init.d system&amp;nbsp;service!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category><category>deploy</category><category>init.d</category></item><item><title>A comprehensive react-redux tutorial</title><link>http://spapas.github.io/2016/03/02/react-redux-tutorial/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category><category>deploy</category><category>init.d</category></item><item><title>A comprehensive react-redux tutorial</title><link>https://spapas.github.io/2016/03/02/react-redux-tutorial/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id2"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -526,7 +526,7 @@ quickly deploy the resulting jar as an init.d system&amp;nbsp;service!&lt;/p&gt;
 &lt;p&gt;Continuing the series of React-related articles, we&amp;#8217;ll try to make a comprehensive
 tutorial to the &lt;a class="reference external" href="https://github.com/rackt/redux"&gt;redux&lt;/a&gt; framework and its integrations with React, using the
 &lt;a class="reference external" href="https://github.com/rackt/react-redux"&gt;react-redux&lt;/a&gt; library. Redux can be used as an alternative to Flux
-(which we discussed in &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;a previous article&lt;/a&gt;)
+(which we discussed in &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;a previous article&lt;/a&gt;)
 to orchestrate the message passing between&amp;nbsp;ui/components/data.&lt;/p&gt;
 &lt;p&gt;This tutorial will also produce as a result an opinionated (my opinion) boilerplate
 project for creating react-redux Single Page Applications. I have used Django
@@ -2677,7 +2677,7 @@ about&amp;nbsp;these.&lt;/p&gt;
 redux/react-redux the flow of the data is &lt;em&gt;crystal&lt;/em&gt; and that as you&amp;#8217;ve already
 seen by now, writing functional components and reducers is &lt;em&gt;pure fun&lt;/em&gt;!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 02 Mar 2016 11:20:00 +0200</pubDate><guid>tag:spapas.github.io,2016-03-02:2016/03/02/react-redux-tutorial/</guid><category>javascript</category><category>react</category><category>redux</category><category>react-redux</category><category>django</category><category>django-rest-framework</category><category>redux-thunk</category><category>redux-form</category><category>react-router</category><category>react-router-redux</category><category>react-notification</category><category>history</category><category>es6</category><category>babel</category><category>babelify</category><category>browserify</category><category>watchify</category><category>uglify</category><category>boilerplate</category><category>ajax</category><category>tutorial</category><category>introduction</category></item><item><title>Ajax data with Fixed Data Table for React</title><link>http://spapas.github.io/2015/12/22/ajax-with-react-fixed-data-table/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 02 Mar 2016 11:20:00 +0200</pubDate><guid>tag:spapas.github.io,2016-03-02:2016/03/02/react-redux-tutorial/</guid><category>javascript</category><category>react</category><category>redux</category><category>react-redux</category><category>django</category><category>django-rest-framework</category><category>redux-thunk</category><category>redux-form</category><category>react-router</category><category>react-router-redux</category><category>react-notification</category><category>history</category><category>es6</category><category>babel</category><category>babelify</category><category>browserify</category><category>watchify</category><category>uglify</category><category>boilerplate</category><category>ajax</category><category>tutorial</category><category>introduction</category></item><item><title>Ajax data with Fixed Data Table for React</title><link>https://spapas.github.io/2015/12/22/ajax-with-react-fixed-data-table/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2712,7 +2712,7 @@ used with server-side, asynchronous, paginated&amp;nbsp;data.&lt;/p&gt;
 requests to &lt;a class="reference external" href="http://swapi.co/api/people/?format=json"&gt;http://swapi.co/api/people/?format=json&lt;/a&gt;. This will return an array of people from the
 star wars universe in &lt;span class="caps"&gt;JSON&lt;/span&gt; format - the results are paginated with a page size of 10 (and we can switch
 to another page using the extra &lt;tt class="docutils literal"&gt;page=&lt;/tt&gt; request&amp;nbsp;parameter).&lt;/p&gt;
-&lt;p&gt;I will use es6 with the object spread operator (as described in &lt;a class="reference external" href="http://spapas.github.io/2015/11/16/using-browserify-es6/"&gt;a previous article&lt;/a&gt;)
+&lt;p&gt;I will use es6 with the object spread operator (as described in &lt;a class="reference external" href="https://spapas.github.io/2015/11/16/using-browserify-es6/"&gt;a previous article&lt;/a&gt;)
 to write the code, using a single main.js as a source which will be transpiled to &lt;tt class="docutils literal"&gt;dist/bundle.js&lt;/tt&gt;.&lt;/p&gt;
 &lt;p&gt;The placeholder &lt;span class="caps"&gt;HTML&lt;/span&gt; for our application&amp;nbsp;is:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
@@ -2941,12 +2941,12 @@ change fetch like&amp;nbsp;this&lt;/p&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id10"&gt;Conslusion&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;The above is a just a proof of concept of using FixedDataTable with asynchronously loaded server-side data.
 This of course could be used for small projects (I am already using it for an internal project) but I recommend
-using the &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux architecture&lt;/a&gt; for more complex projects. What this more or
+using the &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux architecture&lt;/a&gt; for more complex projects. What this more or
 less means is that a store component
 should be developed that will actually keep the data for each row, and a &lt;tt class="docutils literal"&gt;fetchCompleted&lt;/tt&gt; action should be
 dispatched when the &lt;tt class="docutils literal"&gt;fetch&lt;/tt&gt; is finished instead of calling &lt;tt class="docutils literal"&gt;forceUpdate&lt;/tt&gt; directly.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 22 Dec 2015 15:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-12-22:2015/12/22/ajax-with-react-fixed-data-table/</guid><category>javascript</category><category>react</category><category>fixed-data-tables</category><category>FixedDataTable</category></item><item><title>PDFs in Django: The essential guide</title><link>http://spapas.github.io/2015/11/27/pdf-in-django/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 22 Dec 2015 15:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-12-22:2015/12/22/ajax-with-react-fixed-data-table/</guid><category>javascript</category><category>react</category><category>fixed-data-tables</category><category>FixedDataTable</category></item><item><title>PDFs in Django: The essential guide</title><link>https://spapas.github.io/2015/11/27/pdf-in-django/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id4"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -3743,7 +3743,7 @@ out and I&amp;#8217;ll be happy to research it a bit and update the article with
 &lt;p&gt;I am using all the above in various production applications for a long time and everything
 is smooth so don&amp;#8217;t afraid to create PDFs from&amp;nbsp;Django!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 27 Nov 2015 10:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</guid><category>pdf</category><category>django</category><category>reportlab</category><category>python</category><category>xhtml2pdf</category></item><item><title>Improve your client-side-javascript workflow more by using ES6</title><link>http://spapas.github.io/2015/11/16/using-browserify-es6/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 27 Nov 2015 10:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</guid><category>pdf</category><category>django</category><category>reportlab</category><category>python</category><category>xhtml2pdf</category></item><item><title>Improve your client-side-javascript workflow more by using ES6</title><link>https://spapas.github.io/2015/11/16/using-browserify-es6/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -3757,7 +3757,7 @@ is smooth so don&amp;#8217;t afraid to create PDFs from&amp;nbsp;Django!&lt;/p&g
 &lt;p&gt;&lt;strong&gt;Update 22/12/2015:&lt;/strong&gt; Add section for the object-spread&amp;nbsp;operator.&lt;/p&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id1"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In a &lt;a class="reference external" href="http://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous article&lt;/a&gt;
+&lt;p&gt;In a &lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous article&lt;/a&gt;
 we presented a simple workflow to improve your client-side (javascript) workflow
 by including a bunch of tools from the node-js world i.e &lt;a class="reference external" href="http://browserify.org/"&gt;browserify&lt;/a&gt; and
 its friends, &lt;a class="reference external" href="https://github.com/substack/watchify"&gt;watchify&lt;/a&gt; and &lt;a class="reference external" href="https://www.npmjs.com/package/uglify-js"&gt;uglify-js&lt;/a&gt;.&lt;/p&gt;
@@ -3777,7 +3777,7 @@ and transform them to normal javascript using a transformation through the &lt;a
 &lt;p&gt;In the following, we&amp;#8217;ll talk a bit more about the node-js package manager (npm) features,
 talk a little about babel and finally
 modify our workflow so that it will be able to use &lt;span class="caps"&gt;ES6&lt;/span&gt;! Please notice that to properly follow this article
-you need to first read the &lt;a class="reference external" href="http://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous one&lt;/a&gt;.&lt;/p&gt;
+you need to first read the &lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous one&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="npm-save-save-dev-and-avoiding-global-deps"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id2"&gt;&lt;span class="caps"&gt;NPM&lt;/span&gt;, &amp;#8212;save, &amp;#8212;save-dev and avoiding global&amp;nbsp;deps&lt;/a&gt;&lt;/h2&gt;
@@ -3953,7 +3953,7 @@ browserify are not unlimited, so if you wanted to do something more complicated
 task runners (or webpack which is the current trend in javascript bundlers and actually replaces
 the task&amp;nbsp;runners).&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 16 Nov 2015 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-11-16:2015/11/16/using-browserify-es6/</guid><category>javascript</category><category>browserify</category><category>node</category><category>npm</category><category>watchify</category><category>generic</category><category>uglify</category><category>babel</category><category>es6</category></item><item><title>Django dynamic tables and filters for similar models</title><link>http://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 16 Nov 2015 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-11-16:2015/11/16/using-browserify-es6/</guid><category>javascript</category><category>browserify</category><category>node</category><category>npm</category><category>watchify</category><category>generic</category><category>uglify</category><category>babel</category><category>es6</category></item><item><title>Django dynamic tables and filters for similar models</title><link>https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -4020,7 +4020,7 @@ we&amp;#8217;d need again to create three different subclasses (one for each log
 of &lt;tt class="docutils literal"&gt;django_filter.FilterSet&lt;/tt&gt; since
 django-filter requires you to define the model for which the filter will be&amp;nbsp;created!&lt;/p&gt;
 &lt;p&gt;One cool way to resolve such problems is to create your classes dynamically when
-you need &amp;#8216;em. I&amp;#8217;ve already described a way to &lt;a class="reference external" href="http://spapas.github.io/2013/12/24/django-dynamic-forms/"&gt;dynamically create forms in django
+you need &amp;#8216;em. I&amp;#8217;ve already described a way to &lt;a class="reference external" href="https://spapas.github.io/2013/12/24/django-dynamic-forms/"&gt;dynamically create forms in django
 in a previous post&lt;/a&gt;. Below, I&amp;#8217;ll describe
 a similar technique which can be used to create both dynamic tables and filters. Using
 this methodology, you&amp;#8217;ll be able to add a new &lt;span class="caps"&gt;CBV&lt;/span&gt; that displays a table with
@@ -4190,7 +4190,7 @@ creating different &lt;tt class="docutils literal"&gt;SingleTableView&lt;/tt&gt;
 of the Model to be viewed as a parameter and retrieve the model (and queryset) from the content type - so
 we could have a single &lt;span class="caps"&gt;CBV&lt;/span&gt; for all our table/filtering views&amp;nbsp;!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 05 Oct 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-10-05:2015/10/05/django-dynamic-tables-similar-models/</guid><category>django</category><category>python</category><category>forms</category><category>tables</category></item><item><title>A (little more) complex react and flux example</title><link>http://spapas.github.io/2015/09/08/more-complex-react-flux-example/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 05 Oct 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-10-05:2015/10/05/django-dynamic-tables-similar-models/</guid><category>django</category><category>python</category><category>forms</category><category>tables</category></item><item><title>A (little more) complex react and flux example</title><link>https://spapas.github.io/2015/09/08/more-complex-react-flux-example/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id2"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -4231,12 +4231,12 @@ we could have a single &lt;span class="caps"&gt;CBV&lt;/span&gt; for all our tab
 &lt;/div&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id2"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In &lt;a class="reference external" href="http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;previous&lt;/a&gt;
-&lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;two&lt;/a&gt; parts of this series, we have seen
+&lt;p&gt;In &lt;a class="reference external" href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;previous&lt;/a&gt;
+&lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;two&lt;/a&gt; parts of this series, we have seen
 how we could implement a
 not-so-simple single page application with full &lt;span class="caps"&gt;CRUD&lt;/span&gt; capabilities
-using react only (in the &lt;a class="reference external" href="http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part&lt;/a&gt; ) and then how to
-change it to use the flux architecture (in the &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;second part&lt;/a&gt;).&lt;/p&gt;
+using react only (in the &lt;a class="reference external" href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part&lt;/a&gt; ) and then how to
+change it to use the flux architecture (in the &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;second part&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;In this, third, part, we will
 add some more capabilities to the previous app
 to prove how easy it is to create complex apps
@@ -5521,7 +5521,7 @@ will need to use &amp;#8212; if you feel that something is not covered and
 could be integrated to the authors/book application I&amp;#8217;d be happy
 to research and implement&amp;nbsp;it!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 08 Sep 2015 12:55:00 +0300</pubDate><guid>tag:spapas.github.io,2015-09-08:2015/09/08/more-complex-react-flux-example/</guid><category>javascript</category><category>python</category><category>django</category><category>react</category><category>flux</category></item><item><title>django-rq redux: advanced techniques and tools</title><link>http://spapas.github.io/2015/09/01/django-rq-redux/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 08 Sep 2015 12:55:00 +0300</pubDate><guid>tag:spapas.github.io,2015-09-08:2015/09/08/more-complex-react-flux-example/</guid><category>javascript</category><category>python</category><category>django</category><category>react</category><category>flux</category></item><item><title>django-rq redux: advanced techniques and tools</title><link>https://spapas.github.io/2015/09/01/django-rq-redux/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -5537,7 +5537,7 @@ to research and implement&amp;nbsp;it!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id1"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In the &lt;a class="reference external" href="http://spapas.github.io/2015/01/27/async-tasks-with-django-rq/"&gt;previous django-rq article&lt;/a&gt;
+&lt;p&gt;In the &lt;a class="reference external" href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/"&gt;previous django-rq article&lt;/a&gt;
 we presented a quick introduction to asynchronous job queues and created a
 small (but complete) project that used rq and django-rq to implement asynchronous
 job queues in a django&amp;nbsp;project.&lt;/p&gt;
@@ -5841,7 +5841,7 @@ queued
 task adventures with rq. I&amp;#8217;ll try to keep this article updated with
 any new techniques or tools I find in the&amp;nbsp;future!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 01 Sep 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-09-01:2015/09/01/django-rq-redux/</guid><category>django</category><category>python</category><category>tasks</category><category>jobs</category><category>rq</category><category>django-rq</category><category>asynchronous</category><category>scheduling</category><category>redis</category></item><item><title>A comprehensive React and Flux tutorial part 2: Flux</title><link>http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 01 Sep 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-09-01:2015/09/01/django-rq-redux/</guid><category>django</category><category>python</category><category>tasks</category><category>jobs</category><category>rq</category><category>django-rq</category><category>asynchronous</category><category>scheduling</category><category>redis</category></item><item><title>A comprehensive React and Flux tutorial part 2: Flux</title><link>https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -5861,18 +5861,18 @@ any new techniques or tools I find in the&amp;nbsp;future!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id1"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In the &lt;a class="reference external" href="http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part of this series&lt;/a&gt; we implemented a
+&lt;p&gt;In the &lt;a class="reference external" href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part of this series&lt;/a&gt; we implemented a
 not-so-simple one page application with full &lt;span class="caps"&gt;CRUD&lt;/span&gt; capabilities. In this part, we will
 modify that application to make it use the Flux architecture. The full source code can
 be found at &lt;a class="reference external" href="https://github.com/spapas/react-tutorial"&gt;https://github.com/spapas/react-tutorial&lt;/a&gt; (tag name react-flux). In the
-&lt;a class="reference external" href="http://spapas.github.io/2015/09/08/more-complex-react-flux-example/"&gt;next part,&lt;/a&gt; we will create an even more complex application
+&lt;a class="reference external" href="https://spapas.github.io/2015/09/08/more-complex-react-flux-example/"&gt;next part,&lt;/a&gt; we will create an even more complex application
 using&amp;nbsp;react/flux!&lt;/p&gt;
 &lt;p&gt;I recommend reading Facebook&amp;#8217;s &lt;a class="reference external" href="https://facebook.github.io/flux/docs/overview.html"&gt;Flux overview&lt;/a&gt; before reading this article &amp;#8212; please
 read it even if you find some concepts difficult to grasp (I know I found it difficult
 the first time I read it), I will try to explain everything here. Also,
 because a rather large number of extra components will need to be created, we are
 going to split our javascript code to different files using &lt;a class="reference external" href="http://browserify.org/"&gt;browserify&lt;/a&gt; - you can
-learn &lt;a class="reference external" href="http://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;how to use browserify here&lt;/a&gt;.&lt;/p&gt;
+learn &lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;how to use browserify here&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="flux-components"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id2"&gt;Flux&amp;nbsp;components&lt;/a&gt;&lt;/h2&gt;
@@ -6470,7 +6470,7 @@ really going on! This is in contrast with more complex frameworks that do variou
 stuff (two way data binding, magic in the &lt;span class="caps"&gt;REST&lt;/span&gt; etc) where, although it is easier to
 create a simple app, moving to something more complex (and especially debugging it) is a real&amp;nbsp;nightmare!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 02 Jul 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-07-02:2015/07/02/comprehensive-react-flux-tutorial-2/</guid><category>javascript</category><category>python</category><category>django</category><category>react</category><category>flux</category></item><item><title>A comprehensive React and Flux tutorial part 1: React</title><link>http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 02 Jul 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-07-02:2015/07/02/comprehensive-react-flux-tutorial-2/</guid><category>javascript</category><category>python</category><category>django</category><category>react</category><category>flux</category></item><item><title>A comprehensive React and Flux tutorial part 1: React</title><link>https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -7002,7 +7002,7 @@ states of &lt;tt class="docutils literal"&gt;BookPanel&lt;/tt&gt; and &lt;tt cla
 &lt;h2&gt;&lt;a class="toc-backref" href="#id15"&gt;Adding form&amp;nbsp;validation&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Commenter Nitish Kumar made a nice comment about how we could do some validating to our form&amp;nbsp;fields.&lt;/p&gt;
 &lt;p&gt;First of all, this adds to the complexity of the application so maybe it would be better to do it in
-the &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux-architectured version&lt;/a&gt;. However, it&amp;#8217;s not really difficult
+the &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux-architectured version&lt;/a&gt;. However, it&amp;#8217;s not really difficult
 to also have form validation using&amp;nbsp;react-only:&lt;/p&gt;
 &lt;p&gt;Here&amp;#8217;s what we&amp;nbsp;need:&lt;/p&gt;
 &lt;ul class="simple"&gt;
@@ -7064,12 +7064,12 @@ the correct&amp;nbsp;page.&lt;/p&gt;
 &lt;p&gt;For application state keeping, we have selected to store all state attributes in &lt;tt class="docutils literal"&gt;BookPanel&lt;/tt&gt;,
 for every state changing action we create a method that we pass in the child components
 so that the children can call it when the state needs to be&amp;nbsp;updated.&lt;/p&gt;
-&lt;p&gt;As we will see &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;in the next part&lt;/a&gt;, with Flux, Facebook proposes a design pattern for
+&lt;p&gt;As we will see &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;in the next part&lt;/a&gt;, with Flux, Facebook proposes a design pattern for
 where to store the state and how to update it. We&amp;#8217;ll see how to convert our React
 application to also use Flux and find out how Flux will help us when developing
 complex client-side&amp;nbsp;applications!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 05 Jun 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-06-05:2015/06/05/comprehensive-react-flux-tutorial/</guid><category>javascript</category><category>python</category><category>django</category><category>react</category><category>flux</category></item><item><title>Using browserify and watchify to improve your client-side-javascript workflow</title><link>http://spapas.github.io/2015/05/27/using-browserify-watchify/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 05 Jun 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-06-05:2015/06/05/comprehensive-react-flux-tutorial/</guid><category>javascript</category><category>python</category><category>django</category><category>react</category><category>flux</category></item><item><title>Using browserify and watchify to improve your client-side-javascript workflow</title><link>https://spapas.github.io/2015/05/27/using-browserify-watchify/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#the-problem" id="id1"&gt;The&amp;nbsp;problem&lt;/a&gt;&lt;/li&gt;
@@ -7386,7 +7386,7 @@ be used by the users&amp;#8217;&amp;nbsp;browsers.&lt;/p&gt;
 &lt;li&gt;run &lt;tt class="docutils literal"&gt;npm run watch&lt;/tt&gt; when developing and &lt;tt class="docutils literal"&gt;npm run build&lt;/tt&gt; before&amp;nbsp;deploying&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 27 May 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-05-27:2015/05/27/using-browserify-watchify/</guid><category>javascript</category><category>browserify</category><category>node</category><category>npm</category><category>watchify</category><category>generic</category><category>uglify</category></item><item><title>Show 404 page on django when DEBUG=True</title><link>http://spapas.github.io/2015/04/29/django-show-404-page/</link><description>&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 27 May 2015 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-05-27:2015/05/27/using-browserify-watchify/</guid><category>javascript</category><category>browserify</category><category>node</category><category>npm</category><category>watchify</category><category>generic</category><category>uglify</category></item><item><title>Show 404 page on django when DEBUG=True</title><link>https://spapas.github.io/2015/04/29/django-show-404-page/</link><description>&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
 a template named &lt;tt class="docutils literal"&gt;404.html&lt;/tt&gt; to the top level directory of your templates.
 However, on your development environment you&amp;#8217;ll never be able to see this
 template because when &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;DEBUG&lt;/span&gt;=True&lt;/tt&gt; django will render the debug not found
@@ -7402,7 +7402,7 @@ pattern for django&amp;#8217;s default 404 view - just  add the following to you
 &lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You&amp;#8217;ll then be able to see your 404 page by visiting the defined &lt;span class="caps"&gt;URL&lt;/span&gt;!&lt;/p&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 29 Apr 2015 10:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</guid><category>django</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Calling the REST API of Pusher from python</title><link>http://spapas.github.io/2015/02/06/python-pusher-rest/</link><description>&lt;div class="section" id="introduction"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 29 Apr 2015 10:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</guid><category>django</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Calling the REST API of Pusher from python</title><link>https://spapas.github.io/2015/02/06/python-pusher-rest/</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://pusher.com/"&gt;Pusher&lt;/a&gt; is one of the best real time frameworks right now. Using it you can add real time
 events in your projects without the need to configure and use &lt;span class="caps"&gt;HTTP&lt;/span&gt; servers that support
@@ -7549,7 +7549,7 @@ presence&amp;nbsp;channel.&lt;/p&gt;
 channel in python but to also call any method we want from the Pusher &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt; by implementing a function
 similar to  &lt;tt class="docutils literal"&gt;get_users&lt;/tt&gt;.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 06 Feb 2015 12:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</guid><category>pusher</category><category>python</category><category>rest</category></item><item><title>Asynchronous tasks in django with django-rq</title><link>http://spapas.github.io/2015/01/27/async-tasks-with-django-rq/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 06 Feb 2015 12:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</guid><category>pusher</category><category>python</category><category>rest</category></item><item><title>Asynchronous tasks in django with django-rq</title><link>https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -7572,7 +7572,7 @@ similar to  &lt;tt class="docutils literal"&gt;get_users&lt;/tt&gt;.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;p&gt;&lt;strong&gt;Update 01/09/15&lt;/strong&gt;: I&amp;#8217;ve written a new post about rq and django with some
-&lt;a class="reference external" href="http://spapas.github.io/2015/09/01/django-rq-redux/"&gt;more advanced techniques&lt;/a&gt;&amp;nbsp;!&lt;/p&gt;
+&lt;a class="reference external" href="https://spapas.github.io/2015/09/01/django-rq-redux/"&gt;more advanced techniques&lt;/a&gt;&amp;nbsp;!&lt;/p&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id1"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Job queuing (asynchronous tasks) is a common requirement for non-trivial django projects. Whenever an operation
@@ -8002,7 +8002,7 @@ to configure django to use it in a production ready environment using a small
 django project (&lt;a class="reference external" href="https://github.com/spapas/django-test-rq"&gt;https://github.com/spapas/django-test-rq&lt;/a&gt;) which was implemented as a companion
 to help readers quickly test the concepts presented&amp;nbsp;here.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 27 Jan 2015 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</guid><category>django</category><category>python</category><category>tasks</category><category>jobs</category><category>rq</category><category>django-rq</category><category>asynchronous</category><category>scheduling</category><category>redis</category></item><item><title>Django model auditing</title><link>http://spapas.github.io/2015/01/21/django-model-auditing/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 27 Jan 2015 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</guid><category>django</category><category>python</category><category>tasks</category><category>jobs</category><category>rq</category><category>django-rq</category><category>asynchronous</category><category>scheduling</category><category>redis</category></item><item><title>Django model auditing</title><link>https://spapas.github.io/2015/01/21/django-model-auditing/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id5"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -8362,7 +8362,7 @@ django-reversion to save each version as a json object, so no extra tables will 
 do a migrate (&lt;tt class="docutils literal"&gt;python manage.py migrate&lt;/tt&gt; &amp;#8212; uses sqlite3 by default) and run the local development
 server (&lt;tt class="docutils literal"&gt;python manage.py ruinserver&lt;/tt&gt;).&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 21 Jan 2015 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-01-21:2015/01/21/django-model-auditing/</guid><category>django</category><category>python</category><category>auditing</category></item><item><title>Change the primary color of bootstrap material design</title><link>http://spapas.github.io/2014/12/16/change-bootstrap-material-primary-color/</link><description>&lt;div class="section" id="introduction"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 21 Jan 2015 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-01-21:2015/01/21/django-model-auditing/</guid><category>django</category><category>python</category><category>auditing</category></item><item><title>Change the primary color of bootstrap material design</title><link>https://spapas.github.io/2014/12/16/change-bootstrap-material-primary-color/</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/FezVrasta/bootstrap-material-design"&gt;Bootstrap Material Design&lt;/a&gt; is a great theme that sits on top of &lt;a class="reference external" href="http://getbootstrap.com/"&gt;Bootstrap&lt;/a&gt; and transforms it to
 &lt;a class="reference external" href="http://www.google.com/design/spec/material-design/introduction.html"&gt;Material Design&lt;/a&gt;! The great thing about Bootstrap Material Design is that you just need to include
@@ -8427,7 +8427,7 @@ css file. Unfortunately, for the latest versions of the bootstrap-material-desig
 &lt;/ul&gt;
 &lt;p&gt;After these two changes you should once again be able to create your custom css&amp;nbsp;file!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 16 Dec 2014 16:20:00 +0200</pubDate><guid>tag:spapas.github.io,2014-12-16:2014/12/16/change-bootstrap-material-primary-color/</guid><category>css</category><category>design</category><category>boostrap-material-design</category><category>less</category><category>node.js</category></item><item><title>Retrieving Gmail blocked attachments</title><link>http://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/</link><description>&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 16 Dec 2014 16:20:00 +0200</pubDate><guid>tag:spapas.github.io,2014-12-16:2014/12/16/change-bootstrap-material-primary-color/</guid><category>css</category><category>design</category><category>boostrap-material-design</category><category>less</category><category>node.js</category></item><item><title>Retrieving Gmail blocked attachments</title><link>https://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/</link><description>&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
 their Gmail account as a primitive backup solution: Compress your directory and send it to
 your gmail. There. Backup&amp;nbsp;complete.&lt;/p&gt;
 &lt;p&gt;However, nothing is so&amp;nbsp;easy&amp;#8230;&lt;/p&gt;
@@ -8492,7 +8492,7 @@ try this solution before trying the pythonic way (especially if you&amp;#8217;re
 &lt;p&gt;&lt;strong&gt;Update, 6 March 2016&lt;/strong&gt;: Commenter Alex (Alexandre Barfuhok) proposed another clever trick (involving making visible
 the initially invisible &amp;quot;Download to drive&amp;quot; button) for retrieving gmail blocked attachments!
 Read more about it &lt;a class="reference external" href="http://www.barfuhok.com/how-to-download-a-file-with-anti-virus-warning-on-gmail/"&gt;at his article&lt;/a&gt;!&lt;/p&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 23 Oct 2014 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</guid><category>gmail</category><category>python</category><category>security</category><category>google</category></item><item><title>Django non-HTML responses</title><link>http://spapas.github.io/2014/09/15/django-non-html-responses/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 23 Oct 2014 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</guid><category>gmail</category><category>python</category><category>security</category><category>google</category></item><item><title>Django non-HTML responses</title><link>https://spapas.github.io/2014/09/15/django-non-html-responses/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -8505,7 +8505,7 @@ Read more about it &lt;a class="reference external" href="http://www.barfuhok.co
 &lt;/div&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id1"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;I have already written about the many advantages (&lt;span class="caps"&gt;DRY&lt;/span&gt;!) of using &lt;a class="reference external" href="http://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/"&gt;CBVs in a previous article.&lt;/a&gt;
+&lt;p&gt;I have already written about the many advantages (&lt;span class="caps"&gt;DRY&lt;/span&gt;!) of using &lt;a class="reference external" href="https://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/"&gt;CBVs in a previous article.&lt;/a&gt;
 In this article I will present the correct (pythonic) way to allow a normal &lt;span class="caps"&gt;CBV&lt;/span&gt; to return non-&lt;span class="caps"&gt;HTML&lt;/span&gt; responses, like &lt;span class="caps"&gt;PDF&lt;/span&gt;, &lt;span class="caps"&gt;CSV&lt;/span&gt;, &lt;span class="caps"&gt;XSL&lt;/span&gt;&amp;nbsp;etc.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="how-are-cbvs-rendered"&gt;
@@ -8695,7 +8695,7 @@ object with the correct attributes and writes the &lt;span class="caps"&gt;CSV&l
 &lt;p&gt;Using the above techniques we can define CBVs that will output their content in various content types
 beyond &lt;span class="caps"&gt;HTML&lt;/span&gt;. This will help us write write clean and &lt;span class="caps"&gt;DRY&lt;/span&gt;&amp;nbsp;code.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 15 Sep 2014 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2014-09-15:2014/09/15/django-non-html-responses/</guid><category>django</category><category>python</category><category>cbv</category><category>class-based-views</category></item><item><title>Implementing a simple, Heroku-hosted REST service using Flask and mongoDB</title><link>http://spapas.github.io/2014/06/30/rest-flask-mongodb-heroku/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 15 Sep 2014 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2014-09-15:2014/09/15/django-non-html-responses/</guid><category>django</category><category>python</category><category>cbv</category><category>class-based-views</category></item><item><title>Implementing a simple, Heroku-hosted REST service using Flask and mongoDB</title><link>https://spapas.github.io/2014/06/30/rest-flask-mongodb-heroku/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -8902,7 +8902,7 @@ heroku open
 &lt;/pre&gt;
 &lt;p&gt;If everything was ok you should see an status-&lt;span class="caps"&gt;OK&lt;/span&gt; &lt;span class="caps"&gt;JSON&lt;/span&gt;&amp;nbsp;!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 30 Jun 2014 15:23:00 +0300</pubDate><guid>tag:spapas.github.io,2014-06-30:2014/06/30/rest-flask-mongodb-heroku/</guid><category>flask</category><category>mongodb</category><category>heroku</category><category>python</category><category>rest</category></item><item><title>Django generic FormViews for objects</title><link>http://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 30 Jun 2014 15:23:00 +0300</pubDate><guid>tag:spapas.github.io,2014-06-30:2014/06/30/rest-flask-mongodb-heroku/</guid><category>flask</category><category>mongodb</category><category>heroku</category><category>python</category><category>rest</category></item><item><title>Django generic FormViews for objects</title><link>https://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -9048,7 +9048,7 @@ classes. Some ideas is to check if the current user actually has access to modif
 &lt;tt class="docutils literal"&gt;get_object&lt;/tt&gt; method of &lt;tt class="docutils literal"&gt;SingleObjectMixin&lt;/tt&gt;) or render the form diffirently depending on the current user (hint:
 override the &lt;tt class="docutils literal"&gt;get_form_kwargs&lt;/tt&gt; method of &lt;tt class="docutils literal"&gt;FormView&lt;/tt&gt;).&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 11 Apr 2014 10:23:00 +0300</pubDate><guid>tag:spapas.github.io,2014-04-11:2014/04/11/django-generic-formviews-for-objects/</guid><category>django</category><category>python</category><category>cbv</category><category>class-based-views</category></item><item><title>A Wagtail tutorial</title><link>http://spapas.github.io/2014/02/13/wagtail-tutorial/</link><description>&lt;p&gt;&lt;a href="http://wagtail.io"&gt;Wagtail&lt;/a&gt; is a new Open Source &lt;a href="https://www.djangoproject.com"&gt;Django&lt;/a&gt;-based &lt;span class="caps"&gt;CMS&lt;/span&gt;. In this 20 minute tutorial we will see how you can create a blog from scratch using Wagtail. If you want to see some more examples of usage please take a look at the &lt;a href="https://github.com/torchbox/wagtaildemo"&gt;wagtaildemo&lt;/a&gt; GitHub&amp;nbsp;project.&lt;/p&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 11 Apr 2014 10:23:00 +0300</pubDate><guid>tag:spapas.github.io,2014-04-11:2014/04/11/django-generic-formviews-for-objects/</guid><category>django</category><category>python</category><category>cbv</category><category>class-based-views</category></item><item><title>A Wagtail tutorial</title><link>https://spapas.github.io/2014/02/13/wagtail-tutorial/</link><description>&lt;p&gt;&lt;a href="http://wagtail.io"&gt;Wagtail&lt;/a&gt; is a new Open Source &lt;a href="https://www.djangoproject.com"&gt;Django&lt;/a&gt;-based &lt;span class="caps"&gt;CMS&lt;/span&gt;. In this 20 minute tutorial we will see how you can create a blog from scratch using Wagtail. If you want to see some more examples of usage please take a look at the &lt;a href="https://github.com/torchbox/wagtaildemo"&gt;wagtaildemo&lt;/a&gt; GitHub&amp;nbsp;project.&lt;/p&gt;
 &lt;p&gt;To follow this tutorial you will need to have &lt;a href="http://python.org/"&gt;Python&lt;/a&gt; 2.7 installed with a working version of &lt;a href="https://pypi.python.org/pypi/pip"&gt;pip&lt;/a&gt; and &lt;a href="https://pypi.python.org/pypi/virtualenv"&gt;virtualenv&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: The result of this tutorial has been deployed to &lt;a href="https://www.heroku.com/"&gt;Heroku&lt;/a&gt;: &lt;a href="http://gentle-refuge-2590.herokuapp.com/"&gt;http://gentle-refuge-2590.herokuapp.com/&lt;/a&gt; - you may visit the &lt;a href="http://gentle-refuge-2590.herokuapp.com/admin/"&gt;admin site&lt;/a&gt; and login with root / 123 to play with Wagtail! Please don&amp;#8217;t do anything naughty !!! Also, notice that &lt;a href="https://devcenter.heroku.com/articles/dynos#isolation-and-security"&gt;because of how Heroku works&lt;/a&gt; you won&amp;#8217;t be able to upload&amp;nbsp;anything.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update 08/09/2015: This tutorial has been written during the first days of Wagtail, when documentation and tutorials about it were sparce; right now it should be considered by all accounts obsolete and &lt;em&gt;not&lt;/em&gt; be followed! Instead, you should read the official (and very well written) tutorial @ http://docs.wagtail.io/en/latest/getting_started/tutorial.html] in the official Wagtail&amp;nbsp;documentation!&lt;/strong&gt;&lt;/p&gt;
@@ -9072,7 +9072,7 @@ and then install the other requirements. Also please use the latest version of W
 the pypi (so &lt;em&gt;don&amp;#8217;t&lt;/em&gt; do a &lt;code&gt;pip install wagtail&lt;/code&gt;).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Warning:&lt;/strong&gt; Unfortuanately, no official binaries for libsass (which is a django-libsass requirement) are (yet) available for Windows. I
 have compiled a version for win32 and python 2.7 (which I use) using the &lt;a href="http://www.confusedbycode.com/articles/compiling-python-modules.html"&gt;instructions found here&lt;/a&gt;. You can download this version 
-&lt;a href="http://spapas.github.io/images/libsass-0.3.0-cp27-none-win32.whl"&gt;as a wheel package&lt;/a&gt;. Notice that because libsass was compiled with &lt;span class="caps"&gt;VC&lt;/span&gt; Express 2013
+&lt;a href="https://spapas.github.io/images/libsass-0.3.0-cp27-none-win32.whl"&gt;as a wheel package&lt;/a&gt;. Notice that because libsass was compiled with &lt;span class="caps"&gt;VC&lt;/span&gt; Express 2013
 you should also install the &lt;a href="http://www.microsoft.com/en-us/download/details.aspx?id=40784"&gt;Visual C++ 2013 redistributable&lt;/a&gt; package from&amp;nbsp;Microsoft.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Please use it at your own risk&amp;nbsp;!!!&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;To install &lt;a href="http://pythonwheels.com/"&gt;wheels&lt;/a&gt; you have to use a version of pip &amp;gt;= 1.4 (so do an &lt;code&gt;easy_install -U pip&lt;/code&gt; from your
@@ -9327,7 +9327,7 @@ python manage.py migrate
 &lt;p&gt;page &amp;#8212; congratulations&amp;nbsp;!&lt;/p&gt;
 &lt;p&gt;The homepage is rather simple (for now!) but you may already navigate to http://127.0.0.1:8000/admin and from there, login to Wagtail admin with the superuser you created earlier. 
 Now you may start experiencing Wagtail&amp;nbsp;! &lt;/p&gt;
-&lt;p&gt;&lt;img alt="Wagtail admin index" src="http://spapas.github.io/images/wagtail-index.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Wagtail admin index" src="https://spapas.github.io/images/wagtail-index.png" /&gt;&lt;/p&gt;
 &lt;h2&gt;Exploring Wagtail&amp;nbsp;admin&lt;/h2&gt;
 &lt;p&gt;When you login to Wagtail admin you will see a menu at the left with the&amp;nbsp;options:&lt;/p&gt;
 &lt;ul&gt;
@@ -9375,7 +9375,7 @@ Now you may start experiencing Wagtail&amp;nbsp;! &lt;/p&gt;
 &lt;p&gt;and run &lt;code&gt;python manage.py syncdb&lt;/code&gt; to create the &lt;code&gt;tutorial_blogpage&lt;/code&gt; table. &lt;/p&gt;
 &lt;p&gt;Now, if you visit again the /admin and click on the &amp;#8220;Add Child Page&amp;#8221; action of &amp;#8220;Welcome to your new Wagtail Site!&amp;#8221; you will see the &amp;#8220;Blog Page&amp;#8221; page and after you click it you will be able to see a form with the Fields you defined &lt;em&gt;and&lt;/em&gt; title(title, body, date). The title is a field inherited from Page, along with the fields  in the Promote&amp;nbsp;tab. &lt;/p&gt;
 &lt;p&gt;In our declaration of BlogPage we added three &lt;code&gt;FieldPanel&lt;/code&gt;s on its content_panes. A &lt;code&gt;FieldPanel&lt;/code&gt; is a special edit handler for each Field. That is why when you try to edit the body you will see a rich text toolbar that enables you to not only format text but also embed images, documents and even oembed links. If you hadn&amp;#8217;t included the &lt;code&gt;FieldPanel('body', classname="full")&lt;/code&gt; then you wouldn&amp;#8217;t see the rich text&amp;nbsp;editor.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Editing pages in Wagtail" src="http://spapas.github.io/images/wagtail-edit-page.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Editing pages in Wagtail" src="https://spapas.github.io/images/wagtail-edit-page.png" /&gt;&lt;/p&gt;
 &lt;p&gt;So now we can add as many posts as we&amp;nbsp;like! &lt;/p&gt;
 &lt;p&gt;The time has come to take a look at our fine blog post: After we publish our page we click to the view live action&amp;nbsp;and&amp;#8230; &lt;/p&gt;
 &lt;blockquote&gt;
@@ -9466,7 +9466,7 @@ Now you may start experiencing Wagtail&amp;nbsp;! &lt;/p&gt;
 
 
 &lt;p&gt;So self is the context name of the  BlogPageIndex instance that is used to render this page. Beyond that, it&amp;#8217;s normal&amp;nbsp;django.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Rendering the Blog Index" src="http://spapas.github.io/images/wagtail-index-template.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Rendering the Blog Index" src="https://spapas.github.io/images/wagtail-index-template.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Now you can view your Blog Index &amp;#8212; however before clicking on a link to also view your posts add the template for your &lt;code&gt;BlogPost&lt;/code&gt; (&lt;code&gt;tutorial/blog_page.html&lt;/code&gt;):&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;{% load rich_text %}
 &lt;span class="nt"&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
@@ -9494,7 +9494,7 @@ change it at will), or even creating a completely different kind of site by addi
 no complete documentation yet however you&amp;nbsp;can &lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Use the source&amp;nbsp;Luke!&lt;/p&gt;
-&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 13 Feb 2014 21:20:00 +0200</pubDate><guid>tag:spapas.github.io,2014-02-13:2014/02/13/wagtail-tutorial/</guid><category>wagtail</category><category>python</category><category>django</category></item><item><title>Django dynamic forms</title><link>http://spapas.github.io/2013/12/24/django-dynamic-forms/</link><description>&lt;div class="contents topic" id="contents"&gt;
+&lt;/blockquote&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 13 Feb 2014 21:20:00 +0200</pubDate><guid>tag:spapas.github.io,2014-02-13:2014/02/13/wagtail-tutorial/</guid><category>wagtail</category><category>python</category><category>django</category></item><item><title>Django dynamic forms</title><link>https://spapas.github.io/2013/12/24/django-dynamic-forms/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -9706,7 +9706,7 @@ is &lt;span class="caps"&gt;POST&lt;/span&gt; so we pass the &lt;span class="cap
 we just create an empty form. As a result we just pass the data that was
 read from the form to the view for&amp;nbsp;presentation.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 24 Dec 2013 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2013-12-24:2013/12/24/django-dynamic-forms/</guid><category>django</category><category>python</category><category>forms</category></item><item><title>Django authority data</title><link>http://spapas.github.io/2013/11/05/django-authoritiy-data/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 24 Dec 2013 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2013-12-24:2013/12/24/django-dynamic-forms/</guid><category>django</category><category>python</category><category>forms</category></item><item><title>Django authority data</title><link>https://spapas.github.io/2013/11/05/django-authoritiy-data/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -9863,7 +9863,7 @@ have a &lt;tt class="docutils literal"&gt;ForeignKey&lt;/tt&gt; to your Authorit
 to use that. If you have more than one models that belong to an authority and want to stay &lt;span class="caps"&gt;DRY&lt;/span&gt; then you&amp;#8217;d need
 to define all the above as &lt;a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/class-based-views/mixins/"&gt;mixins&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 05 Nov 2013 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2013-11-05:2013/11/05/django-authoritiy-data/</guid><category>django</category><category>python</category><category>security</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>http://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 05 Nov 2013 14:20:00 +0200</pubDate><guid>tag:spapas.github.io,2013-11-05:2013/11/05/django-authoritiy-data/</guid><category>django</category><category>python</category><category>security</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id3"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -10063,7 +10063,7 @@ vertical-align: top; --&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 14 Oct 2013 08:55:00 +0300</pubDate><guid>tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</guid><category>spring</category><category>spring-security</category><category>java</category><category>ldap</category><category>authentication</category></item><item><title>git branches</title><link>http://spapas.github.io/2013/10/08/git-branches/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 14 Oct 2013 08:55:00 +0300</pubDate><guid>tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</guid><category>spring</category><category>spring-security</category><category>java</category><category>ldap</category><category>authentication</category></item><item><title>git branches</title><link>https://spapas.github.io/2013/10/08/git-branches/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -10368,7 +10368,7 @@ D:\testgit&amp;gt;git branch
 &lt;/pre&gt;
 &lt;p&gt;Finally we may push again the named_branch to our remote&amp;nbsp;origin.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 08 Oct 2013 13:20:00 +0300</pubDate><guid>tag:spapas.github.io,2013-10-08:2013/10/08/git-branches/</guid><category>git</category><category>github</category><category>branching</category></item><item><title>Using pelican to generate static sites on windows</title><link>http://spapas.github.io/2013/10/07/pelican-static-windows/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 08 Oct 2013 13:20:00 +0300</pubDate><guid>tag:spapas.github.io,2013-10-08:2013/10/08/git-branches/</guid><category>git</category><category>github</category><category>branching</category></item><item><title>Using pelican to generate static sites on windows</title><link>https://spapas.github.io/2013/10/07/pelican-static-windows/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -10553,7 +10553,7 @@ spapas.github.io&amp;gt;git push origin source
 &lt;p&gt;The above will rename the master branch to source, will attach the origin remote to &lt;a class="reference external" href="https://github.com/spapas/spapas.github.io.git"&gt;https://github.com/spapas/spapas.github.io.git&lt;/a&gt; and will push the source
 branch to it. Now you will have two branches in your username.github.io repository. One
 named origin/master that will be your actual site and will be displayed through &lt;a class="reference external" href="http://username.github.io"&gt;http://username.github.io&lt;/a&gt; and one named origin/source that will contain the source of your&amp;nbsp;site.&lt;/p&gt;
-&lt;p&gt;To learn more about branches and remotes you may check out &lt;a class="reference external" href="http://spapas.github.io/2013/10/08/git-branches/"&gt;the git branches article&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To learn more about branches and remotes you may check out &lt;a class="reference external" href="https://spapas.github.io/2013/10/08/git-branches/"&gt;the git branches article&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="publishing-changes"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id9"&gt;Publishing&amp;nbsp;changes&lt;/a&gt;&lt;/h2&gt;

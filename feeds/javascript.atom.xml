@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="http://spapas.github.io/" rel="alternate"></link><link href="http://spapas.github.io/feeds/javascript.atom.xml" rel="self"></link><id>http://spapas.github.io/</id><updated>2016-03-02T11:20:00+02:00</updated><entry><title>A comprehensive react-redux tutorial</title><link href="http://spapas.github.io/2016/03/02/react-redux-tutorial/" rel="alternate"></link><updated>2016-03-02T11:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-03-02:2016/03/02/react-redux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/javascript.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2016-03-02T11:20:00+02:00</updated><entry><title>A comprehensive react-redux tutorial</title><link href="https://spapas.github.io/2016/03/02/react-redux-tutorial/" rel="alternate"></link><updated>2016-03-02T11:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-03-02:2016/03/02/react-redux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id2"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -61,7 +61,7 @@
 &lt;p&gt;Continuing the series of React-related articles, we&amp;#8217;ll try to make a comprehensive
 tutorial to the &lt;a class="reference external" href="https://github.com/rackt/redux"&gt;redux&lt;/a&gt; framework and its integrations with React, using the
 &lt;a class="reference external" href="https://github.com/rackt/react-redux"&gt;react-redux&lt;/a&gt; library. Redux can be used as an alternative to Flux
-(which we discussed in &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;a previous article&lt;/a&gt;)
+(which we discussed in &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;a previous article&lt;/a&gt;)
 to orchestrate the message passing between&amp;nbsp;ui/components/data.&lt;/p&gt;
 &lt;p&gt;This tutorial will also produce as a result an opinionated (my opinion) boilerplate
 project for creating react-redux Single Page Applications. I have used Django
@@ -2212,7 +2212,7 @@ about&amp;nbsp;these.&lt;/p&gt;
 redux/react-redux the flow of the data is &lt;em&gt;crystal&lt;/em&gt; and that as you&amp;#8217;ve already
 seen by now, writing functional components and reducers is &lt;em&gt;pure fun&lt;/em&gt;!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="react"></category><category term="redux"></category><category term="react-redux"></category><category term="django"></category><category term="django-rest-framework"></category><category term="redux-thunk"></category><category term="redux-form"></category><category term="react-router"></category><category term="react-router-redux"></category><category term="react-notification"></category><category term="history"></category><category term="es6"></category><category term="babel"></category><category term="babelify"></category><category term="browserify"></category><category term="watchify"></category><category term="uglify"></category><category term="boilerplate"></category><category term="ajax"></category><category term="tutorial"></category><category term="introduction"></category></entry><entry><title>Ajax data with Fixed Data Table for React</title><link href="http://spapas.github.io/2015/12/22/ajax-with-react-fixed-data-table/" rel="alternate"></link><updated>2015-12-22T15:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-12-22:2015/12/22/ajax-with-react-fixed-data-table/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="react"></category><category term="redux"></category><category term="react-redux"></category><category term="django"></category><category term="django-rest-framework"></category><category term="redux-thunk"></category><category term="redux-form"></category><category term="react-router"></category><category term="react-router-redux"></category><category term="react-notification"></category><category term="history"></category><category term="es6"></category><category term="babel"></category><category term="babelify"></category><category term="browserify"></category><category term="watchify"></category><category term="uglify"></category><category term="boilerplate"></category><category term="ajax"></category><category term="tutorial"></category><category term="introduction"></category></entry><entry><title>Ajax data with Fixed Data Table for React</title><link href="https://spapas.github.io/2015/12/22/ajax-with-react-fixed-data-table/" rel="alternate"></link><updated>2015-12-22T15:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-12-22:2015/12/22/ajax-with-react-fixed-data-table/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2247,7 +2247,7 @@ used with server-side, asynchronous, paginated&amp;nbsp;data.&lt;/p&gt;
 requests to &lt;a class="reference external" href="http://swapi.co/api/people/?format=json"&gt;http://swapi.co/api/people/?format=json&lt;/a&gt;. This will return an array of people from the
 star wars universe in &lt;span class="caps"&gt;JSON&lt;/span&gt; format - the results are paginated with a page size of 10 (and we can switch
 to another page using the extra &lt;tt class="docutils literal"&gt;page=&lt;/tt&gt; request&amp;nbsp;parameter).&lt;/p&gt;
-&lt;p&gt;I will use es6 with the object spread operator (as described in &lt;a class="reference external" href="http://spapas.github.io/2015/11/16/using-browserify-es6/"&gt;a previous article&lt;/a&gt;)
+&lt;p&gt;I will use es6 with the object spread operator (as described in &lt;a class="reference external" href="https://spapas.github.io/2015/11/16/using-browserify-es6/"&gt;a previous article&lt;/a&gt;)
 to write the code, using a single main.js as a source which will be transpiled to &lt;tt class="docutils literal"&gt;dist/bundle.js&lt;/tt&gt;.&lt;/p&gt;
 &lt;p&gt;The placeholder &lt;span class="caps"&gt;HTML&lt;/span&gt; for our application&amp;nbsp;is:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="cp"&gt;&amp;lt;!DOCTYPE html&amp;gt;&lt;/span&gt;
@@ -2476,12 +2476,12 @@ change fetch like&amp;nbsp;this&lt;/p&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id10"&gt;Conslusion&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;The above is a just a proof of concept of using FixedDataTable with asynchronously loaded server-side data.
 This of course could be used for small projects (I am already using it for an internal project) but I recommend
-using the &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux architecture&lt;/a&gt; for more complex projects. What this more or
+using the &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux architecture&lt;/a&gt; for more complex projects. What this more or
 less means is that a store component
 should be developed that will actually keep the data for each row, and a &lt;tt class="docutils literal"&gt;fetchCompleted&lt;/tt&gt; action should be
 dispatched when the &lt;tt class="docutils literal"&gt;fetch&lt;/tt&gt; is finished instead of calling &lt;tt class="docutils literal"&gt;forceUpdate&lt;/tt&gt; directly.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="react"></category><category term="fixed-data-tables"></category><category term="FixedDataTable"></category></entry><entry><title>Improve your client-side-javascript workflow more by using ES6</title><link href="http://spapas.github.io/2015/11/16/using-browserify-es6/" rel="alternate"></link><updated>2015-11-16T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-16:2015/11/16/using-browserify-es6/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="react"></category><category term="fixed-data-tables"></category><category term="FixedDataTable"></category></entry><entry><title>Improve your client-side-javascript workflow more by using ES6</title><link href="https://spapas.github.io/2015/11/16/using-browserify-es6/" rel="alternate"></link><updated>2015-11-16T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-16:2015/11/16/using-browserify-es6/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2495,7 +2495,7 @@ dispatched when the &lt;tt class="docutils literal"&gt;fetch&lt;/tt&gt; is finis
 &lt;p&gt;&lt;strong&gt;Update 22/12/2015:&lt;/strong&gt; Add section for the object-spread&amp;nbsp;operator.&lt;/p&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id1"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In a &lt;a class="reference external" href="http://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous article&lt;/a&gt;
+&lt;p&gt;In a &lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous article&lt;/a&gt;
 we presented a simple workflow to improve your client-side (javascript) workflow
 by including a bunch of tools from the node-js world i.e &lt;a class="reference external" href="http://browserify.org/"&gt;browserify&lt;/a&gt; and
 its friends, &lt;a class="reference external" href="https://github.com/substack/watchify"&gt;watchify&lt;/a&gt; and &lt;a class="reference external" href="https://www.npmjs.com/package/uglify-js"&gt;uglify-js&lt;/a&gt;.&lt;/p&gt;
@@ -2515,7 +2515,7 @@ and transform them to normal javascript using a transformation through the &lt;a
 &lt;p&gt;In the following, we&amp;#8217;ll talk a bit more about the node-js package manager (npm) features,
 talk a little about babel and finally
 modify our workflow so that it will be able to use &lt;span class="caps"&gt;ES6&lt;/span&gt;! Please notice that to properly follow this article
-you need to first read the &lt;a class="reference external" href="http://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous one&lt;/a&gt;.&lt;/p&gt;
+you need to first read the &lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;previous one&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="npm-save-save-dev-and-avoiding-global-deps"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id2"&gt;&lt;span class="caps"&gt;NPM&lt;/span&gt;, &amp;#8212;save, &amp;#8212;save-dev and avoiding global&amp;nbsp;deps&lt;/a&gt;&lt;/h2&gt;
@@ -2691,7 +2691,7 @@ browserify are not unlimited, so if you wanted to do something more complicated
 task runners (or webpack which is the current trend in javascript bundlers and actually replaces
 the task&amp;nbsp;runners).&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="browserify"></category><category term="node"></category><category term="npm"></category><category term="watchify"></category><category term="generic"></category><category term="uglify"></category><category term="babel"></category><category term="es6"></category></entry><entry><title>A (little more) complex react and flux example</title><link href="http://spapas.github.io/2015/09/08/more-complex-react-flux-example/" rel="alternate"></link><updated>2015-09-08T12:55:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-08:2015/09/08/more-complex-react-flux-example/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="browserify"></category><category term="node"></category><category term="npm"></category><category term="watchify"></category><category term="generic"></category><category term="uglify"></category><category term="babel"></category><category term="es6"></category></entry><entry><title>A (little more) complex react and flux example</title><link href="https://spapas.github.io/2015/09/08/more-complex-react-flux-example/" rel="alternate"></link><updated>2015-09-08T12:55:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-08:2015/09/08/more-complex-react-flux-example/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id2"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2732,12 +2732,12 @@ the task&amp;nbsp;runners).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id2"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In &lt;a class="reference external" href="http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;previous&lt;/a&gt;
-&lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;two&lt;/a&gt; parts of this series, we have seen
+&lt;p&gt;In &lt;a class="reference external" href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;previous&lt;/a&gt;
+&lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;two&lt;/a&gt; parts of this series, we have seen
 how we could implement a
 not-so-simple single page application with full &lt;span class="caps"&gt;CRUD&lt;/span&gt; capabilities
-using react only (in the &lt;a class="reference external" href="http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part&lt;/a&gt; ) and then how to
-change it to use the flux architecture (in the &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;second part&lt;/a&gt;).&lt;/p&gt;
+using react only (in the &lt;a class="reference external" href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part&lt;/a&gt; ) and then how to
+change it to use the flux architecture (in the &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;second part&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;In this, third, part, we will
 add some more capabilities to the previous app
 to prove how easy it is to create complex apps
@@ -4022,7 +4022,7 @@ will need to use &amp;#8212; if you feel that something is not covered and
 could be integrated to the authors/book application I&amp;#8217;d be happy
 to research and implement&amp;nbsp;it!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>A comprehensive React and Flux tutorial part 2: Flux</title><link href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/" rel="alternate"></link><updated>2015-07-02T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-07-02:2015/07/02/comprehensive-react-flux-tutorial-2/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>A comprehensive React and Flux tutorial part 2: Flux</title><link href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/" rel="alternate"></link><updated>2015-07-02T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-07-02:2015/07/02/comprehensive-react-flux-tutorial-2/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -4042,18 +4042,18 @@ to research and implement&amp;nbsp;it!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id1"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;In the &lt;a class="reference external" href="http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part of this series&lt;/a&gt; we implemented a
+&lt;p&gt;In the &lt;a class="reference external" href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/"&gt;first part of this series&lt;/a&gt; we implemented a
 not-so-simple one page application with full &lt;span class="caps"&gt;CRUD&lt;/span&gt; capabilities. In this part, we will
 modify that application to make it use the Flux architecture. The full source code can
 be found at &lt;a class="reference external" href="https://github.com/spapas/react-tutorial"&gt;https://github.com/spapas/react-tutorial&lt;/a&gt; (tag name react-flux). In the
-&lt;a class="reference external" href="http://spapas.github.io/2015/09/08/more-complex-react-flux-example/"&gt;next part,&lt;/a&gt; we will create an even more complex application
+&lt;a class="reference external" href="https://spapas.github.io/2015/09/08/more-complex-react-flux-example/"&gt;next part,&lt;/a&gt; we will create an even more complex application
 using&amp;nbsp;react/flux!&lt;/p&gt;
 &lt;p&gt;I recommend reading Facebook&amp;#8217;s &lt;a class="reference external" href="https://facebook.github.io/flux/docs/overview.html"&gt;Flux overview&lt;/a&gt; before reading this article &amp;#8212; please
 read it even if you find some concepts difficult to grasp (I know I found it difficult
 the first time I read it), I will try to explain everything here. Also,
 because a rather large number of extra components will need to be created, we are
 going to split our javascript code to different files using &lt;a class="reference external" href="http://browserify.org/"&gt;browserify&lt;/a&gt; - you can
-learn &lt;a class="reference external" href="http://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;how to use browserify here&lt;/a&gt;.&lt;/p&gt;
+learn &lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;how to use browserify here&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="flux-components"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id2"&gt;Flux&amp;nbsp;components&lt;/a&gt;&lt;/h2&gt;
@@ -4651,7 +4651,7 @@ really going on! This is in contrast with more complex frameworks that do variou
 stuff (two way data binding, magic in the &lt;span class="caps"&gt;REST&lt;/span&gt; etc) where, although it is easier to
 create a simple app, moving to something more complex (and especially debugging it) is a real&amp;nbsp;nightmare!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>A comprehensive React and Flux tutorial part 1: React</title><link href="http://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/" rel="alternate"></link><updated>2015-06-05T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-06-05:2015/06/05/comprehensive-react-flux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>A comprehensive React and Flux tutorial part 1: React</title><link href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/" rel="alternate"></link><updated>2015-06-05T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-06-05:2015/06/05/comprehensive-react-flux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -5183,7 +5183,7 @@ states of &lt;tt class="docutils literal"&gt;BookPanel&lt;/tt&gt; and &lt;tt cla
 &lt;h2&gt;&lt;a class="toc-backref" href="#id15"&gt;Adding form&amp;nbsp;validation&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;Commenter Nitish Kumar made a nice comment about how we could do some validating to our form&amp;nbsp;fields.&lt;/p&gt;
 &lt;p&gt;First of all, this adds to the complexity of the application so maybe it would be better to do it in
-the &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux-architectured version&lt;/a&gt;. However, it&amp;#8217;s not really difficult
+the &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;flux-architectured version&lt;/a&gt;. However, it&amp;#8217;s not really difficult
 to also have form validation using&amp;nbsp;react-only:&lt;/p&gt;
 &lt;p&gt;Here&amp;#8217;s what we&amp;nbsp;need:&lt;/p&gt;
 &lt;ul class="simple"&gt;
@@ -5245,12 +5245,12 @@ the correct&amp;nbsp;page.&lt;/p&gt;
 &lt;p&gt;For application state keeping, we have selected to store all state attributes in &lt;tt class="docutils literal"&gt;BookPanel&lt;/tt&gt;,
 for every state changing action we create a method that we pass in the child components
 so that the children can call it when the state needs to be&amp;nbsp;updated.&lt;/p&gt;
-&lt;p&gt;As we will see &lt;a class="reference external" href="http://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;in the next part&lt;/a&gt;, with Flux, Facebook proposes a design pattern for
+&lt;p&gt;As we will see &lt;a class="reference external" href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/"&gt;in the next part&lt;/a&gt;, with Flux, Facebook proposes a design pattern for
 where to store the state and how to update it. We&amp;#8217;ll see how to convert our React
 application to also use Flux and find out how Flux will help us when developing
 complex client-side&amp;nbsp;applications!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>Using browserify and watchify to improve your client-side-javascript workflow</title><link href="http://spapas.github.io/2015/05/27/using-browserify-watchify/" rel="alternate"></link><updated>2015-05-27T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-05-27:2015/05/27/using-browserify-watchify/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>Using browserify and watchify to improve your client-side-javascript workflow</title><link href="https://spapas.github.io/2015/05/27/using-browserify-watchify/" rel="alternate"></link><updated>2015-05-27T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-05-27:2015/05/27/using-browserify-watchify/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#the-problem" id="id1"&gt;The&amp;nbsp;problem&lt;/a&gt;&lt;/li&gt;

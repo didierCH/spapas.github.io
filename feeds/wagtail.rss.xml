@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>http://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="http://spapas.github.io/feeds/wagtail.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 13 Feb 2014 21:20:00 +0200</lastBuildDate><item><title>A Wagtail tutorial</title><link>http://spapas.github.io/2014/02/13/wagtail-tutorial/</link><description>&lt;p&gt;&lt;a href="http://wagtail.io"&gt;Wagtail&lt;/a&gt; is a new Open Source &lt;a href="https://www.djangoproject.com"&gt;Django&lt;/a&gt;-based &lt;span class="caps"&gt;CMS&lt;/span&gt;. In this 20 minute tutorial we will see how you can create a blog from scratch using Wagtail. If you want to see some more examples of usage please take a look at the &lt;a href="https://github.com/torchbox/wagtaildemo"&gt;wagtaildemo&lt;/a&gt; GitHub&amp;nbsp;project.&lt;/p&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds/wagtail.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 13 Feb 2014 21:20:00 +0200</lastBuildDate><item><title>A Wagtail tutorial</title><link>https://spapas.github.io/2014/02/13/wagtail-tutorial/</link><description>&lt;p&gt;&lt;a href="http://wagtail.io"&gt;Wagtail&lt;/a&gt; is a new Open Source &lt;a href="https://www.djangoproject.com"&gt;Django&lt;/a&gt;-based &lt;span class="caps"&gt;CMS&lt;/span&gt;. In this 20 minute tutorial we will see how you can create a blog from scratch using Wagtail. If you want to see some more examples of usage please take a look at the &lt;a href="https://github.com/torchbox/wagtaildemo"&gt;wagtaildemo&lt;/a&gt; GitHub&amp;nbsp;project.&lt;/p&gt;
 &lt;p&gt;To follow this tutorial you will need to have &lt;a href="http://python.org/"&gt;Python&lt;/a&gt; 2.7 installed with a working version of &lt;a href="https://pypi.python.org/pypi/pip"&gt;pip&lt;/a&gt; and &lt;a href="https://pypi.python.org/pypi/virtualenv"&gt;virtualenv&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: The result of this tutorial has been deployed to &lt;a href="https://www.heroku.com/"&gt;Heroku&lt;/a&gt;: &lt;a href="http://gentle-refuge-2590.herokuapp.com/"&gt;http://gentle-refuge-2590.herokuapp.com/&lt;/a&gt; - you may visit the &lt;a href="http://gentle-refuge-2590.herokuapp.com/admin/"&gt;admin site&lt;/a&gt; and login with root / 123 to play with Wagtail! Please don&amp;#8217;t do anything naughty !!! Also, notice that &lt;a href="https://devcenter.heroku.com/articles/dynos#isolation-and-security"&gt;because of how Heroku works&lt;/a&gt; you won&amp;#8217;t be able to upload&amp;nbsp;anything.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update 08/09/2015: This tutorial has been written during the first days of Wagtail, when documentation and tutorials about it were sparce; right now it should be considered by all accounts obsolete and &lt;em&gt;not&lt;/em&gt; be followed! Instead, you should read the official (and very well written) tutorial @ http://docs.wagtail.io/en/latest/getting_started/tutorial.html] in the official Wagtail&amp;nbsp;documentation!&lt;/strong&gt;&lt;/p&gt;
@@ -23,7 +23,7 @@ and then install the other requirements. Also please use the latest version of W
 the pypi (so &lt;em&gt;don&amp;#8217;t&lt;/em&gt; do a &lt;code&gt;pip install wagtail&lt;/code&gt;).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Warning:&lt;/strong&gt; Unfortuanately, no official binaries for libsass (which is a django-libsass requirement) are (yet) available for Windows. I
 have compiled a version for win32 and python 2.7 (which I use) using the &lt;a href="http://www.confusedbycode.com/articles/compiling-python-modules.html"&gt;instructions found here&lt;/a&gt;. You can download this version 
-&lt;a href="http://spapas.github.io/images/libsass-0.3.0-cp27-none-win32.whl"&gt;as a wheel package&lt;/a&gt;. Notice that because libsass was compiled with &lt;span class="caps"&gt;VC&lt;/span&gt; Express 2013
+&lt;a href="https://spapas.github.io/images/libsass-0.3.0-cp27-none-win32.whl"&gt;as a wheel package&lt;/a&gt;. Notice that because libsass was compiled with &lt;span class="caps"&gt;VC&lt;/span&gt; Express 2013
 you should also install the &lt;a href="http://www.microsoft.com/en-us/download/details.aspx?id=40784"&gt;Visual C++ 2013 redistributable&lt;/a&gt; package from&amp;nbsp;Microsoft.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Please use it at your own risk&amp;nbsp;!!!&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;To install &lt;a href="http://pythonwheels.com/"&gt;wheels&lt;/a&gt; you have to use a version of pip &amp;gt;= 1.4 (so do an &lt;code&gt;easy_install -U pip&lt;/code&gt; from your
@@ -278,7 +278,7 @@ python manage.py migrate
 &lt;p&gt;page &amp;#8212; congratulations&amp;nbsp;!&lt;/p&gt;
 &lt;p&gt;The homepage is rather simple (for now!) but you may already navigate to http://127.0.0.1:8000/admin and from there, login to Wagtail admin with the superuser you created earlier. 
 Now you may start experiencing Wagtail&amp;nbsp;! &lt;/p&gt;
-&lt;p&gt;&lt;img alt="Wagtail admin index" src="http://spapas.github.io/images/wagtail-index.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Wagtail admin index" src="https://spapas.github.io/images/wagtail-index.png" /&gt;&lt;/p&gt;
 &lt;h2&gt;Exploring Wagtail&amp;nbsp;admin&lt;/h2&gt;
 &lt;p&gt;When you login to Wagtail admin you will see a menu at the left with the&amp;nbsp;options:&lt;/p&gt;
 &lt;ul&gt;
@@ -326,7 +326,7 @@ Now you may start experiencing Wagtail&amp;nbsp;! &lt;/p&gt;
 &lt;p&gt;and run &lt;code&gt;python manage.py syncdb&lt;/code&gt; to create the &lt;code&gt;tutorial_blogpage&lt;/code&gt; table. &lt;/p&gt;
 &lt;p&gt;Now, if you visit again the /admin and click on the &amp;#8220;Add Child Page&amp;#8221; action of &amp;#8220;Welcome to your new Wagtail Site!&amp;#8221; you will see the &amp;#8220;Blog Page&amp;#8221; page and after you click it you will be able to see a form with the Fields you defined &lt;em&gt;and&lt;/em&gt; title(title, body, date). The title is a field inherited from Page, along with the fields  in the Promote&amp;nbsp;tab. &lt;/p&gt;
 &lt;p&gt;In our declaration of BlogPage we added three &lt;code&gt;FieldPanel&lt;/code&gt;s on its content_panes. A &lt;code&gt;FieldPanel&lt;/code&gt; is a special edit handler for each Field. That is why when you try to edit the body you will see a rich text toolbar that enables you to not only format text but also embed images, documents and even oembed links. If you hadn&amp;#8217;t included the &lt;code&gt;FieldPanel('body', classname="full")&lt;/code&gt; then you wouldn&amp;#8217;t see the rich text&amp;nbsp;editor.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Editing pages in Wagtail" src="http://spapas.github.io/images/wagtail-edit-page.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Editing pages in Wagtail" src="https://spapas.github.io/images/wagtail-edit-page.png" /&gt;&lt;/p&gt;
 &lt;p&gt;So now we can add as many posts as we&amp;nbsp;like! &lt;/p&gt;
 &lt;p&gt;The time has come to take a look at our fine blog post: After we publish our page we click to the view live action&amp;nbsp;and&amp;#8230; &lt;/p&gt;
 &lt;blockquote&gt;
@@ -417,7 +417,7 @@ Now you may start experiencing Wagtail&amp;nbsp;! &lt;/p&gt;
 
 
 &lt;p&gt;So self is the context name of the  BlogPageIndex instance that is used to render this page. Beyond that, it&amp;#8217;s normal&amp;nbsp;django.&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Rendering the Blog Index" src="http://spapas.github.io/images/wagtail-index-template.png" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Rendering the Blog Index" src="https://spapas.github.io/images/wagtail-index-template.png" /&gt;&lt;/p&gt;
 &lt;p&gt;Now you can view your Blog Index &amp;#8212; however before clicking on a link to also view your posts add the template for your &lt;code&gt;BlogPost&lt;/code&gt; (&lt;code&gt;tutorial/blog_page.html&lt;/code&gt;):&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;{% load rich_text %}
 &lt;span class="nt"&gt;&amp;lt;html&amp;gt;&lt;/span&gt;
