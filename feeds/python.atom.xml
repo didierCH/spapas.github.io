@@ -1,5 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/python.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2016-06-07T10:40:00+03:00</updated><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><updated>2016-06-07T10:40:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/python.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2016-06-27T14:20:00+03:00</updated><entry><title>How to download all images of an imgur album</title><link href="https://spapas.github.io/2016/06/27/download-imgur-album-images/" rel="alternate"></link><updated>2016-06-27T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</id><summary type="html">&lt;p&gt;Recently I stubmled upon a great &lt;a class="reference external" href="http://imgur.com/"&gt;imgur&lt;/a&gt; album that contained
+&lt;a class="reference external" href="http://imgur.com/a/aoi3T"&gt;379 movie stills that could be used for desktop background&lt;/a&gt;. I
+really liked the idea and wanted to download all the images in order
+to put them in a folder and use them as a slideshow for my Windows
+desktop&amp;nbsp;background.&lt;/p&gt;
+&lt;p&gt;Downloading them one by one would be considered penal
+labour so I tried to find out an automatic way to get them all. With some
+research in google, I found out an old post with the hint that by appending &lt;tt class="docutils literal"&gt;/zip&lt;/tt&gt;
+to the &lt;span class="caps"&gt;URL&lt;/span&gt;  you could get a zip with all the images &amp;#8212; this didn&amp;#8217;t work for me. I
+also tried various browser tools for scrapping or downloading all images from a page but they
+didn&amp;#8217;t work also (they could only download a small number of the images and not&amp;nbsp;all).&lt;/p&gt;
+&lt;p&gt;This seemed strange to me until I understood how imgur loads its images by &amp;quot;inspecting&amp;quot;
+an image and taking a look at the page&amp;#8217;s &lt;span class="caps"&gt;DOM&lt;/span&gt; structure through the&amp;nbsp;console:&lt;/p&gt;
+&lt;img alt="How imgur loads images" src="/images/imgur.gif" style="width: 700px;" /&gt;
+&lt;p&gt;As we can see, the imgur client-side code has a component with a &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;post-images&lt;/span&gt;&lt;/tt&gt; class
+that contains the visible images (and thoese that are above/below the visible images). When
+the user scrolls up/down the contents of &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;post-images&lt;/span&gt;&lt;/tt&gt; will be changed accordingly
+(notice how the component with &lt;tt class="docutils literal"&gt;id=EKMGEPc&lt;/tt&gt; moves down when I scroll up).
+What this means is that each time there are 3-4 images (this actually depends on your window size)
+under &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;post-images&lt;/span&gt;&lt;/tt&gt; that are changed when you scroll &amp;#8212; that&amp;#8217;s why downloaders / scrappers are not working (since these
+tools just inspect the &lt;span class="caps"&gt;DOM&lt;/span&gt; they only see these 3-4 images to&amp;nbsp;download).&lt;/p&gt;
+&lt;p&gt;Another interesting observation is that if you take a look at the network tab when you
+scroll app down you won&amp;#8217;t see any ajax calls (the only network calls are the images that
+are downloaded when they are appended to the &lt;span class="caps"&gt;DOM&lt;/span&gt;). So this means that somewhere there&amp;#8217;s
+an array that is loaded when the page is loaded and contains all the images of the album.
+If we can access this array then we&amp;#8217;d be able to get all the URLs of the&amp;nbsp;images&amp;#8230;&lt;/p&gt;
+&lt;p&gt;From a quick look at the &lt;span class="caps"&gt;DOM&lt;/span&gt; structure we can understand that this is a React application
+(components have a &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;data-reactid&lt;/span&gt;&lt;/tt&gt; attribute). So I tried the &lt;a class="reference external" href="https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi"&gt;React Developer Tools&lt;/a&gt;
+extension to see if I could find anything insteresting. Here&amp;#8217;s the&amp;nbsp;output:&lt;/p&gt;
+&lt;img alt="Imgur - react dev tools" src="/images/imgur-react.png" style="width: 1000px;" /&gt;
+&lt;p&gt;As you can see, there seem to be 4 top-level react elements &amp;#8212; the interesting one is &lt;tt class="docutils literal"&gt;GalleryPost&lt;/tt&gt;.
+If you take a look at its props (in the right hand side of the react-devtools) you&amp;#8217;ll see that it has
+an &lt;tt class="docutils literal"&gt;album_image_store&lt;/tt&gt; property which also seems interesting (it should be the image store for this
+album). After searching a bit its attributes
+you&amp;#8217;ll see that it has a &lt;tt class="docutils literal"&gt;_&lt;/tt&gt; child attribute, which has a &lt;tt class="docutils literal"&gt;posts&lt;/tt&gt; child attribute which has an &lt;tt class="docutils literal"&gt;aoi3T&lt;/tt&gt;
+attribute (notice that this is similar to the &lt;span class="caps"&gt;URL&lt;/span&gt; id of the album) and, finally this has an &lt;tt class="docutils literal"&gt;images&lt;/tt&gt;
+attribute with objects describing all the images of that album&amp;nbsp;\o/!&lt;/p&gt;
+&lt;p&gt;Now we need to get our hands on that &lt;tt class="docutils literal"&gt;images&lt;/tt&gt; array contents. Unfortunately, right clicking doesn&amp;#8217;t seem
+to do anything from react-dev-tools and there doesn&amp;#8217;t seem a way to copy data from that panel&amp;#8230; However, in
+the upper right position of that window you&amp;#8217;ll see the hint &lt;tt class="docutils literal"&gt;($r in the console)&lt;/tt&gt; which means that
+the selected react component is available as $r in the normal javascript console - so by&amp;nbsp;entering&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+copy($r.props.album_image_store._.posts.aoi3T)
+&lt;/pre&gt;
+&lt;p&gt;I was able to copy the images of the album to my clipboard (please notice that &lt;tt class="docutils literal"&gt;$r&lt;/tt&gt; will have the
+value of the selected react component so, before trying it you must select the &lt;tt class="docutils literal"&gt;GalleryPost&lt;/tt&gt;
+component in the react-dev-tools&amp;nbsp;tab)!&lt;/p&gt;
+&lt;p&gt;I dumped this to a file to take a look at it - it is really easy to interpret&amp;nbsp;it:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+[
+  {
+    &amp;quot;hash&amp;quot;: &amp;quot;MQplfkV&amp;quot;,
+    &amp;quot;title&amp;quot;: &amp;quot;2001: A Space Odyssey&amp;quot;,
+    &amp;quot;description&amp;quot;: &amp;quot;Cinematographer: Geoffrey Unsworth\n\nsource:\nhttp://www.filmcaptures.com/2001-a-space-odyssey/&amp;quot;,
+    &amp;quot;width&amp;quot;: 1920,
+    &amp;quot;height&amp;quot;: 864,
+    &amp;quot;size&amp;quot;: 2262862,
+    &amp;quot;ext&amp;quot;: &amp;quot;.png&amp;quot;,
+    &amp;quot;animated&amp;quot;: false,
+    &amp;quot;prefer_video&amp;quot;: false,
+    &amp;quot;looping&amp;quot;: false,
+    &amp;quot;datetime&amp;quot;: &amp;quot;2014-10-25 04:02:58&amp;quot;,
+    &amp;quot;thumbsize&amp;quot;: &amp;quot;g&amp;quot;,
+    &amp;quot;minHeight&amp;quot;: 306,
+    &amp;quot;shown&amp;quot;: true,
+    &amp;quot;containerHeight&amp;quot;: 501
+  },
+..
+&lt;/pre&gt;
+&lt;p&gt;The imgur images have a &lt;span class="caps"&gt;URL&lt;/span&gt; of http//i.imgur.com/{hash}{ext} so, we
+can use the following small python 2 program to download all images from that&amp;nbsp;album:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+import requests
+import json
+from slugify import slugify
+
+# Modified from http://stackoverflow.com/a/16696317/119071
+def download_file(url, local_filename):
+    r = requests.get(url, stream=True)
+    with open(local_filename, 'wb') as f:
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk: # filter out keep-alive new chunks
+                f.write(chunk)
+                #f.flush() commented by recommendation from J.F.Sebastian
+    return local_filename
+
+
+if __name__ == '__main__':
+    for i, jo in enumerate(json.loads(open(&amp;quot;album.txt&amp;quot;).read())):
+        filename = '{0}-{1}{2}'.format(slugify(jo['title']), i+1, jo['ext'])
+        url = 'http://i.imgur.com/{0}{1}'.format(jo['hash'].strip(), jo['ext'])
+        print filename, url
+        download_file(url, filename)
+&lt;/pre&gt;
+&lt;p&gt;Notice that the above uses the &lt;tt class="docutils literal"&gt;requests&lt;/tt&gt; library to retrieve the files and the
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;python-slugify&lt;/span&gt;&lt;/tt&gt; library to generate a filename using the image title so these
+libraries must be installed by using &lt;tt class="docutils literal"&gt;pip install requests &lt;span class="pre"&gt;python-slugify&lt;/span&gt;&lt;/tt&gt;. This
+will read a file named &lt;tt class="docutils literal"&gt;album.txt&lt;/tt&gt; that should contain the copied imgur album images
+in the same directory and download all the&amp;nbsp;images.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Disclaimer&lt;/strong&gt; The above methodology works today (27-06-2016) - probably it will
+stop working sometime in the future, when imgur changes its image loading algorithm
+or its image object representation.
+Also, I haven&amp;#8217;t been able to find a way to quickly access the &lt;tt class="docutils literal"&gt;GalleryPost&lt;/tt&gt; react
+component from the javascript console - you need to install the react dev tools and
+select that component from there so that you&amp;#8217;ll have the &lt;tt class="docutils literal"&gt;$r&lt;/tt&gt; reference to it in
+the javascript console. Finally, don&amp;#8217;t forget to change the
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts.aoi3T)&lt;/span&gt;&lt;/tt&gt;
+depending on your album id (also if the id is not a valid identifier, for example it
+starts with number, use &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts['aoi3T']&lt;/span&gt;&lt;/tt&gt;).&lt;/p&gt;
+</summary><category term="imgur"></category><category term="python"></category><category term="react"></category><category term="javascript"></category><category term="console"></category><category term="research"></category></entry><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><updated>2016-06-07T10:40:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive
 debugger - what this means is that when your python application throws an exception,
