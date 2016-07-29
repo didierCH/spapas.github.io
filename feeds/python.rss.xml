@@ -41,7 +41,7 @@ to do anything from react-dev-tools and there doesn&amp;#8217;t seem a way to co
 the upper right position of that window you&amp;#8217;ll see the hint &lt;tt class="docutils literal"&gt;($r in the console)&lt;/tt&gt; which means that
 the selected react component is available as $r in the normal javascript console - so by&amp;nbsp;entering&lt;/p&gt;
 &lt;pre class="code literal-block"&gt;
-copy($r.props.album_image_store._.posts.aoi3T)
+copy($r.props.album_image_store._.posts.aoi3T.images)
 &lt;/pre&gt;
 &lt;p&gt;I was able to copy the images of the album to my clipboard (please notice that &lt;tt class="docutils literal"&gt;$r&lt;/tt&gt; will have the
 value of the selected react component so, before trying it you must select the &lt;tt class="docutils literal"&gt;GalleryPost&lt;/tt&gt;
@@ -105,9 +105,9 @@ Also, I haven&amp;#8217;t been able to find a way to quickly access the &lt;tt c
 component from the javascript console - you need to install the react dev tools and
 select that component from there so that you&amp;#8217;ll have the &lt;tt class="docutils literal"&gt;$r&lt;/tt&gt; reference to it in
 the javascript console. Finally, don&amp;#8217;t forget to change the
-&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts.aoi3T)&lt;/span&gt;&lt;/tt&gt;
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts.aoi3T.images)&lt;/span&gt;&lt;/tt&gt;
 depending on your album id (also if the id is not a valid identifier, for example it
-starts with number, use &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts['aoi3T']&lt;/span&gt;&lt;/tt&gt;).&lt;/p&gt;
+starts with number, use &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts['aoi3T'].images&lt;/span&gt;&lt;/tt&gt;).&lt;/p&gt;
 </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 27 Jun 2016 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</guid><category>imgur</category><category>python</category><category>react</category><category>javascript</category><category>console</category><category>research</category></item><item><title>Using Werkzeug debugger with Django</title><link>https://spapas.github.io/2016/06/07/django-werkzeug-debugger/</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive

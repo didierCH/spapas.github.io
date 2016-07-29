@@ -120,7 +120,7 @@ to do anything from react-dev-tools and there doesn&#8217;t seem a way to copy d
 the upper right position of that window you&#8217;ll see the hint <tt class="docutils literal">($r in the console)</tt> which means that
 the selected react component is available as $r in the normal javascript console - so by&nbsp;entering</p>
 <pre class="code literal-block">
-copy($r.props.album_image_store._.posts.aoi3T)
+copy($r.props.album_image_store._.posts.aoi3T.images)
 </pre>
 <p>I was able to copy the images of the album to my clipboard (please notice that <tt class="docutils literal">$r</tt> will have the
 value of the selected react component so, before trying it you must select the <tt class="docutils literal">GalleryPost</tt>
@@ -184,9 +184,9 @@ Also, I haven&#8217;t been able to find a way to quickly access the <tt class="d
 component from the javascript console - you need to install the react dev tools and
 select that component from there so that you&#8217;ll have the <tt class="docutils literal">$r</tt> reference to it in
 the javascript console. Finally, don&#8217;t forget to change the
-<tt class="docutils literal"><span class="pre">copy($r.props.album_image_store._.posts.aoi3T)</span></tt>
+<tt class="docutils literal"><span class="pre">copy($r.props.album_image_store._.posts.aoi3T.images)</span></tt>
 depending on your album id (also if the id is not a valid identifier, for example it
-starts with number, use <tt class="docutils literal"><span class="pre">copy($r.props.album_image_store._.posts['aoi3T']</span></tt>).</p>
+starts with number, use <tt class="docutils literal"><span class="pre">copy($r.props.album_image_store._.posts['aoi3T'].images</span></tt>).</p>
 </div>
   		</article>
   		<article>
