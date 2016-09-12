@@ -1,5 +1,474 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds/python.rss.xml" rel="self"></atom:link><lastBuildDate>Mon, 27 Jun 2016 14:20:00 +0300</lastBuildDate><item><title>How to download all images of an imgur album</title><link>https://spapas.github.io/2016/06/27/download-imgur-album-images/</link><description>&lt;p&gt;Recently I stubmled upon a great &lt;a class="reference external" href="http://imgur.com/"&gt;imgur&lt;/a&gt; album that contained
+<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Mon, 12 Sep 2016 16:20:00 +0300</lastBuildDate><item><title>Splitting a query into individual fields in Django</title><link>https://spapas.github.io/2016/09/12/django-split-query/</link><description>&lt;p&gt;As you should have already seen in &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;previous articles&lt;/a&gt;, I really like using &lt;a class="reference external" href="https://github.com/alex/django-filter"&gt;django-filter&lt;/a&gt; since it covers (nearly) all my queryset filtering needs.
+With django-filter, you define a bunch of fields and it will automatically create inputs for each one of these fields so that you can filter by each one of these fields individually or a
+combination of&amp;nbsp;them.&lt;/p&gt;
+&lt;p&gt;However, one thing that django-filter (and django in generally) lacks is the ability to &lt;em&gt;filter multiple fields using a single input&lt;/em&gt;. This functionality may be familiar to some readers from
+the &lt;a class="reference external" href="https://datatables.net/"&gt;datatable&lt;/a&gt; jquery plugin. If you take a look at the example in the datatable homepage, you&amp;#8217;ll see a single &amp;#8220;Search&amp;#8221; field. What is really great is that you can enter multiple values (seperated
+by spaces) into that field and it will filter the individual table values by each one of them. For example, if you enter &amp;#8220;2011 Engineer&amp;#8221; you&amp;#8217;ll see all engineering positions that started
+on 2011. If you append &amp;#8220;Singapore&amp;#8221; (so you&amp;#8217;ll have &amp;#8220;2011 Engineer Singapore&amp;#8221;) you&amp;#8217;ll also get only the corresponding&amp;nbsp;results!&lt;/p&gt;
+&lt;p&gt;This functionality is really useful and is very important to have if you use single-input fields to query your data. One such example is if you use autocompletes, for example with
+django-autocomplete-light: You&amp;#8217;ll have a single input however you may need to filter on more than one field to find out your&amp;nbsp;selection.&lt;/p&gt;
+&lt;p&gt;In the following ost I&amp;#8217;ll show you how to implement this functionality using Django and django-filters (actually django-filters will be used to provide the form) - to see it
+in action you may use the &lt;a class="reference external" href="https://github.com/spapas/django_table_filtering"&gt;https://github.com/spapas/django_table_filtering&lt;/a&gt; repository (check out the &lt;cite&gt;/filter_ex/&lt;/cite&gt; view).&lt;/p&gt;
+&lt;p&gt;I won&amp;#8217;t go into detail on how the code is structured (it&amp;#8217;s really simple) and I&amp;#8217;ll go directly to the filter I am using. Instead of using a filter you can of course directly query on
+your view. What you actually need&amp;nbsp;is:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;a queryset with the instances you want to&amp;nbsp;search&lt;/li&gt;
+&lt;li&gt;a text value with the query (that may contain&amp;nbsp;spaces)&lt;/li&gt;
+&lt;li&gt;a list of the names of the fields you want to&amp;nbsp;search&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In my case, I am using a &lt;cite&gt;Book&lt;/cite&gt; model that has the following fields: &lt;cite&gt;id, title, author, category&lt;/cite&gt;. I have created a filter with a single field named &lt;cite&gt;ex&lt;/cite&gt; that will filter on
+all these fields. So you should be able to enter &amp;#8220;King It&amp;#8221; and find &amp;#8220;It by Stephen King&amp;#8221;. Let&amp;#8217;s see how the filter is&amp;nbsp;implemented:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+import itertools
+
+class BookFilterEx(django_filters.FilterSet):
+    ex = django_filters.MethodFilter()
+    search_fields = ['title', 'author', 'category', 'id', ]
+
+    def filter_ex(self, qs, value):
+        if value:
+            q_parts = value.split()
+
+            # Permutation code copied from http://stackoverflow.com/a/12935562/119071
+
+            list1=self.search_fields
+            list2=q_parts
+            perms = [zip(x,list2) for x in itertools.permutations(list1,len(list2))]
+
+            q_totals = Q()
+            for perm in perms:
+                q_part = Q()
+                for p in perm:
+                    q_part = q_part &amp;amp; Q(**{p[0]+'__icontains': p[1]})
+                q_totals = q_totals | q_part
+
+            qs = qs.filter(q_totals)
+        return qs
+
+    class Meta:
+        model = books.models.Book
+        fields = ['ex']
+&lt;/pre&gt;
+&lt;p&gt;The meat of this code is in the &lt;tt class="docutils literal"&gt;filter_ex&lt;/tt&gt; method, let&amp;#8217;s analyze it line by line:
+First of all, we split the value to its corresponding parts using the whitespace to sperate into individual tokens. For example if the user has entered
+&lt;tt class="docutils literal"&gt;King It&lt;/tt&gt;, &lt;tt class="docutils literal"&gt;q_parts&lt;/tt&gt; be equal to &lt;tt class="docutils literal"&gt;['King', 'It']&lt;/tt&gt;. As you can see the &lt;cite&gt;search_fields&lt;/cite&gt; attribute contains the names of the
+fields we want to search. The first thing I like to do is to generate all possible combinations between &lt;tt class="docutils literal"&gt;q_parts&lt;/tt&gt;
+and &lt;tt class="docutils literal"&gt;search_fields&lt;/tt&gt;, I&amp;#8217;ve copied the list combination code from &lt;a class="reference external" href="http://stackoverflow.com/a/12935562/119071"&gt;http://stackoverflow.com/a/12935562/119071&lt;/a&gt; and it is the line
+&lt;tt class="docutils literal"&gt;perms = [zip(x,list2) for x in &lt;span class="pre"&gt;itertools.permutations(list1,len(list2))]&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;itertools.permutations(list1,len(list2))&lt;/tt&gt; will generate all permutations of list1
+that have length equal to the length of list2. I.e if list2 is &lt;tt class="docutils literal"&gt;['King', 'It']&lt;/tt&gt; (len=2) then it will generate all combinations
+of search_fields with length=2, i.e it will generate the following list of&amp;nbsp;tuples:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+[
+    ('title', 'author'), ('title', 'category'), ('title', 'id'), ('author', 'title'),
+    ('author', 'category'), ('author', 'id'), ('category', 'title'), ('category', 'author'),
+    ('category', 'id'), ('id', 'title'), ('id', 'author'), ('id', 'category')
+]
+&lt;/pre&gt;
+&lt;p&gt;Now, the &lt;tt class="docutils literal"&gt;zip&lt;/tt&gt; will combine the elements of each one of these tuples with the elements of &lt;tt class="docutils literal"&gt;list2&lt;/tt&gt;, so, in our example
+(&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;list2=['King',&lt;/span&gt; 'It']&lt;/tt&gt;) &lt;tt class="docutils literal"&gt;perms&lt;/tt&gt; will be the following&amp;nbsp;array:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+[
+    [('title', 'King'), ('author', 'It')],
+    [('title', 'King'), ('category', 'It')],
+    [('title', 'King'), ('id', 'It')],
+    [('author', 'King'), ('title', 'It')],
+    [('author', 'King'), ('category', 'It')],
+    [('author', 'King'), ('id', 'It')],
+    [('category', 'King'), ('title', 'It')],
+    [('category', 'King'), ('author', 'It')],
+    [('category', 'King'), ('id', 'It')],
+    [('id', 'King'), ('title', 'It')],
+    [('id', 'King'), ('author', 'It')],
+    [('id', 'King'), ('category', 'It')]
+]
+&lt;/pre&gt;
+&lt;p&gt;Notice that &lt;tt class="docutils literal"&gt;itertools.permutations(list1,len(list2))&lt;/tt&gt; will return an empty list if &lt;tt class="docutils literal"&gt;len(list2) &amp;gt; len(list1)&lt;/tt&gt; - this is actually what
+we want since that means that the user entered more query parts than the available fields, i.e we can&amp;#8217;t match each one of the
+possible values after we split the input with a search field so we should return&amp;nbsp;nothing.&lt;/p&gt;
+&lt;p&gt;Now, what I want is to create a single query that will combine the tuples in each of these combinations by &lt;span class="caps"&gt;AND&lt;/span&gt; (i.e
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;title==King&lt;/span&gt; &lt;span class="caps"&gt;AND&lt;/span&gt; &lt;span class="pre"&gt;author==It&lt;/span&gt;&lt;/tt&gt; ) and then combine all these subqueries using &lt;span class="caps"&gt;OR&lt;/span&gt; (i.e
+&amp;#8220; (title==King &lt;span class="caps"&gt;AND&lt;/span&gt; author==It) &lt;span class="caps"&gt;OR&lt;/span&gt; (title==King &lt;span class="caps"&gt;AND&lt;/span&gt; category==It) &lt;span class="caps"&gt;OR&lt;/span&gt; (title==King &lt;span class="caps"&gt;AND&lt;/span&gt; id==It) &lt;span class="caps"&gt;OR&lt;/span&gt;&amp;nbsp;&amp;#8230;&amp;#8220;.&lt;/p&gt;
+&lt;p&gt;This could of course be implemented with a raw sql query however we could use some interesting django tricks for this.
+I&amp;#8217;ve already done something similar to &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;a previous article&lt;/a&gt; so I won&amp;#8217;t go
+into much detail explaining the code that creates the &lt;tt class="docutils literal"&gt;q_totals&lt;/tt&gt; &lt;tt class="docutils literal"&gt;Q&lt;/tt&gt; object. What it does is that it create a big django &lt;tt class="docutils literal"&gt;Q&lt;/tt&gt; object that combines using &lt;span class="caps"&gt;AND&lt;/span&gt; (&lt;tt class="docutils literal"&gt;&amp;amp;&lt;/tt&gt;)
+all individual &lt;tt class="docutils literal"&gt;q_part&lt;/tt&gt; objects. Each &lt;tt class="docutils literal"&gt;q_part&lt;/tt&gt; object combines using &lt;span class="caps"&gt;OR&lt;/span&gt; (&lt;tt class="docutils literal"&gt;|&lt;/tt&gt;) the individual combinations of field name
+and value &amp;#8212; I&amp;#8217;ve used &lt;cite&gt;__icontains`&lt;/cite&gt; to create the query. So the result will be something like&amp;nbsp;this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+q_totals =
+    Q(title__icontains='King') &amp;amp; Q(author__icontains='It')
+    |
+    Q(title__icontains='King') &amp;amp; Q(category__icontains='It')
+    |
+    Q(title__icontains='King') &amp;amp; Q(id__icontains='It')
+    |
+    Q(author__icontains='King') &amp;amp; Q(title__icontains='It')
+    ...
+&lt;/pre&gt;
+&lt;p&gt;Filtering by this &lt;tt class="docutils literal"&gt;q_totals&lt;/tt&gt; will return the correct&amp;nbsp;values!&lt;/p&gt;
+&lt;p&gt;One extra complication we should be aware of is what happens if the user needs to also search for books with multiple words
+in their titles. For example, if the user enters &amp;#8220;Under the Dome King&amp;#8221; or &amp;#8220;It Stephen King&amp;#8221; or even &amp;#8220;The Stand Stephen King&amp;#8221;
+we won&amp;#8217;t get any results&amp;nbsp;:(&lt;/p&gt;
+&lt;p&gt;To fix this, we need to get all possible combinations of sequential substrings, i.e for &amp;#8220;Under the Dome King&amp;#8221;, after we
+split it to [&amp;#8216;Under&amp;#8217;, &amp;#8216;the&amp;#8217;, &amp;#8216;Dome&amp;#8217;, &amp;#8216;King&amp;#8217;] we&amp;#8217;ll need the following&amp;nbsp;combinations:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+[
+    ['Under', 'the', 'Dome', 'King'],
+    ['Under', 'the', 'Dome King'],
+    ['Under', 'the Dome', 'King'],
+    ['Under', 'the Dome King'],
+    ['Under the', 'Dome', 'King'],
+    ['Under the', 'Dome King'],
+    ['Under the Dome', 'King'],
+    ['Under the Dome King']
+]
+&lt;/pre&gt;
+&lt;p&gt;A possible solution for that problem can be found on this &lt;span class="caps"&gt;SO&lt;/span&gt; answer: &lt;a class="reference external" href="http://stackoverflow.com/a/27263616/119071"&gt;http://stackoverflow.com/a/27263616/119071&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Now, to extend our solution to include this, we&amp;#8217;d need to actually search for each one of the above possiblities
+and combine again the results with &lt;span class="caps"&gt;OR&lt;/span&gt;, something like&amp;nbsp;this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+def filter_ex(self, qs, value):
+    if value:
+        q_parts = value.split()
+
+        # Use a global q_totals
+        q_totals = Q()
+
+        # This part will get us all possible segmantiation of the query parts and put it in the possibilities list
+        combinatorics = itertools.product([True, False], repeat=len(q_parts) - 1)
+        possibilities = []
+        for combination in combinatorics:
+            i = 0
+            one_such_combination = [q_parts[i]]
+            for slab in combination:
+                i += 1
+                if not slab: # there is a join
+                    one_such_combination[-1] += ' ' + q_parts[i]
+                else:
+                    one_such_combination += [q_parts[i]]
+            possibilities.append(one_such_combination)
+
+        # Now, for all possiblities we'll append all the Q objects using OR
+        for p in possibilities:
+            list1=self.search_fields
+            list2=p
+            perms = [zip(x,list2) for x in itertools.permutations(list1,len(list2))]
+
+            for perm in perms:
+                q_part = Q()
+                for p in perm:
+                    q_part = q_part &amp;amp; Q(**{p[0]+'__icontains': p[1]})
+                q_totals = q_totals | q_part
+
+        qs = qs.filter(q_totals)
+    return qs
+&lt;/pre&gt;
+&lt;p&gt;The previous filtering code works fine with querise like &amp;#8220;The Stand&amp;#8221; or &amp;#8220;Under the Dome Stephen&amp;nbsp;King&amp;#8221;!&lt;/p&gt;
+&lt;p&gt;One thing that you must be careful is that this code will create &lt;em&gt;very complicated and big&lt;/em&gt; queries. For example,
+searching for &amp;#8220;Under the Dome Stephen King&amp;#8221; will result to &lt;cite&gt;q_totals&lt;/cite&gt; getting this monster&amp;nbsp;value:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+(OR:
+(AND: ),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the'), ('category__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the'), ('id__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the'), ('author__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the'), ('id__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the'), ('author__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the'), ('category__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the'), ('category__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the'), ('id__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the'), ('title__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the'), ('id__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the'), ('title__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the'), ('category__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the'), ('author__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the'), ('id__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the'), ('title__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the'), ('id__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the'), ('title__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the'), ('author__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the'), ('author__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the'), ('category__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the'), ('title__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the'), ('category__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the'), ('title__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the'), ('author__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the'), ('category__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the'), ('id__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the'), ('author__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the'), ('id__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the'), ('author__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the'), ('category__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the'), ('category__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the'), ('id__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the'), ('title__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the'), ('id__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the'), 'title__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the'), ('category__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the'), ('author__icontains', u'Dome Stephen'),('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the'), ('id__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the'), ('title__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the'), ('id__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the'), ('title__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the'), ('author__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the'), ('author__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the'), ('category__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the'), ('title__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the'), ('category__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the'), ('title__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the'), ('author__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the Dome'), ('category__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the Dome'), ('id__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the Dome'), ('author__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the Dome'), ('id__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the Dome'), ('author__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the Dome'), ('category__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the Dome'), ('category__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the Dome'), ('id__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the Dome'), ('title__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the Dome'), ('id__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the Dome'), ('title__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the Dome'), ('category__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the Dome'), ('author__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the Dome'), ('id__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the Dome'), ('title__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the Dome'), ('id__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the Dome'), ('title__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the Dome'), ('author__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the Dome'), ('author__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the Dome'), ('category__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the Dome'), ('title__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the Dome'), ('category__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the Dome'), ('title__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the Dome'), ('author__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under'), ('author__icontains', u'the Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('category__icontains', u'the Dome Stephen King')),
+(AND: ('title__icontains', u'Under'), ('id__icontains', u'the Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('title__icontains', u'the Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('category__icontains', u'the Dome Stephen King')),
+(AND: ('author__icontains', u'Under'), ('id__icontains', u'the Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('title__icontains', u'the Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('author__icontains', u'the Dome Stephen King')),
+(AND: ('category__icontains', u'Under'), ('id__icontains', u'the Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('title__icontains', u'the Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('author__icontains', u'the Dome Stephen King')),
+(AND: ('id__icontains', u'Under'), ('category__icontains', u'the Dome Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('author__icontains', u'Dome'), ('category__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('author__icontains', u'Dome'), ('id__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('category__icontains', u'Dome'), ('author__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('category__icontains', u'Dome'), ('id__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('id__icontains', u'Dome'), ('author__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('id__icontains', u'Dome'), ('category__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('title__icontains', u'Dome'), ('category__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('title__icontains', u'Dome'), ('id__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('category__icontains', u'Dome'), ('title__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('category__icontains', u'Dome'), ('id__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('id__icontains', u'Dome'), ('title__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('id__icontains', u'Dome'), ('category__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('title__icontains', u'Dome'), ('author__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('title__icontains', u'Dome'), ('id__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('author__icontains', u'Dome'), ('title__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('author__icontains', u'Dome'), ('id__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('id__icontains', u'Dome'), ('title__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('id__icontains', u'Dome'), ('author__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('title__icontains', u'Dome'), ('author__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('title__icontains', u'Dome'), ('category__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('author__icontains', u'Dome'), ('title__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('author__icontains', u'Dome'), ('category__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('category__icontains', u'Dome'), ('title__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('category__icontains', u'Dome'), ('author__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('author__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('author__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('category__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('category__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('id__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('id__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('title__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('title__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('category__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('category__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('id__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('id__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('title__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('title__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('author__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('author__icontains', u'Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('id__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('id__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('title__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('title__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('author__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('author__icontains', u'Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('category__icontains', u'Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('category__icontains', u'Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('author__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('author__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('category__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('category__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('id__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('id__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('title__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('title__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('category__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('category__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('id__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under the'), ('id__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('title__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('title__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('author__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('author__icontains', u'Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('id__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under the'), ('id__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('title__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('title__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('author__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('author__icontains', u'Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('category__icontains', u'Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under the'), ('category__icontains', u'Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('author__icontains', u'Under the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('category__icontains', u'Under the'), ('id__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('title__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('author__icontains', u'Dome Stephen King')),
+(AND: ('id__icontains', u'Under the'), ('category__icontains', u'Dome Stephen King')),
+(AND: ('title__icontains', u'Under the Dome'), ('author__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome'), ('author__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome'), ('category__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome'), ('category__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome'), ('id__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome'), ('id__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome'), ('title__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome'), ('title__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome'), ('category__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome'), ('category__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome'), ('id__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome'), ('id__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome'), ('title__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome'), ('title__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome'), ('author__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome'), ('author__icontains', u'Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome'), ('id__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome'), ('id__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome'), ('title__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome'), ('title__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome'), ('author__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome'), ('author__icontains', u'Stephen'), ('category__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome'), ('category__icontains', u'Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome'), ('category__icontains', u'Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('author__icontains', u'Under the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('category__icontains', u'Under the Dome'), ('id__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the Dome'), ('title__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the Dome'), ('author__icontains', u'Stephen King')),
+(AND: ('id__icontains', u'Under the Dome'), ('category__icontains', u'Stephen King')),
+(AND: ('title__icontains', u'Under the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('title__icontains', u'Under the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome Stephen'), ('category__icontains', u'King')),
+(AND: ('author__icontains', u'Under the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('category__icontains', u'Under the Dome Stephen'), ('id__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome Stephen'), ('title__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome Stephen'), ('author__icontains', u'King')),
+(AND: ('id__icontains', u'Under the Dome Stephen'), ('category__icontains', u'King')),
+('title__icontains', u'Under the Dome Stephen King'),
+('author__icontains', u'Under the Dome Stephen King'),
+('category__icontains', u'Under the Dome Stephen King'),
+('id__icontains', u'Under the Dome Stephen King')
+)
+&lt;/pre&gt;
+&lt;p&gt;This query has around 200 different &lt;span class="caps"&gt;OR&lt;/span&gt; parts!!! So please be careful on the amount of search fields you&amp;#8217;ll enable to works
+with this method or your database will really&amp;nbsp;struggle!&lt;/p&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 12 Sep 2016 16:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2016-09-12:2016/09/12/django-split-query/</guid><category>django</category><category>python</category><category>query</category><category>q</category><category>filter</category></item><item><title>How to download all images of an imgur album</title><link>https://spapas.github.io/2016/06/27/download-imgur-album-images/</link><description>&lt;p&gt;Recently I stubmled upon a great &lt;a class="reference external" href="http://imgur.com/"&gt;imgur&lt;/a&gt; album that contained
 &lt;a class="reference external" href="http://imgur.com/a/aoi3T"&gt;379 movie stills that could be used for desktop background&lt;/a&gt;. I
 really liked the idea and wanted to download all the images in order
 to put them in a folder and use them as a slideshow for my Windows
@@ -10,7 +479,7 @@ research in google, I found out an old post with the hint that by appending &lt;
 to the &lt;span class="caps"&gt;URL&lt;/span&gt;  you could get a zip with all the images &amp;#8212; this didn&amp;#8217;t work for me. I
 also tried various browser tools for scrapping or downloading all images from a page but they
 didn&amp;#8217;t work also (they could only download a small number of the images and not&amp;nbsp;all).&lt;/p&gt;
-&lt;p&gt;This seemed strange to me until I understood how imgur loads its images by &amp;quot;inspecting&amp;quot;
+&lt;p&gt;This seemed strange to me until I understood how imgur loads its images by &amp;#8220;inspecting&amp;#8221;
 an image and taking a look at the page&amp;#8217;s &lt;span class="caps"&gt;DOM&lt;/span&gt; structure through the&amp;nbsp;console:&lt;/p&gt;
 &lt;img alt="How imgur loads images" src="/images/imgur.gif" style="width: 700px;" /&gt;
 &lt;p&gt;As we can see, the imgur client-side code has a component with a &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;post-images&lt;/span&gt;&lt;/tt&gt; class
@@ -108,7 +577,7 @@ the javascript console. Finally, don&amp;#8217;t forget to change the
 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts.aoi3T.images)&lt;/span&gt;&lt;/tt&gt;
 depending on your album id (also if the id is not a valid identifier, for example it
 starts with number, use &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts['aoi3T'].images&lt;/span&gt;&lt;/tt&gt;).&lt;/p&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 27 Jun 2016 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</guid><category>imgur</category><category>python</category><category>react</category><category>javascript</category><category>console</category><category>research</category></item><item><title>Using Werkzeug debugger with Django</title><link>https://spapas.github.io/2016/06/07/django-werkzeug-debugger/</link><description>&lt;div class="section" id="introduction"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 27 Jun 2016 14:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</guid><category>imgur</category><category>python</category><category>react</category><category>javascript</category><category>console</category><category>research</category></item><item><title>Using Werkzeug debugger with Django</title><link>https://spapas.github.io/2016/06/07/django-werkzeug-debugger/</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive
 debugger - what this means is that when your python application throws an exception,
@@ -154,7 +623,7 @@ Quit the server with CTRL-BREAK.
  * Debugger pin code: 174-740-467
  * Running on http://127.0.0.1:8000/ (Press CTRL+C to quit)
 &lt;/pre&gt;
-&lt;p&gt;Now, the &amp;quot;debugger pin&amp;quot; you see is a way to protect your interactive debugger (i.e it asks for the pin
+&lt;p&gt;Now, the &amp;#8220;debugger pin&amp;#8221; you see is a way to protect your interactive debugger (i.e it asks for the pin
 before allowing you to enter the interactive prompt). Since this feature should &lt;em&gt;only&lt;/em&gt; be used in your
 local development system I recommend to just disable it by setting the &lt;tt class="docutils literal"&gt;WERKZEUG_DEBUG_PIN&lt;/tt&gt; environment
 variable to &lt;tt class="docutils literal"&gt;off&lt;/tt&gt; (i.e &lt;tt class="docutils literal"&gt;set WERKZEUG_DEBUG_PIN=off&lt;/tt&gt; in windows). After that you should see the message
@@ -191,23 +660,23 @@ I sometimes prefer opening and interactive debugger to find out by trial and err
 &lt;p&gt;Finally, please notice that both Werkzeug and django-extensions offer many more tools beyond the interactive debugger presented here -
 I encourage you to research them since - if you follow my advice - you&amp;#8217;ll integrate these to &lt;em&gt;all&lt;/em&gt; your django&amp;nbsp;projects!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 07 Jun 2016 10:40:00 +0300</pubDate><guid>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</guid><category>django</category><category>debug</category><category>python</category><category>werkzeug</category><category>django-extensions</category></item><item><title>Understanding nested list comprehension syntax in Python</title><link>https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/</link><description>&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 07 Jun 2016 10:40:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</guid><category>django</category><category>debug</category><category>python</category><category>werkzeug</category><category>django-extensions</category></item><item><title>Understanding nested list comprehension syntax in Python</title><link>https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/</link><description>&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
 is actually a smart way to introduce new users to functional programming concepts
 (after all a list comprehension is just a combination of map and filter) and compact&amp;nbsp;statements.&lt;/p&gt;
 &lt;p&gt;However, one thing that always troubled me when using list comprehensions is their
 non intuitive syntax when nesting was needed. For example, let&amp;#8217;s say that we just
 want to flatten a list of lists using a nested list&amp;nbsp;comprehension:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="n"&gt;non_flat&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;non_flat&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;To write that, somebody would think: For a simple list
 comprehension I need to
 write &lt;tt class="docutils literal"&gt;[ x for x in non_flat ]&lt;/tt&gt; to get all its items - however I want to retrieve each element of the &lt;tt class="docutils literal"&gt;x&lt;/tt&gt; list so I&amp;#8217;ll write something like&amp;nbsp;this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Well duh! At this time I&amp;#8217;d need research google for a working list comprehension syntax and adjust it to my needs (or give up and write it as a double for&amp;nbsp;loop).&lt;/p&gt;
 &lt;p&gt;Here&amp;#8217;s the correct nested list comprehension people&amp;nbsp;wondering:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;What if I wanted to add a third level of nesting or an if? Well I&amp;#8217;d just bite the bullet and use for&amp;nbsp;loops!&lt;/p&gt;
@@ -218,20 +687,20 @@ It is proposed to allow conditional construction of list literals
 using for and if clauses. &lt;strong&gt;They would nest in the same way for
 loops and if statements nest now.&lt;/strong&gt;&lt;/blockquote&gt;
 &lt;p&gt;This statement explains everything! &lt;em&gt;Just think in for-loops syntax&lt;/em&gt;. So, If I used for loops for the previous flattening, I&amp;#8217;d do something&amp;nbsp;like:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
         &lt;span class="n"&gt;y&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;which, if &lt;cite&gt;y&lt;/cite&gt; is moved to the front and joined in one line would be the correct nested list&amp;nbsp;comprehension!&lt;/p&gt;
 &lt;p&gt;So that&amp;#8217;s the way&amp;#8230; What If I wanted to include only lists with more than 2 elements in the flattening
 (so &lt;cite&gt;[7,8]&lt;/cite&gt; should not be included)? I&amp;#8217;ll write it with for loops&amp;nbsp;first:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
         &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
             &lt;span class="n"&gt;y&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;so by convering this to list comprehension we&amp;nbsp;get:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;non_flat&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Success!&lt;/p&gt;
@@ -240,11 +709,11 @@ of lists of words and we want to get a list of all the letters of these words
 along with the index of the list they belong to
 but only for words with more than two characters. Using the same
 for-loop syntax for the nested list comprehensions we&amp;#8217;ll&amp;nbsp;get:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;strings&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;foo&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;bar&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;baz&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;taz&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;koko&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;strings&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;foo&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;bar&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;baz&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;taz&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;w&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;koko&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;letter&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 27 Apr 2016 11:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</guid><category>python</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Show 404 page on django when DEBUG=True</title><link>https://spapas.github.io/2015/04/29/django-show-404-page/</link><description>&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 27 Apr 2016 11:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</guid><category>python</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Show 404 page on django when DEBUG=True</title><link>https://spapas.github.io/2015/04/29/django-show-404-page/</link><description>&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
 a template named &lt;tt class="docutils literal"&gt;404.html&lt;/tt&gt; to the top level directory of your templates.
 However, on your development environment you&amp;#8217;ll never be able to see this
 template because when &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;DEBUG&lt;/span&gt;=True&lt;/tt&gt; django will render the debug not found
@@ -252,15 +721,15 @@ page to help you debug your url&amp;nbsp;configuration.&lt;/p&gt;
 &lt;p&gt;If you want to display that page in your development environment you can always
 change the &lt;span class="caps"&gt;DEBUG&lt;/span&gt; setting to False, however there&amp;#8217;s a better way: Add a url
 pattern for django&amp;#8217;s default 404 view - just  add the following to your &lt;tt class="docutils literal"&gt;urls.py&lt;/tt&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;django.views.defaults&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;django.views.defaults&lt;/span&gt;
 
-&lt;span class="n"&gt;urlpatterns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;patterns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-    &lt;span class="c"&gt;# Other url patterns ...&lt;/span&gt;
-    &lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;r&amp;#39;^404/$&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;django&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;views&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;defaults&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;page_not_found&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;),&lt;/span&gt;
+&lt;span class="n"&gt;urlpatterns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;patterns&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="c1"&gt;# Other url patterns ...&lt;/span&gt;
+    &lt;span class="n"&gt;url&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;r&amp;#39;^404/$&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;django&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;views&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;defaults&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;page_not_found&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;),&lt;/span&gt;
 &lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You&amp;#8217;ll then be able to see your 404 page by visiting the defined &lt;span class="caps"&gt;URL&lt;/span&gt;!&lt;/p&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 29 Apr 2015 10:20:00 +0300</pubDate><guid>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</guid><category>django</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Calling the REST API of Pusher from python</title><link>https://spapas.github.io/2015/02/06/python-pusher-rest/</link><description>&lt;div class="section" id="introduction"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 29 Apr 2015 10:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</guid><category>django</category><category>debug</category><category>404</category><category>error</category><category>python</category></item><item><title>Calling the REST API of Pusher from python</title><link>https://spapas.github.io/2015/02/06/python-pusher-rest/</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://pusher.com/"&gt;Pusher&lt;/a&gt; is one of the best real time frameworks right now. Using it you can add real time
 events in your projects without the need to configure and use &lt;span class="caps"&gt;HTTP&lt;/span&gt; servers that support
@@ -268,7 +737,7 @@ real-time events in your environment. I used it recently in a project and it wor
 good, having a very simple &lt;span class="caps"&gt;API&lt;/span&gt; and a nice interface for debugging your&amp;nbsp;requests.&lt;/p&gt;
 &lt;p&gt;The only problem I&amp;#8217;ve found was that the &lt;a class="reference external" href="https://github.com/pusher/pusher_client_python"&gt;Pusher python &lt;span class="caps"&gt;API&lt;/span&gt;&lt;/a&gt; misses some features that
 the APIs for other languages have, specifically finding out the users on a presence&amp;nbsp;channel.&lt;/p&gt;
-&lt;p&gt;Pusher supports real-time events through the use of &amp;quot;channels&amp;quot;. Each pusher client will
+&lt;p&gt;Pusher supports real-time events through the use of &amp;#8220;channels&amp;#8221;. Each pusher client will
 subscribe to a channel and receive messages that are sent to that channel. A special kind
 of channel are presence channels which keep a list of their subscribers. You can query the
 &lt;a class="reference external" href="https://pusher.com/docs/rest_api"&gt;Pusher &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt;&lt;/a&gt; (or f.e the Pusher Javascript &lt;span class="caps"&gt;API&lt;/span&gt;) to find out the names of the users
@@ -291,7 +760,7 @@ this &lt;span class="caps"&gt;API&lt;/span&gt; from python (to get the users of 
 &lt;/blockquote&gt;
 &lt;p&gt;So, we need to create a string and then sign it using our Pusher api_key and secret. To help with this, we create a &lt;tt class="docutils literal"&gt;Token&lt;/tt&gt;
 class which will be initialzed with out pusher key/secret and correctly sign a&amp;nbsp;string:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;,):&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;,):&lt;/span&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;secret&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;secret&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;secret&lt;/span&gt;
@@ -304,22 +773,22 @@ class which will be initialzed with out pusher key/secret and correctly sign a&a
 &lt;div class="section" id="generating-the-complete-query-string"&gt;
 &lt;h2&gt;Generating the complete query&amp;nbsp;string&lt;/h2&gt;
 &lt;p&gt;We can now create a function that will sign a request using an instance of the above&amp;nbsp;token:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;create_signed_query_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request_params&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;create_signed_query_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request_params&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-        &lt;span class="s"&gt;&amp;#39;auth_key&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-        &lt;span class="s"&gt;&amp;#39;auth_timestamp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;()),&lt;/span&gt;
-        &lt;span class="s"&gt;&amp;#39;auth_version&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;auth_key&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;auth_timestamp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;()),&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;auth_version&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
     &lt;span class="p"&gt;}&lt;/span&gt;
     &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;keys&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;sorted&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;keys&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;params_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
     &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;keys&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;{0}={1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{0}={1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
 
-    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;amp;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;amp;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-    &lt;span class="n"&gt;sign_data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query_string&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;amp;auth_signature=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sign_data&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;sign_data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query_string&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;amp;auth_signature=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sign_data&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;query_string&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;&lt;tt class="docutils literal"&gt;create_signed_query_string&lt;/tt&gt; receives an instance of a &lt;tt class="docutils literal"&gt;Token&lt;/tt&gt;, the path that we want to request
@@ -333,11 +802,11 @@ query parameter named (&lt;tt class="docutils literal"&gt;auth_signature&lt;/tt&
 &lt;div class="section" id="requesting-the-users-of-the-presence-channel"&gt;
 &lt;h2&gt;Requesting the users of the presence&amp;nbsp;channel&lt;/h2&gt;
 &lt;p&gt;The &lt;tt class="docutils literal"&gt;create_signed_query_string&lt;/tt&gt; can now be used to get the users of a presence channel like&amp;nbsp;this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_users&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;secret&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;partial_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="s"&gt;&amp;#39;/apps/{0}/channels/{1}/users&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_users&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;secret&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;partial_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="s1"&gt;&amp;#39;/apps/{0}/channels/{1}/users&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;secret&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;qs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;create_signed_query_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
-    &lt;span class="n"&gt;full_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;http://api.pusherapp.com/{0}?{1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;full_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;http://api.pusherapp.com/{0}?{1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;full_path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
@@ -351,15 +820,15 @@ presence&amp;nbsp;channel.&lt;/p&gt;
 &lt;div class="section" id="complete-example"&gt;
 &lt;h2&gt;Complete&amp;nbsp;example&lt;/h2&gt;
 &lt;p&gt;A complete example of getting the presence users of a channel is the&amp;nbsp;following:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;hashlib&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;hmac&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;requests&lt;/span&gt;
 
-&lt;span class="n"&gt;app_id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;pusher_app_id&amp;#39;&lt;/span&gt;
-&lt;span class="n"&gt;key&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;pusher_key&amp;#39;&lt;/span&gt;
-&lt;span class="n"&gt;secret&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;pusher_secret&amp;#39;&lt;/span&gt;
-&lt;span class="n"&gt;channel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;pusher_presence_channel&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;app_id&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;pusher_app_id&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;key&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;pusher_key&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;secret&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;pusher_secret&amp;#39;&lt;/span&gt;
+&lt;span class="n"&gt;channel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;pusher_presence_channel&amp;#39;&lt;/span&gt;
 
 
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;,):&lt;/span&gt;
@@ -373,28 +842,28 @@ presence&amp;nbsp;channel.&lt;/p&gt;
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;create_signed_query_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request_params&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
     &lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-        &lt;span class="s"&gt;&amp;#39;auth_key&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-        &lt;span class="s"&gt;&amp;#39;auth_timestamp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;()),&lt;/span&gt;
-        &lt;span class="s"&gt;&amp;#39;auth_version&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;auth_key&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;auth_timestamp&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="p"&gt;()),&lt;/span&gt;
+        &lt;span class="s1"&gt;&amp;#39;auth_version&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1.0&amp;#39;&lt;/span&gt;
     &lt;span class="p"&gt;}&lt;/span&gt;
     &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;keys&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;sorted&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;keys&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;params_list&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
     &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;keys&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;{0}={1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;{0}={1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
 
-    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;amp;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;amp;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params_list&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-    &lt;span class="n"&gt;sign_data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query_string&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;&amp;amp;auth_signature=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sign_data&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="n"&gt;sign_data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;query_string&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    &lt;span class="n"&gt;query_string&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;amp;auth_signature=&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sign&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sign_data&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;query_string&lt;/span&gt;
 
 
 &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;get_users&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="n"&gt;partial_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="s"&gt;&amp;#39;/apps/{0}/channels/{1}/users&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;partial_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="s1"&gt;&amp;#39;/apps/{0}/channels/{1}/users&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;app_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;channel&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;token&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Token&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;secret&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-    &lt;span class="n"&gt;qs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="n"&gt;create_signed_query_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;GET&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
-    &lt;span class="n"&gt;full_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;http://api.pusherapp.com/{0}?{1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;qs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="n"&gt;create_signed_query_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;token&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;GET&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;{})&lt;/span&gt;
+    &lt;span class="n"&gt;full_path&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;http://api.pusherapp.com/{0}?{1}&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;partial_path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;requests&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;full_path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;
 
@@ -407,7 +876,7 @@ presence&amp;nbsp;channel.&lt;/p&gt;
 channel in python but to also call any method we want from the Pusher &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt; by implementing a function
 similar to  &lt;tt class="docutils literal"&gt;get_users&lt;/tt&gt;.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 06 Feb 2015 12:20:00 +0200</pubDate><guid>tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</guid><category>pusher</category><category>python</category><category>rest</category></item><item><title>Retrieving Gmail blocked attachments</title><link>https://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/</link><description>&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Fri, 06 Feb 2015 12:20:00 +0200</pubDate><guid isPermaLink="false">tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</guid><category>pusher</category><category>python</category><category>rest</category></item><item><title>Retrieving Gmail blocked attachments</title><link>https://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/</link><description>&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
 their Gmail account as a primitive backup solution: Compress your directory and send it to
 your gmail. There. Backup&amp;nbsp;complete.&lt;/p&gt;
 &lt;p&gt;However, nothing is so&amp;nbsp;easy&amp;#8230;&lt;/p&gt;
@@ -439,18 +908,18 @@ needed to extract it from the email and convert it back to&amp;nbsp;binary.&lt;/
 &lt;strong&gt;Important: Before going the python way, please check the 2 June 2015 update at the end of the article for an easier solution!&lt;/strong&gt;&lt;/blockquote&gt;
 &lt;p&gt;This was very easy to do using Python - some people &lt;a class="reference external" href="http://stackoverflow.com/questions/4067937/getting-mail-attachment-to-python-file-object"&gt;had already asked the same thing on &lt;span class="caps"&gt;SO&lt;/span&gt;&lt;/a&gt;.
 So here&amp;#8217;s a simple program that gets an email in text/mime format as input and dumps all&amp;nbsp;attachments:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;email&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;email&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
 
-&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;Please enter a file to extract attachments from&amp;quot;&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Please enter a file to extract attachments from&amp;quot;&lt;/span&gt;
         &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;exit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
     &lt;span class="n"&gt;msg&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;message_from_file&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]))&lt;/span&gt;
     &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;pl&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;msg&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_payload&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;pl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_filename&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt; &lt;span class="c"&gt;# if it is an attachment&lt;/span&gt;
-            &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_filename&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;wb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_payload&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;pl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_filename&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt; &lt;span class="c1"&gt;# if it is an attachment&lt;/span&gt;
+            &lt;span class="nb"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_filename&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;wb&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pl&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_payload&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;decode&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;Save this to a file named &lt;tt class="docutils literal"&gt;get_attachments.py&lt;/tt&gt; and, after saving the original message to a file
 named &lt;tt class="docutils literal"&gt;0.txt&lt;/tt&gt; run &lt;tt class="docutils literal"&gt;python get_attachments.py 0.txt&lt;/tt&gt; and you&amp;#8217;ll see the attachments of your email in the same&amp;nbsp;folder!&lt;/p&gt;
@@ -459,7 +928,7 @@ Disclaimer: I have to warn you that since Gmail claims that an attachment is &lt
 you must be 100% sure that you know what you are doing before retrievening your email attachments like this.&lt;/blockquote&gt;
 &lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: Stefan &lt;a class="reference external" href="https://gist.github.com/stefansundin/a99bbfb6cda873d14fd2"&gt;created an improved version&lt;/a&gt; of the attachment extractor which is also compatible with Python&amp;nbsp;3.4!&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update, 12 January 2015&lt;/strong&gt;: Ivana (at the comments section) proposed a different solution that may work
-for some files: &lt;em&gt;Use a mobile Gmail client (I tested it with Android) and &amp;quot;Save to Drive&amp;quot; your attachment.
+for some files: &lt;em&gt;Use a mobile Gmail client (I tested it with Android) and &amp;#8220;Save to Drive&amp;#8221; your attachment.
 You&amp;#8217;ll then be able to download it from the Google Drive!&lt;/em&gt; I am not sure if this works for all attachments,
 however it worked for the source of my PhD thesis! I&amp;#8217;m writing it may not work for all attachments because
 when you download something from Google Drive it does a virus check so it may not allow you to download the
@@ -470,6 +939,6 @@ of the downloaded &lt;span class="caps"&gt;MIME&lt;/span&gt; text file (original
 Outlook in my system, however I tried opening it with &lt;a class="reference external" href="https://www.mozilla.org/el/thunderbird/"&gt;Thunderbird&lt;/a&gt; and it worked!!! So please
 try this solution before trying the pythonic way (especially if you&amp;#8217;re not familiar with&amp;nbsp;python).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update, 6 March 2016&lt;/strong&gt;: Commenter Alex (Alexandre Barfuhok) proposed another clever trick (involving making visible
-the initially invisible &amp;quot;Download to drive&amp;quot; button) for retrieving gmail blocked attachments!
+the initially invisible &amp;#8220;Download to drive&amp;#8221; button) for retrieving gmail blocked attachments!
 Read more about it &lt;a class="reference external" href="http://www.barfuhok.com/how-to-download-a-file-with-anti-virus-warning-on-gmail/"&gt;at his article&lt;/a&gt;!&lt;/p&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 23 Oct 2014 14:20:00 +0300</pubDate><guid>tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</guid><category>gmail</category><category>python</category><category>security</category><category>google</category></item></channel></rss>
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 23 Oct 2014 14:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</guid><category>gmail</category><category>python</category><category>security</category><category>google</category></item></channel></rss>

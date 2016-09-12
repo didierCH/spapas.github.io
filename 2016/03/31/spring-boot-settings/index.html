@@ -23,6 +23,9 @@
 
   <link href="https://spapas.github.io/theme/css/main.css" media="screen, projection"
         rel="stylesheet" type="text/css">
+        
+  <link href="https://spapas.github.io/theme/css/extra_style.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
 
   <link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic"
         rel="stylesheet" type="text/css">
@@ -78,7 +81,7 @@
 <time datetime="2016-03-31T19:20:00+03:00" pubdate>Πεμ 31 Μάρτιος 2016</time>    </p>
 </header>
 
-  <div class="entry-content"><div class="contents topic" id="contents">
+<div class="entry-content"><div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
@@ -213,7 +216,7 @@ the normal application, you should use the <tt class="docutils literal">&#64;Act
 (for example <tt class="docutils literal"><span class="pre">&#64;ActiveProfiles(&quot;test&quot;)</span></tt>) to make sure that the tests
 will run with the correct settings. So if the contents of your <tt class="docutils literal"><span class="pre">application-test.properties</span></tt>
 are <tt class="docutils literal">config.value=Hello test!</tt> running this test should produce no&nbsp;errors:</p>
-<div class="highlight"><pre><span class="nd">@RunWith</span><span class="o">(</span><span class="n">SpringJUnit4ClassRunner</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<div class="highlight"><pre><span></span><span class="nd">@RunWith</span><span class="o">(</span><span class="n">SpringJUnit4ClassRunner</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
 <span class="nd">@SpringApplicationConfiguration</span><span class="o">(</span><span class="n">classes</span> <span class="o">=</span> <span class="n">SpringBootConfigApplication</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
 <span class="nd">@ActiveProfiles</span><span class="o">(</span><span class="s">&quot;test&quot;</span><span class="o">)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">SpringBootConfigApplicationTests</span> <span class="o">{</span>
@@ -265,7 +268,7 @@ available <em>only</em> on certail profiles is a really powerful&nbsp;tool!</p>
 your <span class="caps">VCS</span> - however we wouldn&#8217;t like storing passwords or other
 sensitive data to a <span class="caps">VCS</span>! Sensitive settings should be empty
 (or have a default value) when
-saved to <span class="caps">VCS</span> and overriden by &quot;local&quot;&nbsp;settings.</p>
+saved to <span class="caps">VCS</span> and overriden by &#8220;local&#8221;&nbsp;settings.</p>
 <p>Also, all the previous are jar-packaged
 and we definitely need a way to override them without messing
 with the artifacts (for example, we need to select the
@@ -340,33 +343,33 @@ you&#8217;ll just need to add the <tt class="docutils literal"><span class="pre"
 <tt class="docutils literal"><span class="pre">spring-boot-maven-plugin</span></tt>. This will add some things in the start of your resulting jar file
 that will make it behave as a unix init.d script. If you take a look at your package artifact
 you&#8217;ll see something like&nbsp;this:</p>
-<div class="highlight"><pre><span class="c">#!/bin/bash</span>
-<span class="c">#</span>
-<span class="c">#    .   ____          _            __ _ _</span>
-<span class="c">#   /\\ / ___&#39;_ __ _ _(_)_ __  __ _ \ \ \ \</span>
-<span class="c">#  ( ( )\___ | &#39;_ | &#39;_| | &#39;_ \/ _` | \ \ \ \</span>
-<span class="c">#   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )</span>
-<span class="c">#    &#39;  |____| .__|_| |_|_| |_\__, | / / / /</span>
-<span class="c">#   =========|_|==============|___/=/_/_/_/</span>
-<span class="c">#   :: Spring Boot Startup Script ::</span>
-<span class="c">#</span>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1">#</span>
+<span class="c1">#    .   ____          _            __ _ _</span>
+<span class="c1">#   /\\ / ___&#39;_ __ _ _(_)_ __  __ _ \ \ \ \</span>
+<span class="c1">#  ( ( )\___ | &#39;_ | &#39;_| | &#39;_ \/ _` | \ \ \ \</span>
+<span class="c1">#   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )</span>
+<span class="c1">#    &#39;  |____| .__|_| |_|_| |_\__, | / / / /</span>
+<span class="c1">#   =========|_|==============|___/=/_/_/_/</span>
+<span class="c1">#   :: Spring Boot Startup Script ::</span>
+<span class="c1">#</span>
 
-<span class="c">### BEGIN INIT INFO</span>
-<span class="c"># Provides:          spring-boot-config</span>
-<span class="c"># Required-Start:    $remote_fs $syslog $network</span>
-<span class="c"># Required-Stop:     $remote_fs $syslog $network</span>
-<span class="c"># Default-Start:     2 3 4 5</span>
-<span class="c"># Default-Stop:      0 1 6</span>
-<span class="c"># Short-Description: spring-boot-config</span>
-<span class="c"># Description:       Demo project for Spring Boot configuration</span>
-<span class="c"># chkconfig:         2345 99 01</span>
-<span class="c">### END INIT INFO</span>
+<span class="c1">### BEGIN INIT INFO</span>
+<span class="c1"># Provides:          spring-boot-config</span>
+<span class="c1"># Required-Start:    $remote_fs $syslog $network</span>
+<span class="c1"># Required-Stop:     $remote_fs $syslog $network</span>
+<span class="c1"># Default-Start:     2 3 4 5</span>
+<span class="c1"># Default-Stop:      0 1 6</span>
+<span class="c1"># Short-Description: spring-boot-config</span>
+<span class="c1"># Description:       Demo project for Spring Boot configuration</span>
+<span class="c1"># chkconfig:         2345 99 01</span>
+<span class="c1">### END INIT INFO</span>
 
 <span class="o">[[</span> -n <span class="s2">&quot;</span><span class="nv">$DEBUG</span><span class="s2">&quot;</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nb">set</span> -x
 
-<span class="c"># Initialize variables that cannot be provided by a .conf file</span>
+<span class="c1"># Initialize variables that cannot be provided by a .conf file</span>
 <span class="nv">WORKING_DIR</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span><span class="s2">&quot;</span>
-<span class="c"># shellcheck disable=SC2153</span>
+<span class="c1"># shellcheck disable=SC2153</span>
 <span class="o">[[</span> -n <span class="s2">&quot;</span><span class="nv">$JARFILE</span><span class="s2">&quot;</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">jarfile</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$JARFILE</span><span class="s2">&quot;</span>
 <span class="o">[[</span> -n <span class="s2">&quot;</span><span class="nv">$APP_NAME</span><span class="s2">&quot;</span> <span class="o">]]</span> <span class="o">&amp;&amp;</span> <span class="nv">identity</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$APP_NAME</span><span class="s2">&quot;</span>
 
@@ -441,6 +444,9 @@ quickly deploy the resulting jar as an init.d system&nbsp;service!</p>
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
       <li class="post">
+          <a href="https://spapas.github.io/2016/09/12/django-split-query/">Splitting a query into individual fields in Django</a>
+      </li>
+      <li class="post">
           <a href="https://spapas.github.io/2016/06/27/download-imgur-album-images/">How to download all images of an imgur album</a>
       </li>
       <li class="post">
@@ -451,9 +457,6 @@ quickly deploy the resulting jar as an init.d system&nbsp;service!</p>
       </li>
       <li class="post">
           <a href="https://spapas.github.io/2016/03/31/spring-boot-settings/">Configuring Spring Boot</a>
-      </li>
-      <li class="post">
-          <a href="https://spapas.github.io/2016/03/02/react-redux-tutorial/">A comprehensive react-redux tutorial</a>
       </li>
     </ul>
   </section>
@@ -476,7 +479,7 @@ quickly deploy the resulting jar as an init.d system&nbsp;service!</p>
 
   <section>
   <h1>Tags</h1>
-    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
 
 
 

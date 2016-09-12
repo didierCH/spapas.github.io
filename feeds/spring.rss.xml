@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds/spring.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 31 Mar 2016 19:20:00 +0300</lastBuildDate><item><title>Configuring Spring Boot</title><link>https://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
+<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Thu, 31 Mar 2016 19:20:00 +0300</lastBuildDate><item><title>Configuring Spring Boot</title><link>https://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -134,7 +134,7 @@ the normal application, you should use the &lt;tt class="docutils literal"&gt;&a
 (for example &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;#64;ActiveProfiles(&amp;quot;test&amp;quot;)&lt;/span&gt;&lt;/tt&gt;) to make sure that the tests
 will run with the correct settings. So if the contents of your &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;application-test.properties&lt;/span&gt;&lt;/tt&gt;
 are &lt;tt class="docutils literal"&gt;config.value=Hello test!&lt;/tt&gt; running this test should produce no&amp;nbsp;errors:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nd"&gt;@RunWith&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;SpringJUnit4ClassRunner&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nd"&gt;@RunWith&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;SpringJUnit4ClassRunner&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;span class="nd"&gt;@SpringApplicationConfiguration&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;classes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SpringBootConfigApplication&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;span class="nd"&gt;@ActiveProfiles&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;test&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
 &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="kd"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;SpringBootConfigApplicationTests&lt;/span&gt; &lt;span class="o"&gt;{&lt;/span&gt;
@@ -186,7 +186,7 @@ available &lt;em&gt;only&lt;/em&gt; on certail profiles is a really powerful&amp
 your &lt;span class="caps"&gt;VCS&lt;/span&gt; - however we wouldn&amp;#8217;t like storing passwords or other
 sensitive data to a &lt;span class="caps"&gt;VCS&lt;/span&gt;! Sensitive settings should be empty
 (or have a default value) when
-saved to &lt;span class="caps"&gt;VCS&lt;/span&gt; and overriden by &amp;quot;local&amp;quot;&amp;nbsp;settings.&lt;/p&gt;
+saved to &lt;span class="caps"&gt;VCS&lt;/span&gt; and overriden by &amp;#8220;local&amp;#8221;&amp;nbsp;settings.&lt;/p&gt;
 &lt;p&gt;Also, all the previous are jar-packaged
 and we definitely need a way to override them without messing
 with the artifacts (for example, we need to select the
@@ -261,33 +261,33 @@ you&amp;#8217;ll just need to add the &lt;tt class="docutils literal"&gt;&lt;spa
 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;spring-boot-maven-plugin&lt;/span&gt;&lt;/tt&gt;. This will add some things in the start of your resulting jar file
 that will make it behave as a unix init.d script. If you take a look at your package artifact
 you&amp;#8217;ll see something like&amp;nbsp;this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c"&gt;#!/bin/bash&lt;/span&gt;
-&lt;span class="c"&gt;#&lt;/span&gt;
-&lt;span class="c"&gt;#    .   ____          _            __ _ _&lt;/span&gt;
-&lt;span class="c"&gt;#   /\\ / ___&amp;#39;_ __ _ _(_)_ __  __ _ \ \ \ \&lt;/span&gt;
-&lt;span class="c"&gt;#  ( ( )\___ | &amp;#39;_ | &amp;#39;_| | &amp;#39;_ \/ _` | \ \ \ \&lt;/span&gt;
-&lt;span class="c"&gt;#   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )&lt;/span&gt;
-&lt;span class="c"&gt;#    &amp;#39;  |____| .__|_| |_|_| |_\__, | / / / /&lt;/span&gt;
-&lt;span class="c"&gt;#   =========|_|==============|___/=/_/_/_/&lt;/span&gt;
-&lt;span class="c"&gt;#   :: Spring Boot Startup Script ::&lt;/span&gt;
-&lt;span class="c"&gt;#&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;span class="c1"&gt;#    .   ____          _            __ _ _&lt;/span&gt;
+&lt;span class="c1"&gt;#   /\\ / ___&amp;#39;_ __ _ _(_)_ __  __ _ \ \ \ \&lt;/span&gt;
+&lt;span class="c1"&gt;#  ( ( )\___ | &amp;#39;_ | &amp;#39;_| | &amp;#39;_ \/ _` | \ \ \ \&lt;/span&gt;
+&lt;span class="c1"&gt;#   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )&lt;/span&gt;
+&lt;span class="c1"&gt;#    &amp;#39;  |____| .__|_| |_|_| |_\__, | / / / /&lt;/span&gt;
+&lt;span class="c1"&gt;#   =========|_|==============|___/=/_/_/_/&lt;/span&gt;
+&lt;span class="c1"&gt;#   :: Spring Boot Startup Script ::&lt;/span&gt;
+&lt;span class="c1"&gt;#&lt;/span&gt;
 
-&lt;span class="c"&gt;### BEGIN INIT INFO&lt;/span&gt;
-&lt;span class="c"&gt;# Provides:          spring-boot-config&lt;/span&gt;
-&lt;span class="c"&gt;# Required-Start:    $remote_fs $syslog $network&lt;/span&gt;
-&lt;span class="c"&gt;# Required-Stop:     $remote_fs $syslog $network&lt;/span&gt;
-&lt;span class="c"&gt;# Default-Start:     2 3 4 5&lt;/span&gt;
-&lt;span class="c"&gt;# Default-Stop:      0 1 6&lt;/span&gt;
-&lt;span class="c"&gt;# Short-Description: spring-boot-config&lt;/span&gt;
-&lt;span class="c"&gt;# Description:       Demo project for Spring Boot configuration&lt;/span&gt;
-&lt;span class="c"&gt;# chkconfig:         2345 99 01&lt;/span&gt;
-&lt;span class="c"&gt;### END INIT INFO&lt;/span&gt;
+&lt;span class="c1"&gt;### BEGIN INIT INFO&lt;/span&gt;
+&lt;span class="c1"&gt;# Provides:          spring-boot-config&lt;/span&gt;
+&lt;span class="c1"&gt;# Required-Start:    $remote_fs $syslog $network&lt;/span&gt;
+&lt;span class="c1"&gt;# Required-Stop:     $remote_fs $syslog $network&lt;/span&gt;
+&lt;span class="c1"&gt;# Default-Start:     2 3 4 5&lt;/span&gt;
+&lt;span class="c1"&gt;# Default-Stop:      0 1 6&lt;/span&gt;
+&lt;span class="c1"&gt;# Short-Description: spring-boot-config&lt;/span&gt;
+&lt;span class="c1"&gt;# Description:       Demo project for Spring Boot configuration&lt;/span&gt;
+&lt;span class="c1"&gt;# chkconfig:         2345 99 01&lt;/span&gt;
+&lt;span class="c1"&gt;### END INIT INFO&lt;/span&gt;
 
 &lt;span class="o"&gt;[[&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$DEBUG&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt; -x
 
-&lt;span class="c"&gt;# Initialize variables that cannot be provided by a .conf file&lt;/span&gt;
+&lt;span class="c1"&gt;# Initialize variables that cannot be provided by a .conf file&lt;/span&gt;
 &lt;span class="nv"&gt;WORKING_DIR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
-&lt;span class="c"&gt;# shellcheck disable=SC2153&lt;/span&gt;
+&lt;span class="c1"&gt;# shellcheck disable=SC2153&lt;/span&gt;
 &lt;span class="o"&gt;[[&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$JARFILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nv"&gt;jarfile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$JARFILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
 &lt;span class="o"&gt;[[&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$APP_NAME&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nv"&gt;identity&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$APP_NAME&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
 
@@ -328,7 +328,7 @@ advanced profiles techniques (multiple profiles, profile enabled
 some really complex configurations! Finally, you&amp;#8217;ll be able to really
 quickly deploy the resulting jar as an init.d system&amp;nbsp;service!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category><category>deploy</category><category>init.d</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category><category>deploy</category><category>init.d</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id3"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -355,14 +355,14 @@ authentication and authorization. Although I&amp;#8217;ve found a great number o
 &lt;div class="section" id="a-basic-spring-security-setup"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id4"&gt;A basic spring security&amp;nbsp;setup&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;I&amp;#8217;ve created a very basic setup for spring-security for a spring-mvc project. Please take a look here for a more thorough explanation of a simple spring-security project &lt;a class="reference external" href="http://www.mkyong.com/spring-security/spring-security-hello-world-example/"&gt;http://www.mkyong.com/spring-security/spring-security-hello-world-example/&lt;/a&gt; and here &lt;a class="reference external" href="http://www.codeproject.com/Articles/253901/Getting-Started-Spring-Security"&gt;http://www.codeproject.com/Articles/253901/Getting-Started-Spring-Security&lt;/a&gt; for a great explanation of the various spring-security&amp;nbsp;classes.&lt;/p&gt;
-&lt;p&gt;In my setup there is a controller that defines two mappings, the &amp;quot;/&amp;quot; which is the homepage that has a link to the &amp;quot;/enter&amp;quot; and the &amp;quot;/enter&amp;quot; which is an internal page in which only authorized users have access. When the user clicks on &amp;quot;enter&amp;quot; he will be represented with a login form first. If the use logs in successfully, the enter.jsp will list the username and the authorities of the logged in user through the following spring-security&amp;nbsp;tags:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="k"&gt;&amp;lt;%@&lt;/span&gt; &lt;span class="n"&gt;taglib&lt;/span&gt; &lt;span class="n"&gt;prefix&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sec&amp;quot;&lt;/span&gt; &lt;span class="n"&gt;uri&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/security/tags&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;%&amp;gt;&lt;/span&gt;
+&lt;p&gt;In my setup there is a controller that defines two mappings, the &amp;#8220;/&amp;#8221; which is the homepage that has a link to the &amp;#8220;/enter&amp;#8221; and the &amp;#8220;/enter&amp;#8221; which is an internal page in which only authorized users have access. When the user clicks on &amp;#8220;enter&amp;#8221; he will be represented with a login form first. If the use logs in successfully, the enter.jsp will list the username and the authorities of the logged in user through the following spring-security&amp;nbsp;tags:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;&amp;lt;%@&lt;/span&gt; &lt;span class="n"&gt;taglib&lt;/span&gt; &lt;span class="n"&gt;prefix&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;sec&amp;quot;&lt;/span&gt; &lt;span class="n"&gt;uri&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/security/tags&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;%&amp;gt;&lt;/span&gt;
 [...]
 Username: &lt;span class="nt"&gt;&amp;lt;sec:authentication&lt;/span&gt; &lt;span class="na"&gt;property=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;principal.username&amp;quot;&lt;/span&gt; &lt;span class="nt"&gt;/&amp;gt;&amp;lt;br&lt;/span&gt; &lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
 Authorities: &lt;span class="nt"&gt;&amp;lt;sec:authentication&lt;/span&gt; &lt;span class="na"&gt;property=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;principal.authorities&amp;quot;&lt;/span&gt;&lt;span class="nt"&gt;/&amp;gt;&amp;lt;br&lt;/span&gt; &lt;span class="nt"&gt;/&amp;gt;&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;The authentication provider is an in memory service in which the username, password and authorities of each user are defined in the &lt;span class="caps"&gt;XML&lt;/span&gt;. So this is a simple spring-security example that can be found in a number of places on the internet. The security rules, login form and the authentication provider are configured with the following &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;security-config.xml&lt;/span&gt;&lt;/tt&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nt"&gt;&amp;lt;beans:beans&lt;/span&gt; &lt;span class="na"&gt;xmlns=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/security&amp;quot;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;&amp;lt;beans:beans&lt;/span&gt; &lt;span class="na"&gt;xmlns=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/security&amp;quot;&lt;/span&gt;
    &lt;span class="na"&gt;xmlns:beans=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/beans&amp;quot;&lt;/span&gt;
    &lt;span class="na"&gt;xmlns:xsi=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;
    &lt;span class="na"&gt;xsi:schemaLocation=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/beans&lt;/span&gt;
@@ -401,7 +401,7 @@ Authorities: &lt;span class="nt"&gt;&amp;lt;sec:authentication&lt;/span&gt; &lt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id5"&gt;Spring security &lt;span class="caps"&gt;LDAP&lt;/span&gt; with custom&amp;nbsp;authorities&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;The previous application can be modified to login through &lt;span class="caps"&gt;LDAP&lt;/span&gt; and get the authorities from a custom class. The main differences are in the &lt;tt class="docutils literal"&gt;pom.xml&lt;/tt&gt; which adsd the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;spring-security-ldap&lt;/span&gt;&lt;/tt&gt; dependency, the addition of a &lt;tt class="docutils literal"&gt;CustomLdapAuthoritiesPopulator.java&lt;/tt&gt; which does the actual mapping of username to authority and various changes to the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;security-config.xml&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
 &lt;p&gt;As you will see we had to define our security beans mainly using spring beans and not using the various elements from security namespace like &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;lt;ldap-server&amp;gt;&lt;/span&gt;&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;lt;ldap-authentication-provder&amp;gt;&lt;/span&gt;&lt;/tt&gt;. For a good tutorial on using these elements and ldap in spring security in general check these out: &lt;a class="reference external" href="http://docs.spring.io/spring-security/site/docs/3.1.x/reference/ldap.html"&gt;http://docs.spring.io/spring-security/site/docs/3.1.x/reference/ldap.html&lt;/a&gt; and &lt;a class="reference external" href="http://krams915.blogspot.gr/2011/01/spring-security-mvc-using-ldap.html"&gt;http://krams915.blogspot.gr/2011/01/spring-security-mvc-using-ldap.html&lt;/a&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="nt"&gt;&amp;lt;beans:beans&lt;/span&gt; &lt;span class="na"&gt;xmlns=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/security&amp;quot;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nt"&gt;&amp;lt;beans:beans&lt;/span&gt; &lt;span class="na"&gt;xmlns=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/security&amp;quot;&lt;/span&gt;
    &lt;span class="na"&gt;xmlns:beans=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/beans&amp;quot;&lt;/span&gt;
    &lt;span class="na"&gt;xmlns:xsi=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;&lt;/span&gt;
    &lt;span class="na"&gt;xsi:schemaLocation=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;http://www.springframework.org/schema/beans&lt;/span&gt;
@@ -481,7 +481,7 @@ No bean named &amp;#8216;org.springframework.security.authenticationManager&amp;
 &lt;div class="section" id="customldapauthoritiespopulator"&gt;
 &lt;h3&gt;&lt;a class="toc-backref" href="#id9"&gt;CustomLdapAuthoritiesPopulator&lt;/a&gt;&lt;/h3&gt;
 &lt;p&gt;The &lt;tt class="docutils literal"&gt;CustomLdapAuthoritiesPopulator&lt;/tt&gt; just needs to implement the &lt;tt class="docutils literal"&gt;LdapAuthoritiesPopulator&lt;/tt&gt; interface. Here&amp;#8217;s our&amp;nbsp;implmentation:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="kn"&gt;package&lt;/span&gt; &lt;span class="nn"&gt;gr.serafeim.springldapcustom&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;package&lt;/span&gt; &lt;span class="nn"&gt;gr.serafeim.springldapcustom&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
 
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;java.util.Collection&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
 &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;java.util.HashSet&lt;/span&gt;&lt;span class="o"&gt;;&lt;/span&gt;
@@ -528,4 +528,4 @@ vertical-align: top; --&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 14 Oct 2013 08:55:00 +0300</pubDate><guid>tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</guid><category>spring</category><category>spring-security</category><category>java</category><category>ldap</category><category>authentication</category></item></channel></rss>
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 14 Oct 2013 08:55:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</guid><category>spring</category><category>spring-security</category><category>java</category><category>ldap</category><category>authentication</category></item></channel></rss>
