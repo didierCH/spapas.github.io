@@ -1,5 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2016-09-21T11:20:00+03:00</updated><entry><title>A pandas pivot_table primer</title><link href="https://spapas.github.io/2016/09/21/pandas-pivot-table-primer/" rel="alternate"></link><published>2016-09-21T11:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-21:2016/09/21/pandas-pivot-table-primer/</id><summary type="html">&lt;style type="text/css"&gt;/*!
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2016-11-02T15:10:00+02:00</updated><entry><title>Getting a logical backup of all databases of your Postgresql server</title><link href="https://spapas.github.io/2016/11/02/postgresql-backup/" rel="alternate"></link><published>2016-11-02T15:10:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-11-02:2016/11/02/postgresql-backup/</id><summary type="html">&lt;p&gt;In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
+with some other goodies. More specifically, the script&amp;nbsp;will:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Create two files at /tmp to output information (one for debugging and one with info for sending it through email at the&amp;nbsp;end)&lt;/li&gt;
+&lt;li&gt;Create a backup directory with the current&amp;nbsp;date&lt;/li&gt;
+&lt;li&gt;Create a list of all databases found on the&amp;nbsp;server&lt;/li&gt;
+&lt;li&gt;For each database, vacuum and analyze it, backup it, gzip it and put it in the backup&amp;nbsp;directory&lt;/li&gt;
+&lt;li&gt;Write info about the backup in the info log&amp;nbsp;file&lt;/li&gt;
+&lt;li&gt;Do the same for global&amp;nbsp;objects&lt;/li&gt;
+&lt;li&gt;Send an email when the backup is finished with the info&amp;nbsp;log&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Now, in my system I&amp;#8217;m using an external folder at &lt;tt class="docutils literal"&gt;/mnt/backupdb&lt;/tt&gt; to put my backups. You may either use the same technique or connect remotely to a
+postgresql database (so you need to change the parameters of &lt;tt class="docutils literal"&gt;vacuumdb&lt;/tt&gt;, &lt;tt class="docutils literal"&gt;pg_dump&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;pg_dumpall&lt;/tt&gt; to define the server and credentials to connect to)
+and put the backups to a local&amp;nbsp;disc.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/bin/sh&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt; &amp;gt; /tmp/db_backup.log
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt; &amp;gt; /tmp/db_backup_info.log
+&lt;span class="nv"&gt;date_str&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;date +&lt;span class="s2"&gt;&amp;quot;%Y%m%d_%H%M%S&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;backup_dir&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;/mnt/backupdb/pg_backup.&lt;span class="nv"&gt;$date_str&lt;/span&gt;
+
+mkdir &lt;span class="nv"&gt;$backup_dir&lt;/span&gt;
+&lt;span class="nb"&gt;pushd&lt;/span&gt; &lt;span class="nv"&gt;$backup_dir&lt;/span&gt; &amp;gt; /dev/null
+
+&lt;span class="nv"&gt;dbs&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;sudo -u postgres psql -Upostgres -lt &lt;span class="p"&gt;|&lt;/span&gt; grep -v : &lt;span class="p"&gt;|&lt;/span&gt; cut -d &lt;span class="se"&gt;\|&lt;/span&gt; -f &lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep -v template &lt;span class="p"&gt;|&lt;/span&gt; grep -v -e &lt;span class="s1"&gt;&amp;#39;^\s*$&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; sed -e &lt;span class="s1"&gt;&amp;#39;s/  *$//&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;|&lt;/span&gt;  tr &lt;span class="s1"&gt;&amp;#39;\n&amp;#39;&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Will backup: &lt;/span&gt;&lt;span class="nv"&gt;$dbs&lt;/span&gt;&lt;span class="s2"&gt; to &lt;/span&gt;&lt;span class="nv"&gt;$backup_dir&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
+&lt;span class="k"&gt;for&lt;/span&gt; db in &lt;span class="nv"&gt;$dbs&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Starting backup for &lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
+  &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
+  sudo -u postgres vacuumdb --analyze -Upostgres &lt;span class="nv"&gt;$db&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup.log
+  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+  &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;stat &lt;span class="nv"&gt;$filename&lt;/span&gt; --printf&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%s&amp;quot;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
+  &lt;span class="nv"&gt;kb_size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;scale=2; &lt;/span&gt;&lt;span class="nv"&gt;$size&lt;/span&gt;&lt;span class="s2"&gt; / 1024.0&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; bc&lt;span class="sb"&gt;`&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Finished backup for &lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt; - size is &lt;/span&gt;&lt;span class="nv"&gt;$kb_size&lt;/span&gt;&lt;span class="s2"&gt; KB&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
+&lt;span class="k"&gt;done&lt;/span&gt;
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Backing up global objects&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
+&lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;global.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
+sudo -u postgres pg_dumpall -Upostgres -v -g 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+&lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;stat &lt;span class="nv"&gt;$filename&lt;/span&gt; --printf&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%s&amp;quot;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
+&lt;span class="nv"&gt;kb_size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;scale=2; &lt;/span&gt;&lt;span class="nv"&gt;$size&lt;/span&gt;&lt;span class="s2"&gt; / 1024.0&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; bc&lt;span class="sb"&gt;`&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Finished backup for global - size is &lt;/span&gt;&lt;span class="nv"&gt;$kb_size&lt;/span&gt;&lt;span class="s2"&gt; KB&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
+
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Ok!&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
+mail -s &lt;span class="s2"&gt;&amp;quot;Backup results&amp;quot;&lt;/span&gt; spapas@mymail.foo.bar  &amp;lt; /tmp/db_backup_info.log
+&lt;span class="nb"&gt;popd&lt;/span&gt; &amp;gt; /dev/null
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Let&amp;#8217;s explain a bit the above script: The two first lines (echo &amp;#8230;)  will just clear out the two files &lt;tt class="docutils literal"&gt;/tmp/db_backup.log&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;/tmp/db_backup_info.log&lt;/tt&gt;. The first
+will contain debug info from the commands and the second one will contain our info that will be sent through an email at the end of the backup. After that, we initialize
+&lt;tt class="docutils literal"&gt;date_str&lt;/tt&gt; with the current date in the form &lt;tt class="docutils literal"&gt;20161102_145011&lt;/tt&gt; and the backup_dir with the correct directory to save the backups to. We then create the backup directory
+and switch to it with &lt;tt class="docutils literal"&gt;pushd&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;The following, rather long command will assign the names of the databases to the &lt;tt class="docutils literal"&gt;dbs&lt;/tt&gt; variable. So how is it working? &lt;tt class="docutils literal"&gt;psql &lt;span class="pre"&gt;-lt&lt;/span&gt;&lt;/tt&gt; lists the names of the databases, but lists
+also more non-needed information which we remove with the following commands (grep, cut etc). The sed removes whitespace and the tr concatenates individual lines to a single line
+so dbs will have a value like &amp;#8216;db1 db2 &amp;#8230;&amp;#8217;. For each one of these files then we assign its name and date to a filename and then, after we execute vacuumdb we use pg_dump with gzip to actually
+create the backup and output it to the file. The other two lines (size and kb_size) are used to calculate the size of the backup file (to be sure that something is actually created) - you&amp;#8217;ll
+need to install bc for that. The same process is followed the to backup global objects (usernames etc) using &lt;tt class="docutils literal"&gt;pg_dumpall &lt;span class="pre"&gt;-g&lt;/span&gt;&lt;/tt&gt;. Finally, we send a mail with a subject of &amp;#8220;Backup results&amp;#8221;
+and body the contents of &lt;tt class="docutils literal"&gt;/tmp/db_backup_info.log&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;#8217;ve saved this file to &lt;tt class="docutils literal"&gt;/var/lib/pgsql/db_backup_all.sh&lt;/tt&gt;. To run I propose using cron &amp;#8212; just edit your crontab (through &lt;tt class="docutils literal"&gt;vi /etc/crontab&lt;/tt&gt;) and add the&amp;nbsp;line&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+15 2  *  *  * root       /usr/bin/bash /var/lib/pgsql/db_backup_all.sh
+&lt;/pre&gt;
+&lt;p&gt;This will run the backup every night at 2.15. Uses the root user to have access rights to the backup folder. One thing to be careful about is that on Redhat/Centos distributions,
+the above won&amp;#8217;t work because sudo requires a tty to work and cron doesn&amp;#8217;t have one. To fix this, comment out the&amp;nbsp;line&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+Defaults    requiretty
+&lt;/pre&gt;
+&lt;p&gt;of your /etc/sudoers&amp;nbsp;file.&lt;/p&gt;
+</summary><category term="bash"></category><category term="cron"></category><category term="postgresql"></category></entry><entry><title>A pandas pivot_table primer</title><link href="https://spapas.github.io/2016/09/21/pandas-pivot-table-primer/" rel="alternate"></link><published>2016-09-21T11:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-21:2016/09/21/pandas-pivot-table-primer/</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *

@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/index.html</loc>
-<lastmod>2016-09-21T11:24:24-00:00</lastmod>
+<lastmod>2016-11-02T15:05:02-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2016-09-21T11:24:24-00:00</lastmod>
+<lastmod>2016-11-02T15:05:02-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2016-09-21T11:24:24-00:00</lastmod>
+<lastmod>2016-11-02T15:05:02-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2016-09-21T11:24:24-00:00</lastmod>
+<lastmod>2016-11-02T15:05:02-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2016/11/02/postgresql-backup/</loc>
+<lastmod>2016-11-02T15:10:00+02:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -291,6 +298,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/category/postgresql.html</loc>
+<lastmod>2016-11-02T15:10:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/category/python.html</loc>
 <lastmod>2016-09-21T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -515,6 +529,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/cron.html</loc>
+<lastmod>2016-11-02T15:10:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/babelify.html</loc>
 <lastmod>2016-03-02T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -634,6 +655,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/bash.html</loc>
+<lastmod>2016-11-02T15:10:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/es6.html</loc>
 <lastmod>2016-03-02T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -643,6 +671,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/spring-boot.html</loc>
 <lastmod>2016-03-31T19:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/postgresql.html</loc>
+<lastmod>2016-11-02T15:10:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1006,7 +1041,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2016-09-21T11:20:00+01:35</lastmod>
+<lastmod>2016-11-02T15:10:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>

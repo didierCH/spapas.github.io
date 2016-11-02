@@ -60,6 +60,9 @@
         <a href="https://spapas.github.io/category/pelican.html">Pelican</a>
       </li>
       <li >
+        <a href="https://spapas.github.io/category/postgresql.html">Postgresql</a>
+      </li>
+      <li >
         <a href="https://spapas.github.io/category/python.html">Python</a>
       </li>
       <li >
@@ -72,6 +75,83 @@
   <div id="main">
     <div id="content">
 <div class="blog-index">
+  		<article>
+<header>
+      <h1 class="entry-title">
+        <a href="https://spapas.github.io/2016/11/02/postgresql-backup/">Getting a logical backup of all databases of your Postgresql server</a>
+      </h1>
+    <p class="meta">
+<time datetime="2016-11-02T15:10:00+02:00" pubdate>Τετ 02 Νοέμβριος 2016</time>    </p>
+</header>
+
+<div class="entry-content"><p>In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
+with some other goodies. More specifically, the script&nbsp;will:</p>
+<ul class="simple">
+<li>Create two files at /tmp to output information (one for debugging and one with info for sending it through email at the&nbsp;end)</li>
+<li>Create a backup directory with the current&nbsp;date</li>
+<li>Create a list of all databases found on the&nbsp;server</li>
+<li>For each database, vacuum and analyze it, backup it, gzip it and put it in the backup&nbsp;directory</li>
+<li>Write info about the backup in the info log&nbsp;file</li>
+<li>Do the same for global&nbsp;objects</li>
+<li>Send an email when the backup is finished with the info&nbsp;log</li>
+</ul>
+<p>Now, in my system I&#8217;m using an external folder at <tt class="docutils literal">/mnt/backupdb</tt> to put my backups. You may either use the same technique or connect remotely to a
+postgresql database (so you need to change the parameters of <tt class="docutils literal">vacuumdb</tt>, <tt class="docutils literal">pg_dump</tt> and <tt class="docutils literal">pg_dumpall</tt> to define the server and credentials to connect to)
+and put the backups to a local&nbsp;disc.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="nb">echo</span> <span class="s2">&quot;&quot;</span> &gt; /tmp/db_backup.log
+<span class="nb">echo</span> <span class="s2">&quot;&quot;</span> &gt; /tmp/db_backup_info.log
+<span class="nv">date_str</span><span class="o">=</span><span class="k">$(</span>date +<span class="s2">&quot;%Y%m%d_%H%M%S&quot;</span><span class="k">)</span>
+<span class="nv">backup_dir</span><span class="o">=</span>/mnt/backupdb/pg_backup.<span class="nv">$date_str</span>
+
+mkdir <span class="nv">$backup_dir</span>
+<span class="nb">pushd</span> <span class="nv">$backup_dir</span> &gt; /dev/null
+
+<span class="nv">dbs</span><span class="o">=</span><span class="sb">`</span>sudo -u postgres psql -Upostgres -lt <span class="p">|</span> grep -v : <span class="p">|</span> cut -d <span class="se">\|</span> -f <span class="m">1</span> <span class="p">|</span> grep -v template <span class="p">|</span> grep -v -e <span class="s1">&#39;^\s*$&#39;</span> <span class="p">|</span> sed -e <span class="s1">&#39;s/  *$//&#39;</span><span class="p">|</span>  tr <span class="s1">&#39;\n&#39;</span> <span class="s1">&#39; &#39;</span><span class="sb">`</span>
+<span class="nb">echo</span> <span class="s2">&quot;Will backup: </span><span class="nv">$dbs</span><span class="s2"> to </span><span class="nv">$backup_dir</span><span class="s2">&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+<span class="k">for</span> db in <span class="nv">$dbs</span><span class="p">;</span> <span class="k">do</span>
+  <span class="nb">echo</span> <span class="s2">&quot;Starting backup for </span><span class="nv">$db</span><span class="s2">&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+  <span class="nv">filename</span><span class="o">=</span><span class="nv">$db</span>.<span class="nv">$date_str</span>.sql.gz
+  sudo -u postgres vacuumdb --analyze -Upostgres <span class="nv">$db</span> &gt;&gt; /tmp/db_backup.log
+  sudo -u postgres pg_dump -Upostgres -v <span class="nv">$db</span> -F p 2&gt;&gt; /tmp/db_backup.log <span class="p">|</span> gzip &gt; <span class="nv">$filename</span>
+  <span class="nv">size</span><span class="o">=</span><span class="sb">`</span>stat <span class="nv">$filename</span> --printf<span class="o">=</span><span class="s2">&quot;%s&quot;</span><span class="sb">`</span>
+  <span class="nv">kb_size</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="s2">&quot;scale=2; </span><span class="nv">$size</span><span class="s2"> / 1024.0&quot;</span> <span class="p">|</span> bc<span class="sb">`</span>
+  <span class="nb">echo</span> <span class="s2">&quot;Finished backup for </span><span class="nv">$db</span><span class="s2"> - size is </span><span class="nv">$kb_size</span><span class="s2"> KB&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+<span class="k">done</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;Backing up global objects&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+<span class="nv">filename</span><span class="o">=</span>global.<span class="nv">$date_str</span>.sql.gz
+sudo -u postgres pg_dumpall -Upostgres -v -g 2&gt;&gt; /tmp/db_backup.log <span class="p">|</span> gzip &gt; <span class="nv">$filename</span>
+<span class="nv">size</span><span class="o">=</span><span class="sb">`</span>stat <span class="nv">$filename</span> --printf<span class="o">=</span><span class="s2">&quot;%s&quot;</span><span class="sb">`</span>
+<span class="nv">kb_size</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="s2">&quot;scale=2; </span><span class="nv">$size</span><span class="s2"> / 1024.0&quot;</span> <span class="p">|</span> bc<span class="sb">`</span>
+<span class="nb">echo</span> <span class="s2">&quot;Finished backup for global - size is </span><span class="nv">$kb_size</span><span class="s2"> KB&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+
+<span class="nb">echo</span> <span class="s2">&quot;Ok!&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+mail -s <span class="s2">&quot;Backup results&quot;</span> spapas@mymail.foo.bar  &lt; /tmp/db_backup_info.log
+<span class="nb">popd</span> &gt; /dev/null
+</pre></div>
+<p>Let&#8217;s explain a bit the above script: The two first lines (echo &#8230;)  will just clear out the two files <tt class="docutils literal">/tmp/db_backup.log</tt> and <tt class="docutils literal">/tmp/db_backup_info.log</tt>. The first
+will contain debug info from the commands and the second one will contain our info that will be sent through an email at the end of the backup. After that, we initialize
+<tt class="docutils literal">date_str</tt> with the current date in the form <tt class="docutils literal">20161102_145011</tt> and the backup_dir with the correct directory to save the backups to. We then create the backup directory
+and switch to it with <tt class="docutils literal">pushd</tt>.</p>
+<p>The following, rather long command will assign the names of the databases to the <tt class="docutils literal">dbs</tt> variable. So how is it working? <tt class="docutils literal">psql <span class="pre">-lt</span></tt> lists the names of the databases, but lists
+also more non-needed information which we remove with the following commands (grep, cut etc). The sed removes whitespace and the tr concatenates individual lines to a single line
+so dbs will have a value like &#8216;db1 db2 &#8230;&#8217;. For each one of these files then we assign its name and date to a filename and then, after we execute vacuumdb we use pg_dump with gzip to actually
+create the backup and output it to the file. The other two lines (size and kb_size) are used to calculate the size of the backup file (to be sure that something is actually created) - you&#8217;ll
+need to install bc for that. The same process is followed the to backup global objects (usernames etc) using <tt class="docutils literal">pg_dumpall <span class="pre">-g</span></tt>. Finally, we send a mail with a subject of &#8220;Backup results&#8221;
+and body the contents of <tt class="docutils literal">/tmp/db_backup_info.log</tt>.</p>
+<p>I&#8217;ve saved this file to <tt class="docutils literal">/var/lib/pgsql/db_backup_all.sh</tt>. To run I propose using cron &#8212; just edit your crontab (through <tt class="docutils literal">vi /etc/crontab</tt>) and add the&nbsp;line</p>
+<pre class="code literal-block">
+15 2  *  *  * root       /usr/bin/bash /var/lib/pgsql/db_backup_all.sh
+</pre>
+<p>This will run the backup every night at 2.15. Uses the root user to have access rights to the backup folder. One thing to be careful about is that on Redhat/Centos distributions,
+the above won&#8217;t work because sudo requires a tty to work and cron doesn&#8217;t have one. To fix this, comment out the&nbsp;line</p>
+<pre class="code literal-block">
+Defaults    requiretty
+</pre>
+<p>of your /etc/sudoers&nbsp;file.</p>
+</div>
+  		</article>
   		<article>
 <header>
       <h1 class="entry-title">
@@ -12601,70 +12681,6 @@ I encourage you to research them since - if you follow my advice - you&#8217;ll 
 </div>
 </div>
   		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/">Understanding nested list comprehension syntax in Python</a>
-      </h1>
-    <p class="meta">
-<time datetime="2016-04-27T11:20:00+03:00" pubdate>Τετ 27 Απρίλιος 2016</time>    </p>
-</header>
-
-<div class="entry-content"><p>List comprehensions are one of the really nice and powerful features of Python. It
-is actually a smart way to introduce new users to functional programming concepts
-(after all a list comprehension is just a combination of map and filter) and compact&nbsp;statements.</p>
-<p>However, one thing that always troubled me when using list comprehensions is their
-non intuitive syntax when nesting was needed. For example, let&#8217;s say that we just
-want to flatten a list of lists using a nested list&nbsp;comprehension:</p>
-<div class="highlight"><pre><span></span><span class="n">non_flat</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span> <span class="p">]</span>
-</pre></div>
-<p>To write that, somebody would think: For a simple list
-comprehension I need to
-write <tt class="docutils literal">[ x for x in non_flat ]</tt> to get all its items - however I want to retrieve each element of the <tt class="docutils literal">x</tt> list so I&#8217;ll write something like&nbsp;this:</p>
-<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span><span class="p">]</span>
-<span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
-</pre></div>
-<p>Well duh! At this time I&#8217;d need research google for a working list comprehension syntax and adjust it to my needs (or give up and write it as a double for&nbsp;loop).</p>
-<p>Here&#8217;s the correct nested list comprehension people&nbsp;wondering:</p>
-<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
-</pre></div>
-<p>What if I wanted to add a third level of nesting or an if? Well I&#8217;d just bite the bullet and use for&nbsp;loops!</p>
-<p>However, if you take a look at the document describing list comprehensions in python (<cite><span class="caps">PEP</span> 202</cite>) you&#8217;ll see
-the following&nbsp;phrase:</p>
-<blockquote>
-It is proposed to allow conditional construction of list literals
-using for and if clauses. <strong>They would nest in the same way for
-loops and if statements nest now.</strong></blockquote>
-<p>This statement explains everything! <em>Just think in for-loops syntax</em>. So, If I used for loops for the previous flattening, I&#8217;d do something&nbsp;like:</p>
-<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
-        <span class="n">y</span>
-</pre></div>
-<p>which, if <cite>y</cite> is moved to the front and joined in one line would be the correct nested list&nbsp;comprehension!</p>
-<p>So that&#8217;s the way&#8230; What If I wanted to include only lists with more than 2 elements in the flattening
-(so <cite>[7,8]</cite> should not be included)? I&#8217;ll write it with for loops&nbsp;first:</p>
-<div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span><span class="p">:</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span>
-        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
-            <span class="n">y</span>
-</pre></div>
-<p>so by convering this to list comprehension we&nbsp;get:</p>
-<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="p">[</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">non_flat</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span> <span class="p">]</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
-</pre></div>
-<p>Success!</p>
-<p>One final, more complex example: Let&#8217;s say that we have a list
-of lists of words and we want to get a list of all the letters of these words
-along with the index of the list they belong to
-but only for words with more than two characters. Using the same
-for-loop syntax for the nested list comprehensions we&#8217;ll&nbsp;get:</p>
-<div class="highlight"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;baz&#39;</span><span class="p">,</span> <span class="s1">&#39;taz&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="s1">&#39;koko&#39;</span><span class="p">]</span> <span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="p">[</span> <span class="p">(</span><span class="n">letter</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">lst</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">lst</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span> <span class="k">for</span> <span class="n">letter</span> <span class="ow">in</span> <span class="n">word</span><span class="p">]</span>
-<span class="p">[(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
-</pre></div>
-</div>
-  		</article>
 <div class="pagination">
     <a class="prev" href="https://spapas.github.io/index2.html">&larr; Older</a>
 
@@ -12681,6 +12697,9 @@ for-loop syntax for the nested list comprehensions we&#8217;ll&nbsp;get:</p>
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
       <li class="post">
+          <a href="https://spapas.github.io/2016/11/02/postgresql-backup/">Getting a logical backup of all databases of your Postgresql server</a>
+      </li>
+      <li class="post">
           <a href="https://spapas.github.io/2016/09/21/pandas-pivot-table-primer/">A pandas pivot_table primer</a>
       </li>
       <li class="post">
@@ -12691,9 +12710,6 @@ for-loop syntax for the nested list comprehensions we&#8217;ll&nbsp;get:</p>
       </li>
       <li class="post">
           <a href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/">Using Werkzeug debugger with Django</a>
-      </li>
-      <li class="post">
-          <a href="https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/">Understanding nested list comprehension syntax in Python</a>
       </li>
     </ul>
   </section>
@@ -12707,6 +12723,7 @@ for-loop syntax for the nested list comprehensions we&#8217;ll&nbsp;get:</p>
         <li><a href="https://spapas.github.io/category/git.html">git</a></li>
         <li><a href="https://spapas.github.io/category/javascript.html">javascript</a></li>
         <li><a href="https://spapas.github.io/category/pelican.html">pelican</a></li>
+        <li><a href="https://spapas.github.io/category/postgresql.html">postgresql</a></li>
         <li><a href="https://spapas.github.io/category/python.html">python</a></li>
         <li><a href="https://spapas.github.io/category/spring.html">spring</a></li>
         <li><a href="https://spapas.github.io/category/wagtail.html">wagtail</a></li>
@@ -12716,7 +12733,7 @@ for-loop syntax for the nested list comprehensions we&#8217;ll&nbsp;get:</p>
 
   <section>
   <h1>Tags</h1>
-    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
 
 
 
