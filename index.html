@@ -150,6 +150,47 @@ the above won&#8217;t work because sudo requires a tty to work and cron doesn&#8
 Defaults    requiretty
 </pre>
 <p>of your /etc/sudoers&nbsp;file.</p>
+<p><strong>Update 02/12/2016:</strong> Here&#8217;s a little better version of the above script&nbsp;that</p>
+<ol class="arabic simple">
+<li>Create two files for each database, one with <span class="caps">SQL</span> script backup, one with binary backup. Although with <span class="caps">SQL</span> backup you can check out the backup and maybe do changes before applying it, the binary backup is a more foolproof method of restoring everything to your database! Also, instead of restoring the database through <tt class="docutils literal">psql</tt> (as required by the <span class="caps">SQL</span> script backup), using the binary backup you can restore through the <tt class="docutils literal">pg_restore</tt> tool.</li>
+<li>Adds a function to output the file size (so the script is more <span class="caps">DRY</span>)</li>
+</ol>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="k">function</span> output_file_size <span class="o">{</span>
+  <span class="nv">size</span><span class="o">=</span><span class="sb">`</span>stat <span class="nv">$1</span> --printf<span class="o">=</span><span class="s2">&quot;%s&quot;</span><span class="sb">`</span>
+  <span class="nv">kb_size</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="s2">&quot;scale=2; </span><span class="nv">$size</span><span class="s2"> / 1024.0&quot;</span> <span class="p">|</span> bc<span class="sb">`</span>
+  <span class="nb">echo</span> <span class="s2">&quot;Finished backup for </span><span class="nv">$2</span><span class="s2"> - size is </span><span class="nv">$kb_size</span><span class="s2"> KB&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+<span class="o">}</span>
+
+<span class="nb">echo</span> <span class="s2">&quot;&quot;</span> &gt; /tmp/db_backup.log
+<span class="nb">echo</span> <span class="s2">&quot;&quot;</span> &gt; /tmp/db_backup_info.log
+<span class="nv">date_str</span><span class="o">=</span><span class="k">$(</span>date +<span class="s2">&quot;%Y%m%d_%H%M%S&quot;</span><span class="k">)</span>
+<span class="nv">backup_dir</span><span class="o">=</span>/mnt/backupdb/dbpg/pg_backup.<span class="nv">$date_str</span>
+
+mkdir <span class="nv">$backup_dir</span>
+<span class="nb">pushd</span> <span class="nv">$backup_dir</span> &gt; /dev/null
+<span class="nv">dbs</span><span class="o">=</span><span class="sb">`</span>sudo -u postgres psql -Upostgres -lt <span class="p">|</span> cut -d <span class="se">\|</span> -f <span class="m">1</span> <span class="p">|</span> grep -v template <span class="p">|</span> grep -v -e <span class="s1">&#39;^\s*$&#39;</span> <span class="p">|</span> sed -e <span class="s1">&#39;s/  *$//&#39;</span><span class="p">|</span>  tr <span class="s1">&#39;\n&#39;</span> <span class="s1">&#39; &#39;</span><span class="sb">`</span>
+<span class="c1">#dbs=&#39;dgul  hrms  mailer_server  missions  postgres&#39;</span>
+<span class="nb">echo</span> <span class="s2">&quot;Will backup: </span><span class="nv">$dbs</span><span class="s2"> to </span><span class="nv">$backup_dir</span><span class="s2">&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+<span class="k">for</span> db in <span class="nv">$dbs</span><span class="p">;</span> <span class="k">do</span>
+  <span class="nb">echo</span> <span class="s2">&quot;Starting backup for </span><span class="nv">$db</span><span class="s2">&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+  <span class="nv">filename</span><span class="o">=</span><span class="nv">$db</span>.<span class="nv">$date_str</span>.sql.gz
+  <span class="nv">filename_binary</span><span class="o">=</span><span class="nv">$db</span>.<span class="nv">$date_str</span>.bak.gz
+  sudo -u postgres vacuumdb --analyze -Upostgres <span class="nv">$db</span> &gt;&gt; /tmp/db_backup.log
+  sudo -u postgres pg_dump -Upostgres -v <span class="nv">$db</span> -F p 2&gt;&gt; /tmp/db_backup.log <span class="p">|</span> gzip &gt; <span class="nv">$filename</span>
+  sudo -u postgres pg_dump -Upostgres -v <span class="nv">$db</span> -F c 2&gt;&gt; /tmp/db_backup.log <span class="p">|</span> gzip &gt; <span class="nv">$filename_binary</span>
+  output_file_size <span class="nv">$filename</span> <span class="s2">&quot;</span><span class="nv">$db</span><span class="s2"> sql&quot;</span>
+  output_file_size <span class="nv">$filename_binary</span> <span class="s2">&quot;</span><span class="nv">$db</span><span class="s2"> bin&quot;</span>
+<span class="k">done</span>
+<span class="nb">echo</span> <span class="s2">&quot;Backing up global objects&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+<span class="nv">filename</span><span class="o">=</span>global.<span class="nv">$date_str</span>.sql.gz
+sudo -u postgres pg_dumpall -Upostgres -v -g 2&gt;&gt; /tmp/db_backup.log <span class="p">|</span> gzip &gt; <span class="nv">$filename</span>
+output_file_size <span class="nv">$filename</span> global
+<span class="nb">echo</span> <span class="s2">&quot;Ok!&quot;</span> &gt;&gt; /tmp/db_backup_info.log
+mail -s <span class="s2">&quot;Backup results&quot;</span> spapas@hcg.gr  &lt; /tmp/db_backup_info.log
+<span class="nb">popd</span> &gt; /dev/null
+</pre></div>
 </div>
   		</article>
   		<article>
