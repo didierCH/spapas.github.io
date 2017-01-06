@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>http://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="http://spapas.github.io/feeds/spring.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 31 Mar 2016 19:20:00 +0300</lastBuildDate><item><title>Configuring Spring Boot</title><link>http://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds/spring.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 31 Mar 2016 19:20:00 +0300</lastBuildDate><item><title>Configuring Spring Boot</title><link>https://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -17,7 +17,8 @@
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;&lt;a class="reference internal" href="#conclusion" id="id10"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#deploying-spring-boot-applications" id="id10"&gt;Deploying Spring Boot&amp;nbsp;applications&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#conclusion" id="id11"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;div class="section" id="introduction"&gt;
@@ -42,6 +43,7 @@ order to&amp;nbsp;have:&lt;/p&gt;
 &lt;li&gt;Different settings for each of your environments (development, &lt;span class="caps"&gt;UAT&lt;/span&gt;, staging, production and&amp;nbsp;test)&lt;/li&gt;
 &lt;li&gt;A way to configure your passwords and other sensitive data (that you don&amp;#8217;t want to put to your &lt;span class="caps"&gt;VCS&lt;/span&gt;)&lt;/li&gt;
 &lt;li&gt;Being able to override any setting in any&amp;nbsp;environment&lt;/li&gt;
+&lt;li&gt;Deploying your Spring Boot app in Linux using &lt;tt class="docutils literal"&gt;init.d&lt;/tt&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;To quickly test the proposed settings configuration I&amp;#8217;ve created a simple
 Spring Boot project &amp;#64; &lt;a class="reference external" href="https://github.com/spapas/spring-boot-config"&gt;https://github.com/spapas/spring-boot-config&lt;/a&gt;. Just clone
@@ -247,13 +249,86 @@ Use command line arguments only for quick tests (run something with a specific s
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="section" id="conclusion"&gt;
-&lt;h2&gt;&lt;a class="toc-backref" href="#id10"&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
-&lt;p&gt;Using the descibed file structure you should be able to fully configure Spring Boot and have all the
-goodies you&amp;#8217;d like: global settings, profiles, non-version control settings! Also, using the
-advanced profiles techniques you&amp;#8217;ll be able to do any number of exotic things you want with your&amp;nbsp;configuration!&lt;/p&gt;
+&lt;div class="section" id="deploying-spring-boot-applications"&gt;
+&lt;h2&gt;&lt;a class="toc-backref" href="#id10"&gt;Deploying Spring Boot&amp;nbsp;applications&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;If you check
+the deployment documentation of Spring Boot you&amp;#8217;ll see that it has various hints on
+&lt;a class="reference external" href="http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#deployment"&gt;on deploying Spring Boot applications&lt;/a&gt;. I won&amp;#8217;t go into much detail about these however I&amp;#8217;ll
+represent my recommendation on deploying Spring Boot apps on Linux as an init.d&amp;nbsp;script:&lt;/p&gt;
+&lt;p&gt;What is really interesting about Spring boot is that it allows you to make your jar-packaged jars &lt;a class="reference external" href="https://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html"&gt;executable as an init.d script&lt;/a&gt; so that you will
+be able to manage it using something like &lt;tt class="docutils literal"&gt;service springbootapp start/stop/restart&lt;/tt&gt; etc. To do that,
+you&amp;#8217;ll just need to add the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;lt;executable&amp;gt;true&amp;lt;/executable&amp;gt;&lt;/span&gt;&lt;/tt&gt; &lt;tt class="docutils literal"&gt;configuration&lt;/tt&gt; for your pom&amp;#8217;s
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;spring-boot-maven-plugin&lt;/span&gt;&lt;/tt&gt;. This will add some things in the start of your resulting jar file
+that will make it behave as a unix init.d script. If you take a look at your package artifact
+you&amp;#8217;ll see something like&amp;nbsp;this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class="c1"&gt;#&lt;/span&gt;
+&lt;span class="c1"&gt;#    .   ____          _            __ _ _&lt;/span&gt;
+&lt;span class="c1"&gt;#   /\\ / ___&amp;#39;_ __ _ _(_)_ __  __ _ \ \ \ \&lt;/span&gt;
+&lt;span class="c1"&gt;#  ( ( )\___ | &amp;#39;_ | &amp;#39;_| | &amp;#39;_ \/ _` | \ \ \ \&lt;/span&gt;
+&lt;span class="c1"&gt;#   \\/  ___)| |_)| | | | | || (_| |  ) ) ) )&lt;/span&gt;
+&lt;span class="c1"&gt;#    &amp;#39;  |____| .__|_| |_|_| |_\__, | / / / /&lt;/span&gt;
+&lt;span class="c1"&gt;#   =========|_|==============|___/=/_/_/_/&lt;/span&gt;
+&lt;span class="c1"&gt;#   :: Spring Boot Startup Script ::&lt;/span&gt;
+&lt;span class="c1"&gt;#&lt;/span&gt;
+
+&lt;span class="c1"&gt;### BEGIN INIT INFO&lt;/span&gt;
+&lt;span class="c1"&gt;# Provides:          spring-boot-config&lt;/span&gt;
+&lt;span class="c1"&gt;# Required-Start:    $remote_fs $syslog $network&lt;/span&gt;
+&lt;span class="c1"&gt;# Required-Stop:     $remote_fs $syslog $network&lt;/span&gt;
+&lt;span class="c1"&gt;# Default-Start:     2 3 4 5&lt;/span&gt;
+&lt;span class="c1"&gt;# Default-Stop:      0 1 6&lt;/span&gt;
+&lt;span class="c1"&gt;# Short-Description: spring-boot-config&lt;/span&gt;
+&lt;span class="c1"&gt;# Description:       Demo project for Spring Boot configuration&lt;/span&gt;
+&lt;span class="c1"&gt;# chkconfig:         2345 99 01&lt;/span&gt;
+&lt;span class="c1"&gt;### END INIT INFO&lt;/span&gt;
+
+&lt;span class="o"&gt;[[&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$DEBUG&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nb"&gt;set&lt;/span&gt; -x
+
+&lt;span class="c1"&gt;# Initialize variables that cannot be provided by a .conf file&lt;/span&gt;
+&lt;span class="nv"&gt;WORKING_DIR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;&lt;span class="nb"&gt;pwd&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;span class="c1"&gt;# shellcheck disable=SC2153&lt;/span&gt;
+&lt;span class="o"&gt;[[&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$JARFILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nv"&gt;jarfile&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$JARFILE&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+&lt;span class="o"&gt;[[&lt;/span&gt; -n &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$APP_NAME&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nv"&gt;identity&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$APP_NAME&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+
+...
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;One thing that may seem puzzling at first is that if make this jar executable
+and try to run it you&amp;#8217;ll see that, instead of offering you the well known
+options of the init scripts (Usage &amp;#8230; start/stop/restart etc)  it will immediatelly
+run the application! This is because the embedded script is smart enough to
+check that it will be executed as an init script only when it is executed
+as a link from &lt;tt class="docutils literal"&gt;/etc/init.d&lt;/tt&gt; - else it will immediately run the&amp;nbsp;application.&lt;/p&gt;
+&lt;p&gt;If
+you want to quickly test that behavior, you may override the &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MODE&lt;/span&gt;&lt;/tt&gt; parameter
+which forces the mode of operation of the jar. If you want to run it as a
+script (without using a links from /etc/ini.d) then just set &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MODE&lt;/span&gt;=service&lt;/tt&gt;.
+So, try&amp;nbsp;runnin:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+&amp;gt; MODE=service ./springapplication.jar
+Usage: ./hsk9eea.jar {start|stop|restart|force-reload|status|run}
+&lt;/pre&gt;
+&lt;p&gt;Success! Of course, this is just for testing purposes, to actually deploy
+your application then please create a link to it from &lt;tt class="docutils literal"&gt;/etc/init.d&lt;/tt&gt; as
+proposed by the Spring Boot&amp;nbsp;docs.&lt;/p&gt;
+&lt;p&gt;If you want to &lt;a class="reference external" href="http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#deployment-script-customization"&gt;customize the init.d script&lt;/a&gt;  you can use a file named
+&lt;tt class="docutils literal"&gt;sprinbootapp.conf&lt;/tt&gt; in the same directory as your &lt;tt class="docutils literal"&gt;springbootapp.jar&lt;/tt&gt;
+(i.e it should have the same name as your jar with an extension of .conf). The
+options from it will be sourced before running your application &amp;#8212; for example
+you could set the active profile using &lt;tt class="docutils literal"&gt;RUN_ARGS&lt;/tt&gt;, however as I already
+recommended, explicitly setting it to a file named &lt;tt class="docutils literal"&gt;config/applications.properties&lt;/tt&gt;
+is&amp;nbsp;preferrable.&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>http://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;&lt;a class="toc-backref" href="#id11"&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Using the described file structure you should be able to fully configure Spring Boot and have all the
+goodies you&amp;#8217;d expect from a modern framework: global settings, profiles, non-version control settings! Also, using the
+advanced profiles techniques (multiple profiles, profile enabled
+&amp;#64;Components and &amp;#64;Configurations) you&amp;#8217;ll be able to implement
+some really complex configurations! Finally, you&amp;#8217;ll be able to really
+quickly deploy the resulting jar as an init.d system&amp;nbsp;service!&lt;/p&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category><category>deploy</category><category>init.d</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id3"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
