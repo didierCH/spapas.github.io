@@ -1,5 +1,261 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/postgresql.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2016-11-02T15:10:00+02:00</updated><entry><title>Getting a logical backup of all databases of your Postgresql server</title><link href="https://spapas.github.io/2016/11/02/postgresql-backup/" rel="alternate"></link><published>2016-11-02T15:10:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-11-02:2016/11/02/postgresql-backup/</id><summary type="html">&lt;p&gt;In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/postgresql.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-07-04T09:05:00+03:00</updated><entry><title>Automatically create a category table in Postgresql by extracting unique table values</title><link href="https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/" rel="alternate"></link><published>2017-07-04T09:05:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-07-04:2017/07/04/postgresql-auto-create-category-column/</id><summary type="html">&lt;p&gt;Recently I was given an &lt;span class="caps"&gt;SQL&lt;/span&gt; table containing some useful data. The problem with that table was that it was was non-properly normalized but was completely flat,
+i.e all its columns contained varchar values while, some of them should have instead contained foreign keys to other tables. Here&amp;#8217;s an example of how this
+table looked&amp;nbsp;like:&lt;/p&gt;
+&lt;table border="1" class="docutils"&gt;
+&lt;colgroup&gt;
+&lt;col width="14%" /&gt;
+&lt;col width="25%" /&gt;
+&lt;col width="28%" /&gt;
+&lt;col width="33%" /&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head" colspan="4"&gt;Parts&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;th class="head"&gt;&lt;span class="caps"&gt;ID&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;Serial&lt;/th&gt;
+&lt;th class="head"&gt;Category&lt;/th&gt;
+&lt;th class="head"&gt;Manufacturer&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;423431&lt;/td&gt;
+&lt;td&gt;Monitor&lt;/td&gt;
+&lt;td&gt;&lt;span class="caps"&gt;LG&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;534552&lt;/td&gt;
+&lt;td&gt;Monitor&lt;/td&gt;
+&lt;td&gt;&lt;span class="caps"&gt;LG&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;435634&lt;/td&gt;
+&lt;td&gt;Printer&lt;/td&gt;
+&lt;td&gt;&lt;span class="caps"&gt;HP&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;534234&lt;/td&gt;
+&lt;td&gt;Printer&lt;/td&gt;
+&lt;td&gt;Samsung&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;234212&lt;/td&gt;
+&lt;td&gt;Monitor&lt;/td&gt;
+&lt;td&gt;Samsung&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;6&lt;/td&gt;
+&lt;td&gt;123123&lt;/td&gt;
+&lt;td&gt;Monitor&lt;/td&gt;
+&lt;td&gt;&lt;span class="caps"&gt;LG&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The normalized version of this table should have been instead like&amp;nbsp;this:&lt;/p&gt;
+&lt;table border="1" class="docutils"&gt;
+&lt;colgroup&gt;
+&lt;col width="13%" /&gt;
+&lt;col width="23%" /&gt;
+&lt;col width="28%" /&gt;
+&lt;col width="38%" /&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head" colspan="4"&gt;Parts&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;th class="head"&gt;&lt;span class="caps"&gt;ID&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;Serial&lt;/th&gt;
+&lt;th class="head"&gt;Category_id&lt;/th&gt;
+&lt;th class="head"&gt;Manufacturer_id&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;423431&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;534552&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;435634&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;534234&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;234212&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;6&lt;/td&gt;
+&lt;td&gt;123123&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;with the following extra tables that contain the category values with proper foreign&amp;nbsp;keys:&lt;/p&gt;
+&lt;table border="1" class="docutils"&gt;
+&lt;colgroup&gt;
+&lt;col width="22%" /&gt;
+&lt;col width="78%" /&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head" colspan="2"&gt;Category&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;th class="head"&gt;&lt;span class="caps"&gt;ID&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;Name&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;Monitor&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;Printer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table border="1" class="docutils"&gt;
+&lt;colgroup&gt;
+&lt;col width="17%" /&gt;
+&lt;col width="83%" /&gt;
+&lt;/colgroup&gt;
+&lt;thead valign="bottom"&gt;
+&lt;tr&gt;&lt;th class="head" colspan="2"&gt;Manufacturer&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;th class="head"&gt;&lt;span class="caps"&gt;ID&lt;/span&gt;&lt;/th&gt;
+&lt;th class="head"&gt;Name&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody valign="top"&gt;
+&lt;tr&gt;&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;Monitor&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;Printer&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The normalized version should be used instead of the flat one &lt;a class="reference external" href="http://www.imdb.com/title/tt0057012/quotes?item=qt0454452"&gt;for reasons which at this moment must be all too obvious&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Having such non-normalized tables is also a common problem I experience with Django: When creating a model
+I usually define some &lt;tt class="docutils literal"&gt;CharField&lt;/tt&gt;  with pre-defined &lt;tt class="docutils literal"&gt;choices&lt;/tt&gt; which &amp;#8220;will never change&amp;#8221;. Sometime during the
+development (if I am lucky) or when the project is live for years I will be informed that the choices need not
+only to be changed but must be changed by the users of the site without the need to change the source code! Or
+that the choices/categories have properties (beyond their name) that need to be defined and used in the project. Both
+of these cases mean that these categories need to be extracted from simple strings to full Django models (i.e get
+normalized in their own&amp;nbsp;table)!&lt;/p&gt;
+&lt;p&gt;In this post I will present a function written in &lt;span class="caps"&gt;PL&lt;/span&gt;/pgsql that will automatically normalize a column from a
+flat table like the previous. Specifically, using the previous example,
+if you have a table named &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; that has a non-normalized
+column named &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; then when you call &lt;tt class="docutils literal"&gt;select &lt;span class="pre"&gt;export_relation('part',&lt;/span&gt; 'category')&lt;/tt&gt; the following
+will&amp;nbsp;happen:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p class="first"&gt;A new table named &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; will be created. This table will contain two columns &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt;, with &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; being the primary key and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; having a unique constraint. If the table exists it will be dropped and&amp;nbsp;re-ccreated&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;A new column named &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; will be added to &lt;tt class="docutils literal"&gt;part&lt;/tt&gt;. This column will be a foreign key to the new table &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;dl class="first docutils"&gt;
+&lt;dt&gt;For each unique value &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; of &lt;tt class="docutils literal"&gt;category&lt;/tt&gt;:&lt;/dt&gt;
+&lt;dd&gt;&lt;ul class="first last simple"&gt;
+&lt;li&gt;Insert a new record in &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; with &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; in the &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; field of the table and save the inserted id to &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;Set &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt; to &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt;  to all rows of &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; where &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; has the value of &lt;tt class="docutils literal"&gt;v&lt;/tt&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Before diving in to the &lt;span class="caps"&gt;PL&lt;/span&gt;/pgSQL script that does the above changes to the table I&amp;#8217;d like to notice that I am
+not very experienced with &lt;span class="caps"&gt;PL&lt;/span&gt;/pgSQL since I rarerly use it
+(I actually avoid writing code in the database) however, because the case I described is ideal for using a database script
+I&amp;#8217;ve bitten the bullet and implemented&amp;nbsp;it.&lt;/p&gt;
+&lt;p&gt;Beyond it&amp;#8217;s actual functionality, this script can be used as a reference/cookbook for common &lt;span class="caps"&gt;PL&lt;/span&gt;/pgSQL&amp;nbsp;tasks:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Create/define a &lt;span class="caps"&gt;PL&lt;/span&gt;/pgSQL function (stored&amp;nbsp;procedure)&lt;/li&gt;
+&lt;li&gt;Declare&amp;nbsp;variables&lt;/li&gt;
+&lt;li&gt;Assign values to&amp;nbsp;variables&lt;/li&gt;
+&lt;li&gt;Execute &lt;span class="caps"&gt;SQL&lt;/span&gt; commands with variable defined table / column&amp;nbsp;names&lt;/li&gt;
+&lt;li&gt;Log process in &lt;span class="caps"&gt;PL&lt;/span&gt;/pgSQL&lt;/li&gt;
+&lt;li&gt;Executing code&amp;nbsp;conditionally&lt;/li&gt;
+&lt;li&gt;Loop through the rows of a&amp;nbsp;query&lt;/li&gt;
+&lt;li&gt;Save the primary key of an inserted&amp;nbsp;row&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The script works however I feel that more experienced &lt;span class="caps"&gt;PL&lt;/span&gt;/pgSQL developers would write things different - if you have any
+proposals please comment out and I&amp;#8217;ll be happy to incorporate them to the&amp;nbsp;script.&lt;/p&gt;
+&lt;p&gt;Now, let&amp;#8217;s now take a look at the actual&amp;nbsp;script:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;CREATE&lt;/span&gt; &lt;span class="k"&gt;OR&lt;/span&gt; &lt;span class="k"&gt;REPLACE&lt;/span&gt; &lt;span class="k"&gt;FUNCTION&lt;/span&gt; &lt;span class="n"&gt;export_relation&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;table_name&lt;/span&gt; &lt;span class="nb"&gt;varchar&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;column_name&lt;/span&gt; &lt;span class="nb"&gt;varchar&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;RETURNS&lt;/span&gt; &lt;span class="nb"&gt;void&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="s"&gt;$$&lt;/span&gt;
+&lt;span class="k"&gt;DECLARE&lt;/span&gt;
+    &lt;span class="n"&gt;val&lt;/span&gt; &lt;span class="nb"&gt;varchar&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="nb"&gt;boolean&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;new_table_name&lt;/span&gt; &lt;span class="nb"&gt;varchar&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;new_column_name&lt;/span&gt; &lt;span class="nb"&gt;varchar&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;current_id&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="k"&gt;BEGIN&lt;/span&gt;
+    &lt;span class="n"&gt;new_table_name&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="n"&gt;table_name&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;_&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="n"&gt;column_name&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;new_column_name&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="n"&gt;column_name&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;_id&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;drop table if exists %s cascade&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_table_name&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;CREATE TABLE %s (id serial NOT NULL, name character varying(255) NOT NULL, CONSTRAINT %s_pkey PRIMARY KEY (id), CONSTRAINT %s_unique UNIQUE (name))WITH ( OIDS=FALSE)&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="n"&gt;new_table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_table_name&lt;/span&gt;
+    &lt;span class="p"&gt;);&lt;/span&gt;
+
+    &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;select exists(SELECT column_name  FROM information_schema.columns WHERE table_name=&amp;#39;&amp;#39;%s&amp;#39;&amp;#39; and column_name=&amp;#39;&amp;#39;%s&amp;#39;&amp;#39;) as x&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_column_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;into&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="k"&gt;is&lt;/span&gt; &lt;span class="k"&gt;false&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+        &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="k"&gt;notice&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Creating colum&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ALTER TABLE %s ADD COLUMN %s integer null&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_column_name&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+        &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;ALTER TABLE %s ADD CONSTRAINT fk_%s FOREIGN KEY (%s) REFERENCES %s(id)&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_column_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_column_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_table_name&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt; &lt;span class="k"&gt;IN&lt;/span&gt; &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;select %s from %s group by(%s)&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;column_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;column_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;LOOP&lt;/span&gt;
+        &lt;span class="k"&gt;RAISE&lt;/span&gt; &lt;span class="k"&gt;NOTICE&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Inserting new value %s ...&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;insert into  %s(name) values (&amp;#39;&amp;#39;%s&amp;#39;&amp;#39;) returning id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;into&lt;/span&gt; &lt;span class="n"&gt;current_id&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="k"&gt;notice&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Created ID %&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;current_id&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;execute&lt;/span&gt; &lt;span class="n"&gt;format&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;update %s set %s = %s where %s = &amp;#39;&amp;#39;%s&amp;#39;&amp;#39;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;table_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;new_column_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;current_id&lt;/span&gt; &lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;column_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt; &lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;END&lt;/span&gt; &lt;span class="k"&gt;LOOP&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="cm"&gt;/* Uncomment this if you want to drop the flat column&lt;/span&gt;
+&lt;span class="cm"&gt;    raise notice &amp;#39;Dropping colmn&amp;#39;;&lt;/span&gt;
+&lt;span class="cm"&gt;    execute format (&amp;#39;alter table %s drop column %s&amp;#39;, table_name, column_name);&lt;/span&gt;
+&lt;span class="cm"&gt;    */&lt;/span&gt;
+
+&lt;span class="k"&gt;END&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="s"&gt;$$&lt;/span&gt; &lt;span class="k"&gt;LANGUAGE&lt;/span&gt; &lt;span class="n"&gt;plpgsql&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The first line creates or updates the script. You can just copy over this script to an &lt;span class="caps"&gt;SQL&lt;/span&gt; window and run it as many times as you like (making changes
+between runs) and the script will be always updated. The function that is created is actually a procedure since it returns &lt;tt class="docutils literal"&gt;void&lt;/tt&gt; and takes two parameters.
+The &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;DECLARE&lt;/span&gt;&lt;/tt&gt; section that follows contains all the variables that are used in the&amp;nbsp;script:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;val&lt;/tt&gt; is the current value of the category when looping through their&amp;nbsp;values&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;res&lt;/tt&gt; is a boolean variable used for a&amp;nbsp;conditional&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;new_table_name&lt;/tt&gt; is the name of the table that will be&amp;nbsp;created&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;new_column_name&lt;/tt&gt; is the name of the column that will be added to the old&amp;nbsp;table&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt; is the id of the last inserted value in the new&amp;nbsp;table&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;After the &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;BEGIN&lt;/span&gt;&lt;/tt&gt; the actual procedure starts: First the values of &lt;tt class="docutils literal"&gt;new_table_name&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;new_column_name&lt;/tt&gt; are initialized to be used throughout the code and
+then the new table is dropped (if exists) and re-created. Noticce the &lt;tt class="docutils literal"&gt;execute format (parameter)&lt;/tt&gt; function that executes the &lt;span class="caps"&gt;SQL&lt;/span&gt; contained in the parameter which
+is a string and is constructed using the variables we&amp;#8217;ve defined. The next line checks if the old table has the new column (i.e category_id) and saves
+the result in the &lt;tt class="docutils literal"&gt;res&lt;/tt&gt; variable to check if the new column exists and if not add it to the old&amp;nbsp;table.&lt;/p&gt;
+&lt;p&gt;A loop enumerating all unique values of the category column of the old table is then executed. Notice that &lt;tt class="docutils literal"&gt;val&lt;/tt&gt; will contain a single value since the &lt;span class="caps"&gt;SQL&lt;/span&gt; that is executed
+will return a single column (that&amp;#8217;s why it is declared as varchar). If we returned more than one column from the select the val could be declared as &lt;tt class="docutils literal"&gt;record&lt;/tt&gt; and access its
+properties through dot notation (&lt;tt class="docutils literal"&gt;val.prop1&lt;/tt&gt; etc). The value is inserted to the newly created table using a &lt;tt class="docutils literal"&gt;insert into table values () returning id&lt;/tt&gt; &lt;span class="caps"&gt;SQL&lt;/span&gt; syntax
+(so that the new id will be returned - this is an insert/select hybrid command) and saved to the &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt; variable. The &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt; variable then is used to update
+the new column that was added to the old table with the proper foreign key&amp;nbsp;value.&lt;/p&gt;
+&lt;p&gt;Notice that I&amp;#8217;ve a commented out code in the end - if you want you can uncomment it and the old (flat) column will be dropped - so in my examply the &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; column will be
+removed since I will have &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; to find out the name of each category. I recommend to uncomment this and actually drop the column since when you have both &lt;tt class="docutils literal"&gt;category&lt;/tt&gt;
+and &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; the values of these two columns are going to get out of sync and since you&amp;#8217;ll have duplicate information your table will be even more non-normalized. You can
+of course keep the column to make sure that the script works as you want since if the column is not dropped you can easily return to the previous state of the database by
+removeing the new table and&amp;nbsp;column.&lt;/p&gt;
+&lt;p&gt;To call it just run &lt;tt class="docutils literal"&gt;select &lt;span class="pre"&gt;export_relation('part',&lt;/span&gt; 'category')&lt;/tt&gt; and you should see some debug info in the messages tab. When the script is finished you&amp;#8217;ll have the
+&lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; table and &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; column in the &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; table.&lt;/p&gt;
+</summary><category term="postgresql"></category><category term="plpgsql"></category></entry><entry><title>Getting a logical backup of all databases of your Postgresql server</title><link href="https://spapas.github.io/2016/11/02/postgresql-backup/" rel="alternate"></link><published>2016-11-02T15:10:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-11-02:2016/11/02/postgresql-backup/</id><summary type="html">&lt;p&gt;In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
 with some other goodies. More specifically, the script&amp;nbsp;will:&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;Create two files at /tmp to output information (one for debugging and one with info for sending it through email at the&amp;nbsp;end)&lt;/li&gt;

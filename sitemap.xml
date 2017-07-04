@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/index.html</loc>
-<lastmod>2017-01-04T09:54:35-00:00</lastmod>
+<lastmod>2017-07-04T08:59:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2017-01-04T09:54:35-00:00</lastmod>
+<lastmod>2017-07-04T08:59:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2017-01-04T09:54:35-00:00</lastmod>
+<lastmod>2017-07-04T08:59:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2017-01-04T09:54:35-00:00</lastmod>
+<lastmod>2017-07-04T08:59:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/</loc>
+<lastmod>2017-07-04T09:05:00+03:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -306,7 +313,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/category/postgresql.html</loc>
-<lastmod>2016-11-02T15:10:00+01:35</lastmod>
+<lastmod>2017-07-04T09:05:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -705,7 +712,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/postgresql.html</loc>
-<lastmod>2016-11-02T15:10:00+01:35</lastmod>
+<lastmod>2017-07-04T09:05:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -928,6 +935,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/plpgsql.html</loc>
+<lastmod>2017-07-04T09:05:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/generic.html</loc>
 <lastmod>2015-11-16T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -1069,7 +1083,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2017-01-03T09:55:00+01:35</lastmod>
+<lastmod>2017-07-04T09:05:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
