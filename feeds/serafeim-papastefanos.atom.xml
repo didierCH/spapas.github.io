@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-10-11T14:20:00+03:00</updated><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><published>2017-10-11T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-10-11T14:20:00+03:00</updated><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><updated>2017-10-11T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
 in most of my projects. I am using django for more than 5 years as my day to
 day work tool to develop applications for the public sector organization I work for.
 So please keep in mind that these packages are targeted to the &amp;#8220;enterpripse&amp;#8221;
@@ -55,11 +55,11 @@ database connectors etc) but these won&amp;#8217;t be discussed&amp;nbsp;here.&l
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;div class="section" id="packages-i-use-in-all-my-projects"&gt;
-&lt;h2&gt;&lt;a class="toc-backref" href="#id30"&gt;Packages I use in all my&amp;nbsp;projects&lt;/a&gt;&lt;/h2&gt;
+&lt;h2&gt;Packages I use in all my&amp;nbsp;projects&lt;/h2&gt;
 &lt;p&gt;These packages are used more or less in all my projects - I just install them when I
 create a new project (or create the project through the cookiecutter I mention&amp;nbsp;above)/&lt;/p&gt;
 &lt;div class="section" id="django-tables2"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id31"&gt;django-tables2&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-tables2&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/bradleyayers/django-tables2"&gt;django-tables2&lt;/a&gt;, along with django-filter (following) are the two packages
 I always use in my projets. You create a &lt;cite&gt;tables.py&lt;/cite&gt; module inside your applications
 where you define a bunch of tables using more or less the same methodology as with
@@ -80,7 +80,7 @@ django-tables2 &lt;a class="reference external" href="https://django-tables2.rea
 of this&amp;nbsp;library.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-filter"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id32"&gt;django-filter&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-filter&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/carltongibson/django-filter"&gt;django-filter&lt;/a&gt; is used to create filters for your data. It plays well with
 django-tables2 but you can use it to create filters for any kind of listing you want. It
 works similar to django-tables2: Create a &lt;tt class="docutils literal"&gt;filters.py&lt;/tt&gt; module in your application and define
@@ -115,7 +115,7 @@ uses both django-tables2 and django-filters for you to use: &lt;a class="referen
 Also, I&amp;#8217;ve written an article which describes a technique for &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;automatically creating a filter-table view&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-crispy-forms"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id33"&gt;django-crispy-forms&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-crispy-forms&lt;/h3&gt;
 &lt;p&gt;The forms that are created by default by django-forms are very basic and not styled properly.
 To overcome this and have better styles for my forms, I always use &lt;a class="reference external" href="https://github.com/django-crispy-forms/django-crispy-forms"&gt;django-crispy-forms&lt;/a&gt;. It actually has two modes: Using the crispy template filter and using
 the crispy template tag. Using the crispy template filter is very simple - just take a plain old django form and
@@ -169,7 +169,7 @@ class CardForm(ModelForm):
 to write it yourself like with plain django forms) so you have to define their method (post in this example) and submit&amp;nbsp;button.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-extensions"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id34"&gt;django-extensions&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-extensions&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/django-extensions/django-extensions"&gt;django-extensions&lt;/a&gt; is a swiss-army-knife of django tools. I use it &lt;em&gt;always&lt;/em&gt; in my projects because of the &lt;cite&gt;runserver_plus&lt;/cite&gt;
 and &lt;cite&gt;shell_plus&lt;/cite&gt; commands. The first uses the &lt;a class="reference external" href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/"&gt;Werkzeug debugger with django&lt;/a&gt; which makes django development an absolute joy
 (open a python shell wherever you want in your code and start writing commands)!
@@ -181,7 +181,7 @@ commands like: &lt;cite&gt;admin_generator&lt;/cite&gt; to quickly create an adm
 at them and you&amp;#8217;ll probably find more useful&amp;nbsp;things!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-autocomplete-light"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id35"&gt;django-autocomplete-light&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-autocomplete-light&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/yourlabs/django-autocomplete-light"&gt;django-autocomplete-light&lt;/a&gt; is the best auto-complete library for django, especially after v3 was released (which greatly reduces the magic and
 uses normal CBVs for configuring the querysets). You will create
 an AutocompleteView for a model (similar to your other class based views) and then automatically use this view through a widget in the admin
@@ -192,7 +192,7 @@ jquery &lt;em&gt;and&lt;/em&gt; &lt;tt class="docutils literal"&gt;{{ form.media
 many to many fields (you could use the checkboxes widget to improve their behavior a little but you will have bad behavior when there are many&amp;nbsp;choices).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-reversion"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id36"&gt;django-reversion&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-reversion&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/etianen/django-reversion"&gt;django-reversion&lt;/a&gt; is a really important package for my projects. When it is configured properly (by adding a a reversion-middleware), it offers full auditing
 for all changes in the your model instances you select (and properly groups them in case of changes to multiple instances in a simple request).
 It saves a &lt;span class="caps"&gt;JSON&lt;/span&gt; representation
@@ -201,7 +201,7 @@ then is is probably the best way to do it. I have written an article about &lt;a
 (following)&amp;nbsp;more.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-compressor"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id37"&gt;django-compressor&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-compressor&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/django-compressor/django-compressor/"&gt;django-compressor&lt;/a&gt; is package that combines and minifies your css and javascript (both files and line snippets) into static files. There are
 other tools for this but I have never used them since django-compressor satisfies my needs. Although I&amp;#8217;ve
 &lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;written about browserify&lt;/a&gt; and friends from the node-js world I don&amp;#8217;t recommend using such tools in django to combine and minify your
@@ -213,7 +213,7 @@ offline mode, you need to run a management command that will create the static f
 recommended because any missing files problems etc will be resolved while deploying the&amp;nbsp;app.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-debug-toolbar"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id38"&gt;django-debug-toolbar&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-debug-toolbar&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/jazzband/django-debug-toolbar"&gt;django-debug-toolbar&lt;/a&gt;: This is a well known package for debugging django apps that is always included in the development configuration of my projects.
 It has various panels that help you debug your application but, at least for me, the most helpful is the one that displays you all &lt;span class="caps"&gt;SQL&lt;/span&gt; queries that
 are executed for a page load. Because of how the django orm is working it will go on and follow all relations something that will lead to
@@ -232,12 +232,12 @@ authors a on b.author_id = a.id&lt;/tt&gt;?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="section" id="packages-i-use-when-i-need-their-functionality"&gt;
-&lt;h2&gt;&lt;a class="toc-backref" href="#id39"&gt;Packages I use when I need their&amp;nbsp;functionality&lt;/a&gt;&lt;/h2&gt;
+&lt;h2&gt;Packages I use when I need their&amp;nbsp;functionality&lt;/h2&gt;
 &lt;p&gt;The packages following are also essential to me but only when I need their functionality. I don&amp;#8217;t use them in all my projects
 but, when I need the capabilities they offer then I will use these packages (and not some others). For example, if I need to
 render PDFs in my applications then I will use the xhtml2pdf, if I need to login through &lt;span class="caps"&gt;LDAP&lt;/span&gt; I will use django-auth-ldap&amp;nbsp;etc.&lt;/p&gt;
 &lt;div class="section" id="xhtml2pdf"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id40"&gt;xhtml2pdf&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;xhtml2pdf&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/xhtml2pdf/xhtml2pdf"&gt;xhtml2pdf&lt;/a&gt; is the package I use for creating &lt;span class="caps"&gt;PDF&lt;/span&gt;&amp;#8217;s with django as I&amp;#8217;ve alreadly discussed in the &lt;a class="reference external" href="https://spapas.github.io/2015/11/27/pdf-in-django/"&gt;PDFs in Django&lt;/a&gt; article (this is not
 a django-specific package like most others I discuss here but it plays really good with django). You create a
 normal django template, add some styling to it and dump it to html. Notice that there&amp;#8217;s a &lt;a class="reference external" href="https://github.com/chrisglass/django-xhtml2pdf"&gt;django-xhtml2pdf&lt;/a&gt; project but has not been recently updated
@@ -250,20 +250,20 @@ I urge you to try xhtml2pdf first and only if you find that it does not cover yo
 me about your problem) try the other&amp;nbsp;solutions.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-auth-ldap"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id41"&gt;django-auth-ldap&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-auth-ldap&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://bitbucket.org/psagers/django-auth-ldap/"&gt;django-auth-ldap&lt;/a&gt; is the package you&amp;#8217;ll want to use if your organization uses &lt;span class="caps"&gt;LDAP&lt;/span&gt; (or Active Directory) and you want to use it for
 logging in. Just configure your &lt;span class="caps"&gt;LDAP&lt;/span&gt; server settings,
 add the ldap authenticator and you&amp;#8217;ll be ready to go. Please notice that this package is a django wrapper of the python-ldap package
 which actually provides the &lt;span class="caps"&gt;LDAP&lt;/span&gt;&amp;nbsp;connection.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-localflavor"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id42"&gt;django-localflavor&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-localflavor&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/django/django-localflavor"&gt;django-localflavor&lt;/a&gt; offers useful stuff for various countries, mainly form fields with the correct validation and lists of choices.
 For example, for my country (Greece) you&amp;#8217;ll get a &lt;tt class="docutils literal"&gt;GRPhoneNumberField&lt;/tt&gt;, a &lt;tt class="docutils literal"&gt;GRPostalCodeField&lt;/tt&gt; and a &lt;tt class="docutils literal"&gt;GRTaxNumberCodeField&lt;/tt&gt;. Use it instead of re-implementing
 the&amp;nbsp;behavior.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-constance"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id43"&gt;django-constance&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-constance&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/jazzband/django-constance"&gt;django-constance&lt;/a&gt; is a simple package that enables you to add quick-configurable settings in your application. To change the settings.py file
 you need to edit the source and restart the application - for most installations this is a full re-deployment of the application. Fully
 re-deploying the app just to change a setting is not very good practice (depending on the setting of course but if it is a business setting
@@ -274,12 +274,12 @@ these settings will be saved. One option is the database but this is not recomme
 available much&amp;nbsp;quicker!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-rq"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id44"&gt;django-rq&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-rq&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/ui/django-rq"&gt;django-rq&lt;/a&gt; is a django wrapper for the &lt;a class="reference external" href="https://github.com/nvie/rq"&gt;rq&lt;/a&gt; library. I use it when I need asynchronous tasks (which is on almost all of my projects). More
 info can be found on the two articles I have writtten about django rq (&lt;a class="reference external" href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/"&gt;asynchronous tasks in django&lt;/a&gt; and &lt;a class="reference external" href="https://spapas.github.io/2015/09/01/django-rq-redux/"&gt;django-rq redux&lt;/a&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-rules-light"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id45"&gt;django-rules-light&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-rules-light&lt;/h3&gt;
 &lt;p&gt;One of the least known packages from those I discuss here, &lt;a class="reference external" href="https://github.com/yourlabs/django-rules-light"&gt;django-rules-light&lt;/a&gt; is one of the most useful when is needed. This package
 allows you to define complex rules for doing actions on model instances. Each rule is a function that gets the user that wants to do the action
 and the object that the user wants to action on. The function returns True or False to allow or not allow the action. You can then use these in
@@ -291,7 +291,7 @@ can view all objects and your object can be finalized so no changes are allowed 
 from using&amp;nbsp;it!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-generic-scaffold"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id46"&gt;django-generic-scaffold&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-generic-scaffold&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/spapas/django-generic-scaffold"&gt;django-generic-scaffold&lt;/a&gt; is a package I have created that can be used to quickly (and DRYly) create &lt;span class="caps"&gt;CRUD&lt;/span&gt; CBVs for your models. I usually don&amp;#8217;t want to
 give access to the django-admin to non-technical users however sometimes I want to quickly create the required CBVs for them (list, detail, create, edit
 delete). Using django-generic-scaffold you can just create a scaffold which is related with a Model and all the views will be automagically created -
@@ -311,7 +311,7 @@ urlpatterns += book_crud.get_url_patterns()
 &lt;p&gt;Now you can visit the corresponding views (for example /books or /bookscreate - depends on the prefix) to add/view/edit etc your&amp;nbsp;books!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-taggit"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id47"&gt;django-taggit&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-taggit&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/alex/django-taggit"&gt;django-taggit&lt;/a&gt; is the library you&amp;#8217;ll want to use if you have to use tags with your models. A tag is a synonym for keyword, i.e adding some
 words/phrases to your instances that are used to categorise and desribe em. The relation between your to-be-tagged-model and your tags is
 many to many. To use it, you just add &lt;cite&gt;tags = TaggableManager()&lt;/cite&gt; to your
@@ -319,7 +319,7 @@ model and you are ready to go! Of course it will need some more configuration to
 autocomplete-lights can be &lt;a class="reference external" href="https://django-autocomplete-light.readthedocs.io/en/master/taggit.html"&gt;integrated with django-taggit&lt;/a&gt;!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-sendfile"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id48"&gt;django-sendfile&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-sendfile&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/johnsensile/django-sendfile"&gt;django-sendfile&lt;/a&gt; is a very important - at least to - me library. Sometimes, user uploaded files (media in django) should not be visible to all users
 so you&amp;#8217;ll need to implement some access control through your django app. However, it is important to &lt;em&gt;not&lt;/em&gt; serve these media files through your application
 server (uwsi, gunicorn etc) but use a web server (nginx, apache ect) for serving them. This is needed because your application server&amp;#8217;s purpose is
@@ -333,13 +333,13 @@ More info about
 and, if yes, instruct the web server to actually serve that file by appending a specific header to the&amp;nbsp;response.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-reversion-compare"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id49"&gt;django-reversion-compare&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-reversion-compare&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/jedie/django-reversion-compare"&gt;django-reversion-compare&lt;/a&gt; is an addon to django-reversion. It allows you to compare two different versions of a model instance
 and highlights their differences using various smart algorithms (so if you have a long text field you won&amp;#8217;t only see that these are different but
 you&amp;#8217;ll also see where exactly they differ, with output similar to the one you get when using&amp;nbsp;diff).&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-simple-history"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id50"&gt;django-simple-history&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-simple-history&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/treyhunner/django-simple-history"&gt;django-simple-history&lt;/a&gt; has similar capabilities with django-reversion - (auditing and keeping versions of models) with a very important
 difference: While django-reversion keeps a &lt;span class="caps"&gt;JSON&lt;/span&gt; representation of each version in the database (making querying very difficult), django-simple-history
 creates an extra, history table for each model instance you want to track and adds each change as a new row to that table. As can be understood this
@@ -347,7 +347,7 @@ will make the history table really huge but has the advantage that you can easil
 that I will need the history&amp;nbsp;querying.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-import-export"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id51"&gt;django-import-export&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-import-export&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/django-import-export/django-import-export"&gt;django-import-export&lt;/a&gt; can be used to enchance your models with mass import and export capabilities (from example from/to &lt;span class="caps"&gt;CSV&lt;/span&gt;).
 You will add an ModelResource class that describes (and configures) how your Model should be imported/exported. The ModelResource class can
 then be easily used in your views and, more importantly, it is integrated to the django-admin. I have to confess that I have not used django-import-export
@@ -357,7 +357,7 @@ capabilities of django-import-export in various projects with great success, esp
 data capabilities of most&amp;nbsp;users.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-extra-views"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id52"&gt;django-extra-views&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-extra-views&lt;/h3&gt;
 &lt;p&gt;Beyond django-forms, django supports a feature called &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/formsets/"&gt;Formsets&lt;/a&gt; which allows you to add/edit multiple object instances in
 a single view (by displaying all instances one after the other). The classic request/response cycle of django is preserved in Formsets, so
 your form instances will be submitted all together when you submit the form. The logic extension to the Formset is the &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/#model-formsets"&gt;ModelFormset&lt;/a&gt; i.e each form
@@ -371,7 +371,7 @@ to the foreground. You can use the corresponding CBVs of django-extra-views to s
 are more or less similar to using the good-old django&amp;nbsp;FormView.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="easy-thumbnails"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id53"&gt;easy-thumbnails&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;easy-thumbnails&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/SmileyChris/easy-thumbnails"&gt;easy-thumbnails&lt;/a&gt; is a great library if you want to support thumbnails. Actually, thumbnails is not 100% correct - this package can be used to
 generate and manage various versions of your original images, for example you may have a small version of the image that will be used as a thumbnail,
 a larger version that will be used in a gallery-carousel view and an even larger version (but not the original one which could be huge) that will be used when
@@ -381,7 +381,7 @@ to your thumbnails both in your templates and in your views. Notice that a speci
 the generated images are saved so each thumbnail will be generated on the first request it contains it and will be reused in the following such&amp;nbsp;requests.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-rest-framework"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id54"&gt;django-rest-framework&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-rest-framework&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/encode/django-rest-framework"&gt;django-rest-framework&lt;/a&gt; is definitely the best package for creating web APIs with django. I don&amp;#8217;t recommend using it if you want to create a quick &lt;span class="caps"&gt;JSON&lt;/span&gt; search
 &lt;span class="caps"&gt;API&lt;/span&gt; (take a look at &lt;a class="reference external" href="https://spapas.github.io/2014/09/15/django-non-html-responses/"&gt;django non-&lt;span class="caps"&gt;HTML&lt;/span&gt; responses&lt;/a&gt;) but if you want to go the &lt;span class="caps"&gt;SPA&lt;/span&gt; way or if you want to create multiple APIs for various models then
 this is the way to go. Integrating it to your project will need some effort (that&amp;#8217;s why I don&amp;#8217;t recommend it for quick and dirty APIs) because you&amp;#8217;ll
@@ -395,7 +395,7 @@ friends but the back-end is in django and&amp;nbsp;django-rest-framework).&lt;/p
 in your &lt;span class="caps"&gt;REST&lt;/span&gt; APIs - &lt;span class="caps"&gt;DRY&lt;/span&gt; at its&amp;nbsp;best!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-waffle"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id55"&gt;django-waffle&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-waffle&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/jsocol/django-waffle"&gt;django-waffle&lt;/a&gt; is described as a feature flipper. What does this mean? Let&amp;#8217;s say that you want to control at will when a specific view will be enabled
 - this is the library you&amp;#8217;ll want to use. Or you have developed a new feature and you want to give access to it only on a subset of users for a pilot run of
 the feature - once again you should use django flipper. It offers a nice admin interface where you can configure the flags that will be used for the various
@@ -403,7 +403,7 @@ feature enabling/disabling (and if they are active or not) and various template 
 or&amp;nbsp;not.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-allauth"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id56"&gt;django-allauth&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-allauth&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/pennersr/django-allauth"&gt;django-allauth&lt;/a&gt; should be used in two cases: When you want a &lt;em&gt;better&lt;/em&gt; user registration workflow than the default (non-existant) one or you want
 to integrate your application with an external OAuth provider (i.e allow your users to login through their facebook, google, twitter, github etc accounts). I
 have mainly used this package for the first case and I can confirm that it works great and you can create as complex flows as you want (for example, in
@@ -415,7 +415,7 @@ django-allauth is that it (in my opition) does not have very good documentation 
 is very clear so you can always use the source as documentation for this&amp;nbsp;package.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-modeltranslation"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id57"&gt;django-modeltranslation&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-modeltranslation&lt;/h3&gt;
 &lt;p&gt;The &lt;a class="reference external" href="https://github.com/deschler/django-modeltranslation"&gt;django-modeltranslation&lt;/a&gt; library is the library I recommend for when you want to have translations to your models. To use it
 you add a translation.py file where you declare the models and their fields that should be translated. The, depending on which languages you have configured
 in your settings.py after you run makemigrations and migrate you&amp;#8217;ll see that django-modeltranslation will have included extra fields to the database, each one
@@ -424,7 +424,7 @@ django-modeltranslation will add the fields &lt;tt class="docutils literal"&gt;n
 depending on the current language of your site when you use &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; you&amp;#8217;ll get either &lt;tt class="docutils literal"&gt;name_el&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;name_en&lt;/tt&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-widget-tweaks"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id58"&gt;django-widget-tweaks&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-widget-tweaks&lt;/h3&gt;
 &lt;p&gt;If for some reason you don&amp;#8217;t want to do django-crispy-forms, or you have a form in which you want to do a specific layout change but without
 fully implementing the FormHelper then you can actually render the form in &lt;span class="caps"&gt;HTML&lt;/span&gt; and output the fields one by one. One thing that cannot
 be done though is passing custom options to the rendered form field. When you do a &lt;tt class="docutils literal"&gt;{{ form.field }}&lt;/tt&gt; to your template django will render
@@ -434,19 +434,19 @@ want to add a class to the rendered &lt;tt class="docutils literal"&gt;&amp;lt;i
 the rendered form fields - so if you use &lt;tt class="docutils literal"&gt;{{ &lt;span class="pre"&gt;form.field|add_class:&amp;quot;myclass&amp;quot;&lt;/span&gt; }}&lt;/tt&gt; the rendered &lt;tt class="docutils literal"&gt;&amp;lt;input&amp;gt;&lt;/tt&gt; will have a &lt;tt class="docutils literal"&gt;myclass&lt;/tt&gt; css&amp;nbsp;class.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="django-simple-captcha"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id59"&gt;django-simple-captcha&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;django-simple-captcha&lt;/h3&gt;
 &lt;p&gt;Use &lt;a class="reference external" href="https://github.com/mbi/django-simple-captcha"&gt;django-simple-captcha&lt;/a&gt; to add (configurable) captchas to your django forms. This is a very simple package that does not have any requirements
 beyond the Pillow library for the captcha image generator. The generated captchas are simple images with some added noise so it won&amp;#8217;t integrate
 &lt;a class="reference external" href="https://www.google.com/recaptcha/intro/"&gt;reCAPTCHA&lt;/a&gt; with which you may be more familiar. I deliberatly propose this package for captchas so you won&amp;#8217;t need to integrate with Google&amp;nbsp;services.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class="section" id="wagtail"&gt;
-&lt;h3&gt;&lt;a class="toc-backref" href="#id60"&gt;wagtail&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;wagtail&lt;/h3&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/wagtail/wagtail"&gt;wagtail&lt;/a&gt; is a great django &lt;span class="caps"&gt;CMS&lt;/span&gt;. I use it when I need to create a &lt;span class="caps"&gt;CMS&lt;/span&gt; or I need to add &lt;span class="caps"&gt;CMS&lt;/span&gt; like capabilities to a project. It has many
 capabilities, too many to be listed here. I urge you to try it if you need a &lt;span class="caps"&gt;CMS&lt;/span&gt;!&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="section" id="conclusion"&gt;
-&lt;h2&gt;&lt;a class="toc-backref" href="#id61"&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;The above packages should cover most of your django needs. I have listed only packages with good documentation,
 that have been recently updated
 and work with new django versions and should be fairly easy to integrate with your projects. If you need anything more or want to take a general
@@ -465,7 +465,7 @@ When somebody (or you after some months) sees that package in requirements or IN
 its intented purpose and thank you because you have saved him some time - please don&amp;#8217;t make him waste his time by needing to read your source code to understand
 any smart tricks or reinventing the&amp;nbsp;wheel.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category></entry><entry><title>Automatically create a category table in Postgresql by extracting unique table values</title><link href="https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/" rel="alternate"></link><published>2017-07-04T09:05:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-07-04:2017/07/04/postgresql-auto-create-category-column/</id><summary type="html">&lt;p&gt;Recently I was given an &lt;span class="caps"&gt;SQL&lt;/span&gt; table containing some useful data. The problem with that table was that it was was non-properly normalized but was completely flat,
+</summary><category term="django"></category><category term="python"></category></entry><entry><title>Automatically create a category table in Postgresql by extracting unique table values</title><link href="https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/" rel="alternate"></link><updated>2017-07-04T09:05:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-07-04:2017/07/04/postgresql-auto-create-category-column/</id><summary type="html">&lt;p&gt;Recently I was given an &lt;span class="caps"&gt;SQL&lt;/span&gt; table containing some useful data. The problem with that table was that it was was non-properly normalized but was completely flat,
 i.e all its columns contained varchar values while, some of them should have instead contained foreign keys to other tables. Here&amp;#8217;s an example of how this
 table looked&amp;nbsp;like:&lt;/p&gt;
 &lt;table border="1" class="docutils"&gt;
@@ -721,7 +721,7 @@ of course keep the column to make sure that the script works as you want since i
 removeing the new table and&amp;nbsp;column.&lt;/p&gt;
 &lt;p&gt;To call it just run &lt;tt class="docutils literal"&gt;select &lt;span class="pre"&gt;export_relation('part',&lt;/span&gt; 'category')&lt;/tt&gt; and you should see some debug info in the messages tab. When the script is finished you&amp;#8217;ll have the
 &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; table and &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; column in the &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; table.&lt;/p&gt;
-</summary><category term="postgresql"></category><category term="plpgsql"></category></entry><entry><title>Creating custom components for ag-grid</title><link href="https://spapas.github.io/2017/01/03/ag-grid-custom-components/" rel="alternate"></link><published>2017-01-03T09:55:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-01-03:2017/01/03/ag-grid-custom-components/</id><summary type="html">&lt;p&gt;Recently I had to integrate an application with a javascript (client-side) excel-like grid. After some research
+</summary><category term="postgresql"></category><category term="plpgsql"></category></entry><entry><title>Creating custom components for ag-grid</title><link href="https://spapas.github.io/2017/01/03/ag-grid-custom-components/" rel="alternate"></link><updated>2017-01-03T09:55:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-01-03:2017/01/03/ag-grid-custom-components/</id><summary type="html">&lt;p&gt;Recently I had to integrate an application with a javascript (client-side) excel-like grid. After some research
 I found out that &lt;a class="reference external" href="https://www.ag-grid.com/"&gt;ag-grid&lt;/a&gt; is (at least for me) the best javascript grid library. It has an open source version with a &lt;span class="caps"&gt;MIT&lt;/span&gt; license
 so it can safely be used by all your projects and a commercial, enteprise version that includes a bunch of
 extra features. The open source version should be sufficient for most projects however I really recommend
@@ -736,7 +736,7 @@ I will implement two components that can be included in your&amp;nbsp;grid:&lt;/
 &lt;div class="section" id="a-common-ground"&gt;
 &lt;h2&gt;A common&amp;nbsp;ground&lt;/h2&gt;
 &lt;p&gt;First of all, let&amp;#8217;s create a simple example that will act as a common ground for our&amp;nbsp;components:&lt;/p&gt;
-&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="http://jsfiddle.net/6vmvdmzj/6/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;As you can see, I have defined a bunch of columns for the grid and then create a new grid passing it the &lt;tt class="docutils literal"&gt;myGrid&lt;/tt&gt; div
+&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="//jsfiddle.net/6vmvdmzj/6/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;As you can see, I have defined a bunch of columns for the grid and then create a new grid passing it the &lt;tt class="docutils literal"&gt;myGrid&lt;/tt&gt; div
 and the &lt;tt class="docutils literal"&gt;gridOptions&lt;/tt&gt; (which are kept to a minimum). Finally, there&amp;#8217;s an event handler for button click that adds an
 empty&amp;nbsp;row:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;columns&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
@@ -804,7 +804,7 @@ valid function could be different for different column&amp;nbsp;types.&lt;/p&gt;
 &lt;p&gt;The first component we&amp;#8217;ll present here is an object renderer/editor. This component will receiver a list of fields and will
 allow the user to edit them in a popup grouped together. Here&amp;#8217;s a fiddle with the Address of each employee using the
 object editing&amp;nbsp;component:&lt;/p&gt;
-&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="http://jsfiddle.net/0o85uywr/4/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;To integrate it with the ag-grid I&amp;#8217;ve added an addressFields list containg the fields of the object like&amp;nbsp;this:&lt;/p&gt;
+&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="//jsfiddle.net/0o85uywr/4/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;To integrate it with the ag-grid I&amp;#8217;ve added an addressFields list containg the fields of the object like&amp;nbsp;this:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;addressFields&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;name&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;address&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;label&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Address&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt;
   &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;name&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;zip&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;label&amp;#39;&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;ZIP&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt;
@@ -942,7 +942,7 @@ and can be used for cleaning up if needed and &lt;tt class="docutils literal"&gt
 &lt;h2&gt;Creating the array-like cell&amp;nbsp;editor&lt;/h2&gt;
 &lt;p&gt;The multi-line renderer/editor will allow a cell to contain a list of values. Here&amp;#8217;s the complete fiddle where the &amp;#8220;children&amp;#8221; column
 is using the multi-line&amp;nbsp;component:&lt;/p&gt;
-&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="http://jsfiddle.net/a6s7r4tq/1/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;To integrate it with ag-grid we just need to use the corresponding editor and&amp;nbsp;renderer:&lt;/p&gt;
+&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="//jsfiddle.net/a6s7r4tq/1/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;To integrate it with ag-grid we just need to use the corresponding editor and&amp;nbsp;renderer:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;
     &lt;span class="nx"&gt;headerName&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Children&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;field&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;children&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;width&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;200&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;editable&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
     &lt;span class="nx"&gt;cellRenderer&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;MultiLineCellRenderer&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
@@ -1097,7 +1097,7 @@ an excerise to the&amp;nbsp;reader:&lt;/p&gt;
 &lt;li&gt;The multi-line editor doesn&amp;#8217;t really need to have only text values for each item. You could combine the multi-line editor with the object editor so that each line has a specific, object-like structure. For example, for each child we may have two attributes, name and date of&amp;nbsp;birth&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="component"></category><category term="ag-grid"></category><category term="grid"></category></entry><entry><title>Getting a logical backup of all databases of your Postgresql server</title><link href="https://spapas.github.io/2016/11/02/postgresql-backup/" rel="alternate"></link><published>2016-11-02T15:10:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-11-02:2016/11/02/postgresql-backup/</id><summary type="html">&lt;p&gt;In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
+</summary><category term="javascript"></category><category term="component"></category><category term="ag-grid"></category><category term="grid"></category></entry><entry><title>Getting a logical backup of all databases of your Postgresql server</title><link href="https://spapas.github.io/2016/11/02/postgresql-backup/" rel="alternate"></link><updated>2016-11-02T15:10:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-11-02:2016/11/02/postgresql-backup/</id><summary type="html">&lt;p&gt;In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
 with some other goodies. More specifically, the script&amp;nbsp;will:&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;Create two files at /tmp to output information (one for debugging and one with info for sending it through email at the&amp;nbsp;end)&lt;/li&gt;
@@ -1204,7 +1204,7 @@ output_file_size &lt;span class="nv"&gt;$filename&lt;/span&gt; global
 mail -s &lt;span class="s2"&gt;&amp;quot;Backup results&amp;quot;&lt;/span&gt; spapas@hcg.gr  &amp;lt; /tmp/db_backup_info.log
 &lt;span class="nb"&gt;popd&lt;/span&gt; &amp;gt; /dev/null
 &lt;/pre&gt;&lt;/div&gt;
-</summary><category term="bash"></category><category term="cron"></category><category term="postgresql"></category></entry><entry><title>A pandas pivot_table primer</title><link href="https://spapas.github.io/2016/09/21/pandas-pivot-table-primer/" rel="alternate"></link><published>2016-09-21T11:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-21:2016/09/21/pandas-pivot-table-primer/</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</summary><category term="bash"></category><category term="cron"></category><category term="postgresql"></category></entry><entry><title>A pandas pivot_table primer</title><link href="https://spapas.github.io/2016/09/21/pandas-pivot-table-primer/" rel="alternate"></link><updated>2016-09-21T11:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-21:2016/09/21/pandas-pivot-table-primer/</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -4261,21 +4261,21 @@ Name: pages, dtype: float64&lt;/pre&gt;
 &lt;th&gt;70&amp;#8217;s&lt;/th&gt;
 &lt;td&gt;None&lt;/td&gt;
 &lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
 &lt;td&gt;None&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;th&gt;80&amp;#8217;s&lt;/th&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;th&gt;90&amp;#8217;s&lt;/th&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
 &lt;td&gt;None&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -6715,34 +6715,34 @@ dtype: float64&lt;/pre&gt;
 &lt;div class="output"&gt;
 &lt;div class="output_area"&gt;&lt;div class="prompt"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;&lt;class &amp;#x27;pandas.core.groupby.dataframegroupby&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("70's", 'Stephen King')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("80's", 'John Grisham')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("80's", 'Michael Crichton')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("80's", 'Stephen King')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'George Pelecanos')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'George R.R Martin')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'John Grisham')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'Michael Crichton')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
-type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
-first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'Stephen King')
-second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+&lt;pre&gt;&lt;class 'pandas.core.groupby.dataframegroupby'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("70's", 'Stephen King')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("80's", 'John Grisham')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("80's", 'Michael Crichton')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("80's", 'Stephen King')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("90's", 'George Pelecanos')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("90's", 'George R.R Martin')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("90's", 'John Grisham')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("90's", 'Michael Crichton')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+type:  &lt;type 'tuple'&gt; len:  2
+first element of tuple &lt;type 'tuple'&gt; ("90's", 'Stephen King')
+second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -13028,7 +13028,7 @@ SUVORK5CYII=
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="pandas"></category><category term="scipy"></category><category term="numpy"></category><category term="pivot"></category><category term="pivot_table"></category><category term="ipython"></category><category term="jupyter"></category><category term="notebook"></category></entry><entry><title>Splitting a query into individual fields in Django</title><link href="https://spapas.github.io/2016/09/12/django-split-query/" rel="alternate"></link><published>2016-09-12T16:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-12:2016/09/12/django-split-query/</id><summary type="html">&lt;p&gt;As you should have already seen in &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;previous articles&lt;/a&gt;, I really like using &lt;a class="reference external" href="https://github.com/alex/django-filter"&gt;django-filter&lt;/a&gt; since it covers (nearly) all my queryset filtering needs.
+</summary><category term="python"></category><category term="pandas"></category><category term="scipy"></category><category term="numpy"></category><category term="pivot"></category><category term="pivot_table"></category><category term="ipython"></category><category term="jupyter"></category><category term="notebook"></category></entry><entry><title>Splitting a query into individual fields in Django</title><link href="https://spapas.github.io/2016/09/12/django-split-query/" rel="alternate"></link><updated>2016-09-12T16:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-12:2016/09/12/django-split-query/</id><summary type="html">&lt;p&gt;As you should have already seen in &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;previous articles&lt;/a&gt;, I really like using &lt;a class="reference external" href="https://github.com/alex/django-filter"&gt;django-filter&lt;/a&gt; since it covers (nearly) all my queryset filtering needs.
 With django-filter, you define a bunch of fields and it will automatically create inputs for each one of these fields so that you can filter by each one of these fields individually or a
 combination of&amp;nbsp;them.&lt;/p&gt;
 &lt;p&gt;However, one thing that django-filter (and django in generally) lacks is the ability to &lt;em&gt;filter multiple fields using a single input&lt;/em&gt;. This functionality may be familiar to some readers from
@@ -13497,7 +13497,7 @@ searching for &amp;#8220;Under the Dome Stephen King&amp;#8221; will result to &
 &lt;/pre&gt;
 &lt;p&gt;This query has around 200 different &lt;span class="caps"&gt;OR&lt;/span&gt; parts!!! So please be careful on the amount of search fields you&amp;#8217;ll enable to works
 with this method or your database will really&amp;nbsp;struggle!&lt;/p&gt;
-</summary><category term="django"></category><category term="python"></category><category term="query"></category><category term="q"></category><category term="filter"></category></entry><entry><title>How to download all images of an imgur album</title><link href="https://spapas.github.io/2016/06/27/download-imgur-album-images/" rel="alternate"></link><published>2016-06-27T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</id><summary type="html">&lt;p&gt;Recently I stubmled upon a great &lt;a class="reference external" href="http://imgur.com/"&gt;imgur&lt;/a&gt; album that contained
+</summary><category term="django"></category><category term="python"></category><category term="query"></category><category term="q"></category><category term="filter"></category></entry><entry><title>How to download all images of an imgur album</title><link href="https://spapas.github.io/2016/06/27/download-imgur-album-images/" rel="alternate"></link><updated>2016-06-27T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</id><summary type="html">&lt;p&gt;Recently I stubmled upon a great &lt;a class="reference external" href="http://imgur.com/"&gt;imgur&lt;/a&gt; album that contained
 &lt;a class="reference external" href="http://imgur.com/a/aoi3T"&gt;379 movie stills that could be used for desktop background&lt;/a&gt;. I
 really liked the idea and wanted to download all the images in order
 to put them in a folder and use them as a slideshow for my Windows
@@ -13606,7 +13606,7 @@ the javascript console. Finally, don&amp;#8217;t forget to change the
 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts.aoi3T.images)&lt;/span&gt;&lt;/tt&gt;
 depending on your album id (also if the id is not a valid identifier, for example it
 starts with number, use &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts['aoi3T'].images&lt;/span&gt;&lt;/tt&gt;).&lt;/p&gt;
-</summary><category term="imgur"></category><category term="python"></category><category term="react"></category><category term="javascript"></category><category term="console"></category><category term="research"></category></entry><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><published>2016-06-07T10:40:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+</summary><category term="imgur"></category><category term="python"></category><category term="react"></category><category term="javascript"></category><category term="console"></category><category term="research"></category></entry><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><updated>2016-06-07T10:40:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive
 debugger - what this means is that when your python application throws an exception,
@@ -13689,7 +13689,7 @@ I sometimes prefer opening and interactive debugger to find out by trial and err
 &lt;p&gt;Finally, please notice that both Werkzeug and django-extensions offer many more tools beyond the interactive debugger presented here -
 I encourage you to research them since - if you follow my advice - you&amp;#8217;ll integrate these to &lt;em&gt;all&lt;/em&gt; your django&amp;nbsp;projects!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="debug"></category><category term="python"></category><category term="werkzeug"></category><category term="django-extensions"></category></entry><entry><title>Understanding nested list comprehension syntax in Python</title><link href="https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/" rel="alternate"></link><published>2016-04-27T11:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</id><summary type="html">&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
+</summary><category term="django"></category><category term="debug"></category><category term="python"></category><category term="werkzeug"></category><category term="django-extensions"></category></entry><entry><title>Understanding nested list comprehension syntax in Python</title><link href="https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/" rel="alternate"></link><updated>2016-04-27T11:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</id><summary type="html">&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
 is actually a smart way to introduce new users to functional programming concepts
 (after all a list comprehension is just a combination of map and filter) and compact&amp;nbsp;statements.&lt;/p&gt;
 &lt;p&gt;However, one thing that always troubled me when using list comprehensions is their
@@ -13742,7 +13742,7 @@ for-loop syntax for the nested list comprehensions we&amp;#8217;ll&amp;nbsp;get:
 &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;letter&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-</summary><category term="python"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Configuring Spring Boot</title><link href="https://spapas.github.io/2016/03/31/spring-boot-settings/" rel="alternate"></link><published>2016-03-31T19:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="python"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Configuring Spring Boot</title><link href="https://spapas.github.io/2016/03/31/spring-boot-settings/" rel="alternate"></link><updated>2016-03-31T19:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -14071,7 +14071,7 @@ advanced profiles techniques (multiple profiles, profile enabled
 some really complex configurations! Finally, you&amp;#8217;ll be able to really
 quickly deploy the resulting jar as an init.d system&amp;nbsp;service!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="spring"></category><category term="spring-boot"></category><category term="java"></category><category term="ldap"></category><category term="profiles"></category><category term="settings"></category><category term="properties"></category><category term="yaml"></category><category term="configuration"></category><category term="deploy"></category><category term="init.d"></category></entry><entry><title>A comprehensive react-redux tutorial</title><link href="https://spapas.github.io/2016/03/02/react-redux-tutorial/" rel="alternate"></link><published>2016-03-02T11:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-03-02:2016/03/02/react-redux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="spring"></category><category term="spring-boot"></category><category term="java"></category><category term="ldap"></category><category term="profiles"></category><category term="settings"></category><category term="properties"></category><category term="yaml"></category><category term="configuration"></category><category term="deploy"></category><category term="init.d"></category></entry><entry><title>A comprehensive react-redux tutorial</title><link href="https://spapas.github.io/2016/03/02/react-redux-tutorial/" rel="alternate"></link><updated>2016-03-02T11:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-03-02:2016/03/02/react-redux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id2"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -14191,7 +14191,7 @@ could be also used with different view frameworks, or even with &lt;em&gt;no vie
 &lt;h3&gt;&lt;a class="toc-backref" href="#id4"&gt;A simple&amp;nbsp;example&lt;/a&gt;&lt;/h3&gt;
 &lt;p&gt;I&amp;#8217;ve implemented a very simple redux example &amp;#64; jsfiddle that increases and decreases
 a number using two buttons to support the&amp;nbsp;above:&lt;/p&gt;
-&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="http://jsfiddle.net/8aba3sp6/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;Its html&amp;nbsp;is:&lt;/p&gt;
+&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="//jsfiddle.net/8aba3sp6/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;Its html&amp;nbsp;is:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;id&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;state_container&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;0&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;button&lt;/span&gt; &lt;span class="na"&gt;onclick&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;increase()&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;button&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;button&lt;/span&gt; &lt;span class="na"&gt;onclick&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;decrease()&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;-&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;button&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
@@ -14306,7 +14306,7 @@ that allows you to &amp;#8220;pass data through the component tree without havin
 at every level&amp;#8221;. So &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;connect``ed&lt;/span&gt; components used context to retrieve the store properties that
 have been passed to the context by the ``Provider&lt;/tt&gt;.&lt;/p&gt;
 &lt;p&gt;How react-redux is used be made more clear with another jsfiddle that will convert the previous example to React and&amp;nbsp;react-redux:&lt;/p&gt;
-&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="http://jsfiddle.net/8aba3sp6/2/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;The html is just &lt;tt class="docutils literal"&gt;&amp;lt;div &lt;span class="pre"&gt;id='container'&amp;gt;&amp;lt;/div&amp;gt;&lt;/span&gt;&lt;/tt&gt; since the components will
+&lt;div class="jsfiddle"&gt;&lt;iframe width="100%" height="300" src="//jsfiddle.net/8aba3sp6/2/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;The html is just &lt;tt class="docutils literal"&gt;&amp;lt;div &lt;span class="pre"&gt;id='container'&amp;gt;&amp;lt;/div&amp;gt;&lt;/span&gt;&lt;/tt&gt; since the components will
 be rendered through react, while the es6/jsx code&amp;nbsp;is:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;let&lt;/span&gt; &lt;span class="nx"&gt;reducer&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;state&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
   &lt;span class="k"&gt;switch&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;action&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;type&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
@@ -16284,7 +16284,7 @@ about&amp;nbsp;these.&lt;/p&gt;
 redux/react-redux the flow of the data is &lt;em&gt;crystal&lt;/em&gt; and that as you&amp;#8217;ve already
 seen by now, writing functional components and reducers is &lt;em&gt;pure fun&lt;/em&gt;!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="react"></category><category term="redux"></category><category term="react-redux"></category><category term="django"></category><category term="django-rest-framework"></category><category term="redux-thunk"></category><category term="redux-form"></category><category term="react-router"></category><category term="react-router-redux"></category><category term="react-notification"></category><category term="history"></category><category term="es6"></category><category term="babel"></category><category term="babelify"></category><category term="browserify"></category><category term="watchify"></category><category term="uglify"></category><category term="boilerplate"></category><category term="ajax"></category><category term="tutorial"></category><category term="introduction"></category></entry><entry><title>Ajax data with Fixed Data Table for React</title><link href="https://spapas.github.io/2015/12/22/ajax-with-react-fixed-data-table/" rel="alternate"></link><published>2015-12-22T15:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-12-22:2015/12/22/ajax-with-react-fixed-data-table/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="react"></category><category term="redux"></category><category term="react-redux"></category><category term="django"></category><category term="django-rest-framework"></category><category term="redux-thunk"></category><category term="redux-form"></category><category term="react-router"></category><category term="react-router-redux"></category><category term="react-notification"></category><category term="history"></category><category term="es6"></category><category term="babel"></category><category term="babelify"></category><category term="browserify"></category><category term="watchify"></category><category term="uglify"></category><category term="boilerplate"></category><category term="ajax"></category><category term="tutorial"></category><category term="introduction"></category></entry><entry><title>Ajax data with Fixed Data Table for React</title><link href="https://spapas.github.io/2015/12/22/ajax-with-react-fixed-data-table/" rel="alternate"></link><updated>2015-12-22T15:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-12-22:2015/12/22/ajax-with-react-fixed-data-table/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -16553,7 +16553,7 @@ less means is that a store component
 should be developed that will actually keep the data for each row, and a &lt;tt class="docutils literal"&gt;fetchCompleted&lt;/tt&gt; action should be
 dispatched when the &lt;tt class="docutils literal"&gt;fetch&lt;/tt&gt; is finished instead of calling &lt;tt class="docutils literal"&gt;forceUpdate&lt;/tt&gt; directly.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="react"></category><category term="fixed-data-tables"></category><category term="FixedDataTable"></category></entry><entry><title>PDFs in Django: The essential guide</title><link href="https://spapas.github.io/2015/11/27/pdf-in-django/" rel="alternate"></link><published>2015-11-27T10:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="react"></category><category term="fixed-data-tables"></category><category term="FixedDataTable"></category></entry><entry><title>PDFs in Django: The essential guide</title><link href="https://spapas.github.io/2015/11/27/pdf-in-django/" rel="alternate"></link><updated>2015-11-27T10:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id4"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -17350,7 +17350,7 @@ out and I&amp;#8217;ll be happy to research it a bit and update the article with
 &lt;p&gt;I am using all the above in various production applications for a long time and everything
 is smooth so don&amp;#8217;t afraid to create PDFs from&amp;nbsp;Django!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="pdf"></category><category term="django"></category><category term="reportlab"></category><category term="python"></category><category term="xhtml2pdf"></category></entry><entry><title>Improve your client-side-javascript workflow more by using ES6</title><link href="https://spapas.github.io/2015/11/16/using-browserify-es6/" rel="alternate"></link><published>2015-11-16T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-16:2015/11/16/using-browserify-es6/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="pdf"></category><category term="django"></category><category term="reportlab"></category><category term="python"></category><category term="xhtml2pdf"></category></entry><entry><title>Improve your client-side-javascript workflow more by using ES6</title><link href="https://spapas.github.io/2015/11/16/using-browserify-es6/" rel="alternate"></link><updated>2015-11-16T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-16:2015/11/16/using-browserify-es6/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -17560,7 +17560,7 @@ browserify are not unlimited, so if you wanted to do something more complicated
 task runners (or webpack which is the current trend in javascript bundlers and actually replaces
 the task&amp;nbsp;runners).&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="browserify"></category><category term="node"></category><category term="npm"></category><category term="watchify"></category><category term="generic"></category><category term="uglify"></category><category term="babel"></category><category term="es6"></category></entry><entry><title>Django dynamic tables and filters for similar models</title><link href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/" rel="alternate"></link><published>2015-10-05T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-10-05:2015/10/05/django-dynamic-tables-similar-models/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="browserify"></category><category term="node"></category><category term="npm"></category><category term="watchify"></category><category term="generic"></category><category term="uglify"></category><category term="babel"></category><category term="es6"></category></entry><entry><title>Django dynamic tables and filters for similar models</title><link href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/" rel="alternate"></link><updated>2015-10-05T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-10-05:2015/10/05/django-dynamic-tables-similar-models/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -17798,7 +17798,7 @@ creating different &lt;tt class="docutils literal"&gt;SingleTableView&lt;/tt&gt;
 of the Model to be viewed as a parameter and retrieve the model (and queryset) from the content type - so
 we could have a single &lt;span class="caps"&gt;CBV&lt;/span&gt; for all our table/filtering views&amp;nbsp;!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="forms"></category><category term="tables"></category></entry><entry><title>A (little more) complex react and flux example</title><link href="https://spapas.github.io/2015/09/08/more-complex-react-flux-example/" rel="alternate"></link><published>2015-09-08T12:55:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-08:2015/09/08/more-complex-react-flux-example/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="forms"></category><category term="tables"></category></entry><entry><title>A (little more) complex react and flux example</title><link href="https://spapas.github.io/2015/09/08/more-complex-react-flux-example/" rel="alternate"></link><updated>2015-09-08T12:55:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-08:2015/09/08/more-complex-react-flux-example/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id2"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -19129,7 +19129,7 @@ will need to use &amp;#8212; if you feel that something is not covered and
 could be integrated to the authors/book application I&amp;#8217;d be happy
 to research and implement&amp;nbsp;it!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>django-rq redux: advanced techniques and tools</title><link href="https://spapas.github.io/2015/09/01/django-rq-redux/" rel="alternate"></link><published>2015-09-01T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-01:2015/09/01/django-rq-redux/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>django-rq redux: advanced techniques and tools</title><link href="https://spapas.github.io/2015/09/01/django-rq-redux/" rel="alternate"></link><updated>2015-09-01T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-01:2015/09/01/django-rq-redux/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -19449,7 +19449,7 @@ queued
 task adventures with rq. I&amp;#8217;ll try to keep this article updated with
 any new techniques or tools I find in the&amp;nbsp;future!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>A comprehensive React and Flux tutorial part 2: Flux</title><link href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/" rel="alternate"></link><published>2015-07-02T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-07-02:2015/07/02/comprehensive-react-flux-tutorial-2/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>A comprehensive React and Flux tutorial part 2: Flux</title><link href="https://spapas.github.io/2015/07/02/comprehensive-react-flux-tutorial-2/" rel="alternate"></link><updated>2015-07-02T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-07-02:2015/07/02/comprehensive-react-flux-tutorial-2/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -20078,7 +20078,7 @@ really going on! This is in contrast with more complex frameworks that do variou
 stuff (two way data binding, magic in the &lt;span class="caps"&gt;REST&lt;/span&gt; etc) where, although it is easier to
 create a simple app, moving to something more complex (and especially debugging it) is a real&amp;nbsp;nightmare!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>A comprehensive React and Flux tutorial part 1: React</title><link href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/" rel="alternate"></link><published>2015-06-05T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-06-05:2015/06/05/comprehensive-react-flux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>A comprehensive React and Flux tutorial part 1: React</title><link href="https://spapas.github.io/2015/06/05/comprehensive-react-flux-tutorial/" rel="alternate"></link><updated>2015-06-05T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-06-05:2015/06/05/comprehensive-react-flux-tutorial/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -20677,7 +20677,7 @@ where to store the state and how to update it. We&amp;#8217;ll see how to conver
 application to also use Flux and find out how Flux will help us when developing
 complex client-side&amp;nbsp;applications!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>Using browserify and watchify to improve your client-side-javascript workflow</title><link href="https://spapas.github.io/2015/05/27/using-browserify-watchify/" rel="alternate"></link><published>2015-05-27T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-05-27:2015/05/27/using-browserify-watchify/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="javascript"></category><category term="python"></category><category term="django"></category><category term="react"></category><category term="flux"></category></entry><entry><title>Using browserify and watchify to improve your client-side-javascript workflow</title><link href="https://spapas.github.io/2015/05/27/using-browserify-watchify/" rel="alternate"></link><updated>2015-05-27T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-05-27:2015/05/27/using-browserify-watchify/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#the-problem" id="id1"&gt;The&amp;nbsp;problem&lt;/a&gt;&lt;/li&gt;
@@ -20994,7 +20994,7 @@ be used by the users&amp;#8217;&amp;nbsp;browsers.&lt;/p&gt;
 &lt;li&gt;run &lt;tt class="docutils literal"&gt;npm run watch&lt;/tt&gt; when developing and &lt;tt class="docutils literal"&gt;npm run build&lt;/tt&gt; before&amp;nbsp;deploying&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-</summary><category term="javascript"></category><category term="browserify"></category><category term="node"></category><category term="npm"></category><category term="watchify"></category><category term="generic"></category><category term="uglify"></category></entry><entry><title>Show 404 page on django when DEBUG=True</title><link href="https://spapas.github.io/2015/04/29/django-show-404-page/" rel="alternate"></link><published>2015-04-29T10:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</id><summary type="html">&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
+</summary><category term="javascript"></category><category term="browserify"></category><category term="node"></category><category term="npm"></category><category term="watchify"></category><category term="generic"></category><category term="uglify"></category></entry><entry><title>Show 404 page on django when DEBUG=True</title><link href="https://spapas.github.io/2015/04/29/django-show-404-page/" rel="alternate"></link><updated>2015-04-29T10:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</id><summary type="html">&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
 a template named &lt;tt class="docutils literal"&gt;404.html&lt;/tt&gt; to the top level directory of your templates.
 However, on your development environment you&amp;#8217;ll never be able to see this
 template because when &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;DEBUG&lt;/span&gt;=True&lt;/tt&gt; django will render the debug not found
@@ -21010,7 +21010,7 @@ pattern for django&amp;#8217;s default 404 view - just  add the following to you
 &lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You&amp;#8217;ll then be able to see your 404 page by visiting the defined &lt;span class="caps"&gt;URL&lt;/span&gt;!&lt;/p&gt;
-</summary><category term="django"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Calling the REST API of Pusher from python</title><link href="https://spapas.github.io/2015/02/06/python-pusher-rest/" rel="alternate"></link><published>2015-02-06T12:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+</summary><category term="django"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Calling the REST API of Pusher from python</title><link href="https://spapas.github.io/2015/02/06/python-pusher-rest/" rel="alternate"></link><updated>2015-02-06T12:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://pusher.com/"&gt;Pusher&lt;/a&gt; is one of the best real time frameworks right now. Using it you can add real time
 events in your projects without the need to configure and use &lt;span class="caps"&gt;HTTP&lt;/span&gt; servers that support
@@ -21157,7 +21157,7 @@ presence&amp;nbsp;channel.&lt;/p&gt;
 channel in python but to also call any method we want from the Pusher &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt; by implementing a function
 similar to  &lt;tt class="docutils literal"&gt;get_users&lt;/tt&gt;.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="pusher"></category><category term="python"></category><category term="rest"></category></entry><entry><title>Asynchronous tasks in django with django-rq</title><link href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/" rel="alternate"></link><published>2015-01-27T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="pusher"></category><category term="python"></category><category term="rest"></category></entry><entry><title>Asynchronous tasks in django with django-rq</title><link href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/" rel="alternate"></link><updated>2015-01-27T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -21610,7 +21610,7 @@ to configure django to use it in a production ready environment using a small
 django project (&lt;a class="reference external" href="https://github.com/spapas/django-test-rq"&gt;https://github.com/spapas/django-test-rq&lt;/a&gt;) which was implemented as a companion
 to help readers quickly test the concepts presented&amp;nbsp;here.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Django model auditing</title><link href="https://spapas.github.io/2015/01/21/django-model-auditing/" rel="alternate"></link><published>2015-01-21T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-21:2015/01/21/django-model-auditing/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Django model auditing</title><link href="https://spapas.github.io/2015/01/21/django-model-auditing/" rel="alternate"></link><updated>2015-01-21T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-21:2015/01/21/django-model-auditing/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id5"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -21970,7 +21970,7 @@ django-reversion to save each version as a json object, so no extra tables will 
 do a migrate (&lt;tt class="docutils literal"&gt;python manage.py migrate&lt;/tt&gt; &amp;#8212; uses sqlite3 by default) and run the local development
 server (&lt;tt class="docutils literal"&gt;python manage.py ruinserver&lt;/tt&gt;).&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="auditing"></category></entry><entry><title>Change the primary color of bootstrap material design</title><link href="https://spapas.github.io/2014/12/16/change-bootstrap-material-primary-color/" rel="alternate"></link><published>2014-12-16T16:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-12-16:2014/12/16/change-bootstrap-material-primary-color/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="auditing"></category></entry><entry><title>Change the primary color of bootstrap material design</title><link href="https://spapas.github.io/2014/12/16/change-bootstrap-material-primary-color/" rel="alternate"></link><updated>2014-12-16T16:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-12-16:2014/12/16/change-bootstrap-material-primary-color/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/FezVrasta/bootstrap-material-design"&gt;Bootstrap Material Design&lt;/a&gt; is a great theme that sits on top of &lt;a class="reference external" href="http://getbootstrap.com/"&gt;Bootstrap&lt;/a&gt; and transforms it to
 &lt;a class="reference external" href="http://www.google.com/design/spec/material-design/introduction.html"&gt;Material Design&lt;/a&gt;! The great thing about Bootstrap Material Design is that you just need to include
@@ -22046,7 +22046,7 @@ git checkout master
 &lt;/pre&gt;
 &lt;p&gt;This should change the current branch to master and you should see the &lt;cite&gt;less&lt;/cite&gt; folder inside the &lt;cite&gt;bootstrap&lt;/cite&gt; folder. After that everything should work as&amp;nbsp;expected.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="css"></category><category term="design"></category><category term="boostrap-material-design"></category><category term="less"></category><category term="node.js"></category></entry><entry><title>Retrieving Gmail blocked attachments</title><link href="https://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/" rel="alternate"></link><published>2014-10-23T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</id><summary type="html">&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
+</summary><category term="css"></category><category term="design"></category><category term="boostrap-material-design"></category><category term="less"></category><category term="node.js"></category></entry><entry><title>Retrieving Gmail blocked attachments</title><link href="https://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/" rel="alternate"></link><updated>2014-10-23T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</id><summary type="html">&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
 their Gmail account as a primitive backup solution: Compress your directory and send it to
 your gmail. There. Backup&amp;nbsp;complete.&lt;/p&gt;
 &lt;p&gt;However, nothing is so&amp;nbsp;easy&amp;#8230;&lt;/p&gt;
@@ -22111,7 +22111,7 @@ try this solution before trying the pythonic way (especially if you&amp;#8217;re
 &lt;p&gt;&lt;strong&gt;Update, 6 March 2016&lt;/strong&gt;: Commenter Alex (Alexandre Barfuhok) proposed another clever trick (involving making visible
 the initially invisible &amp;#8220;Download to drive&amp;#8221; button) for retrieving gmail blocked attachments!
 Read more about it &lt;a class="reference external" href="http://www.barfuhok.com/how-to-download-a-file-with-anti-virus-warning-on-gmail/"&gt;at his article&lt;/a&gt;!&lt;/p&gt;
-</summary><category term="gmail"></category><category term="python"></category><category term="security"></category><category term="google"></category></entry><entry><title>Django non-HTML responses</title><link href="https://spapas.github.io/2014/09/15/django-non-html-responses/" rel="alternate"></link><published>2014-09-15T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-09-15:2014/09/15/django-non-html-responses/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="gmail"></category><category term="python"></category><category term="security"></category><category term="google"></category></entry><entry><title>Django non-HTML responses</title><link href="https://spapas.github.io/2014/09/15/django-non-html-responses/" rel="alternate"></link><updated>2014-09-15T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-09-15:2014/09/15/django-non-html-responses/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -22314,7 +22314,7 @@ object with the correct attributes and writes the &lt;span class="caps"&gt;CSV&l
 &lt;p&gt;Using the above techniques we can define CBVs that will output their content in various content types
 beyond &lt;span class="caps"&gt;HTML&lt;/span&gt;. This will help us write write clean and &lt;span class="caps"&gt;DRY&lt;/span&gt;&amp;nbsp;code.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>Implementing a simple, Heroku-hosted REST service using Flask and mongoDB</title><link href="https://spapas.github.io/2014/06/30/rest-flask-mongodb-heroku/" rel="alternate"></link><published>2014-06-30T15:23:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-06-30:2014/06/30/rest-flask-mongodb-heroku/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>Implementing a simple, Heroku-hosted REST service using Flask and mongoDB</title><link href="https://spapas.github.io/2014/06/30/rest-flask-mongodb-heroku/" rel="alternate"></link><updated>2014-06-30T15:23:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-06-30:2014/06/30/rest-flask-mongodb-heroku/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -22521,7 +22521,7 @@ heroku open
 &lt;/pre&gt;
 &lt;p&gt;If everything was ok you should see an status-&lt;span class="caps"&gt;OK&lt;/span&gt; &lt;span class="caps"&gt;JSON&lt;/span&gt;&amp;nbsp;!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="flask"></category><category term="mongodb"></category><category term="heroku"></category><category term="python"></category><category term="rest"></category></entry><entry><title>Django generic FormViews for objects</title><link href="https://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/" rel="alternate"></link><published>2014-04-11T10:23:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-04-11:2014/04/11/django-generic-formviews-for-objects/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="flask"></category><category term="mongodb"></category><category term="heroku"></category><category term="python"></category><category term="rest"></category></entry><entry><title>Django generic FormViews for objects</title><link href="https://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/" rel="alternate"></link><updated>2014-04-11T10:23:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-04-11:2014/04/11/django-generic-formviews-for-objects/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -22667,7 +22667,7 @@ classes. Some ideas is to check if the current user actually has access to modif
 &lt;tt class="docutils literal"&gt;get_object&lt;/tt&gt; method of &lt;tt class="docutils literal"&gt;SingleObjectMixin&lt;/tt&gt;) or render the form diffirently depending on the current user (hint:
 override the &lt;tt class="docutils literal"&gt;get_form_kwargs&lt;/tt&gt; method of &lt;tt class="docutils literal"&gt;FormView&lt;/tt&gt;).&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>A Wagtail tutorial</title><link href="https://spapas.github.io/2014/02/13/wagtail-tutorial/" rel="alternate"></link><published>2014-02-13T21:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-02-13:2014/02/13/wagtail-tutorial/</id><summary type="html">&lt;p&gt;&lt;a href="http://wagtail.io"&gt;Wagtail&lt;/a&gt; is a new Open Source &lt;a href="https://www.djangoproject.com"&gt;Django&lt;/a&gt;-based &lt;span class="caps"&gt;CMS&lt;/span&gt;. In this 20 minute tutorial we will see how you can create a blog from scratch using Wagtail. If you want to see some more examples of usage please take a look at the &lt;a href="https://github.com/torchbox/wagtaildemo"&gt;wagtaildemo&lt;/a&gt; GitHub&amp;nbsp;project.&lt;/p&gt;
+</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>A Wagtail tutorial</title><link href="https://spapas.github.io/2014/02/13/wagtail-tutorial/" rel="alternate"></link><updated>2014-02-13T21:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-02-13:2014/02/13/wagtail-tutorial/</id><summary type="html">&lt;p&gt;&lt;a href="http://wagtail.io"&gt;Wagtail&lt;/a&gt; is a new Open Source &lt;a href="https://www.djangoproject.com"&gt;Django&lt;/a&gt;-based &lt;span class="caps"&gt;CMS&lt;/span&gt;. In this 20 minute tutorial we will see how you can create a blog from scratch using Wagtail. If you want to see some more examples of usage please take a look at the &lt;a href="https://github.com/torchbox/wagtaildemo"&gt;wagtaildemo&lt;/a&gt; GitHub&amp;nbsp;project.&lt;/p&gt;
 &lt;p&gt;To follow this tutorial you will need to have &lt;a href="http://python.org/"&gt;Python&lt;/a&gt; 2.7 installed with a working version of &lt;a href="https://pypi.python.org/pypi/pip"&gt;pip&lt;/a&gt; and &lt;a href="https://pypi.python.org/pypi/virtualenv"&gt;virtualenv&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: The result of this tutorial has been deployed to &lt;a href="https://www.heroku.com/"&gt;Heroku&lt;/a&gt;: &lt;a href="http://gentle-refuge-2590.herokuapp.com/"&gt;http://gentle-refuge-2590.herokuapp.com/&lt;/a&gt; - you may visit the &lt;a href="http://gentle-refuge-2590.herokuapp.com/admin/"&gt;admin site&lt;/a&gt; and login with root / 123 to play with Wagtail! Please don&amp;#8217;t do anything naughty !!! Also, notice that &lt;a href="https://devcenter.heroku.com/articles/dynos#isolation-and-security"&gt;because of how Heroku works&lt;/a&gt; you won&amp;#8217;t be able to upload&amp;nbsp;anything.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update 08/09/2015: This tutorial has been written during the first days of Wagtail, when documentation and tutorials about it were sparce; right now it should be considered by all accounts obsolete and &lt;em&gt;not&lt;/em&gt; be followed! Instead, you should read the official (and very well written) tutorial @ http://docs.wagtail.io/en/latest/getting_started/tutorial.html] in the official Wagtail&amp;nbsp;documentation!&lt;/strong&gt;&lt;/p&gt;
@@ -23113,7 +23113,7 @@ change it at will), or even creating a completely different kind of site by addi
 no complete documentation yet however you&amp;nbsp;can &lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Use the source&amp;nbsp;Luke!&lt;/p&gt;
-&lt;/blockquote&gt;</summary><category term="wagtail"></category><category term="python"></category><category term="django"></category></entry><entry><title>Django dynamic forms</title><link href="https://spapas.github.io/2013/12/24/django-dynamic-forms/" rel="alternate"></link><published>2013-12-24T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-12-24:2013/12/24/django-dynamic-forms/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+&lt;/blockquote&gt;</summary><category term="wagtail"></category><category term="python"></category><category term="django"></category></entry><entry><title>Django dynamic forms</title><link href="https://spapas.github.io/2013/12/24/django-dynamic-forms/" rel="alternate"></link><updated>2013-12-24T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-12-24:2013/12/24/django-dynamic-forms/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -23325,7 +23325,7 @@ is &lt;span class="caps"&gt;POST&lt;/span&gt; so we pass the &lt;span class="cap
 we just create an empty form. As a result we just pass the data that was
 read from the form to the view for&amp;nbsp;presentation.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="forms"></category></entry><entry><title>Django authority data</title><link href="https://spapas.github.io/2013/11/05/django-authoritiy-data/" rel="alternate"></link><published>2013-11-05T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-11-05:2013/11/05/django-authoritiy-data/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="forms"></category></entry><entry><title>Django authority data</title><link href="https://spapas.github.io/2013/11/05/django-authoritiy-data/" rel="alternate"></link><updated>2013-11-05T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-11-05:2013/11/05/django-authoritiy-data/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -23482,7 +23482,7 @@ have a &lt;tt class="docutils literal"&gt;ForeignKey&lt;/tt&gt; to your Authorit
 to use that. If you have more than one models that belong to an authority and want to stay &lt;span class="caps"&gt;DRY&lt;/span&gt; then you&amp;#8217;d need
 to define all the above as &lt;a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/class-based-views/mixins/"&gt;mixins&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="security"></category></entry><entry><title>Using custom authorities with spring-security LDAP authentication</title><link href="https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/" rel="alternate"></link><published>2013-10-14T08:55:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="security"></category></entry><entry><title>Using custom authorities with spring-security LDAP authentication</title><link href="https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/" rel="alternate"></link><updated>2013-10-14T08:55:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id3"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -23682,7 +23682,7 @@ vertical-align: top; --&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-</summary><category term="spring"></category><category term="spring-security"></category><category term="java"></category><category term="ldap"></category><category term="authentication"></category></entry><entry><title>git branches</title><link href="https://spapas.github.io/2013/10/08/git-branches/" rel="alternate"></link><published>2013-10-08T13:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-10-08:2013/10/08/git-branches/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="spring"></category><category term="spring-security"></category><category term="java"></category><category term="ldap"></category><category term="authentication"></category></entry><entry><title>git branches</title><link href="https://spapas.github.io/2013/10/08/git-branches/" rel="alternate"></link><updated>2013-10-08T13:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-10-08:2013/10/08/git-branches/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -23987,7 +23987,7 @@ D:\testgit&amp;gt;git branch
 &lt;/pre&gt;
 &lt;p&gt;Finally we may push again the named_branch to our remote&amp;nbsp;origin.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="git"></category><category term="github"></category><category term="branching"></category></entry><entry><title>Using pelican to generate static sites on windows</title><link href="https://spapas.github.io/2013/10/07/pelican-static-windows/" rel="alternate"></link><published>2013-10-07T10:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-10-07:2013/10/07/pelican-static-windows/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="git"></category><category term="github"></category><category term="branching"></category></entry><entry><title>Using pelican to generate static sites on windows</title><link href="https://spapas.github.io/2013/10/07/pelican-static-windows/" rel="alternate"></link><updated>2013-10-07T10:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-10-07:2013/10/07/pelican-static-windows/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/django.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2015-11-27T10:20:00+02:00</updated><entry><title>PDFs in Django: The essential guide</title><link href="https://spapas.github.io/2015/11/27/pdf-in-django/" rel="alternate"></link><published>2015-11-27T10:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/django.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2015-11-27T10:20:00+02:00</updated><entry><title>PDFs in Django: The essential guide</title><link href="https://spapas.github.io/2015/11/27/pdf-in-django/" rel="alternate"></link><updated>2015-11-27T10:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id4"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -796,7 +796,7 @@ out and I&amp;#8217;ll be happy to research it a bit and update the article with
 &lt;p&gt;I am using all the above in various production applications for a long time and everything
 is smooth so don&amp;#8217;t afraid to create PDFs from&amp;nbsp;Django!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="pdf"></category><category term="django"></category><category term="reportlab"></category><category term="python"></category><category term="xhtml2pdf"></category></entry><entry><title>Django dynamic tables and filters for similar models</title><link href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/" rel="alternate"></link><published>2015-10-05T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-10-05:2015/10/05/django-dynamic-tables-similar-models/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="pdf"></category><category term="django"></category><category term="reportlab"></category><category term="python"></category><category term="xhtml2pdf"></category></entry><entry><title>Django dynamic tables and filters for similar models</title><link href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/" rel="alternate"></link><updated>2015-10-05T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-10-05:2015/10/05/django-dynamic-tables-similar-models/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -1034,7 +1034,7 @@ creating different &lt;tt class="docutils literal"&gt;SingleTableView&lt;/tt&gt;
 of the Model to be viewed as a parameter and retrieve the model (and queryset) from the content type - so
 we could have a single &lt;span class="caps"&gt;CBV&lt;/span&gt; for all our table/filtering views&amp;nbsp;!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="forms"></category><category term="tables"></category></entry><entry><title>django-rq redux: advanced techniques and tools</title><link href="https://spapas.github.io/2015/09/01/django-rq-redux/" rel="alternate"></link><published>2015-09-01T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-01:2015/09/01/django-rq-redux/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="forms"></category><category term="tables"></category></entry><entry><title>django-rq redux: advanced techniques and tools</title><link href="https://spapas.github.io/2015/09/01/django-rq-redux/" rel="alternate"></link><updated>2015-09-01T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-09-01:2015/09/01/django-rq-redux/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -1354,7 +1354,7 @@ queued
 task adventures with rq. I&amp;#8217;ll try to keep this article updated with
 any new techniques or tools I find in the&amp;nbsp;future!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Asynchronous tasks in django with django-rq</title><link href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/" rel="alternate"></link><published>2015-01-27T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Asynchronous tasks in django with django-rq</title><link href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/" rel="alternate"></link><updated>2015-01-27T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -1807,7 +1807,7 @@ to configure django to use it in a production ready environment using a small
 django project (&lt;a class="reference external" href="https://github.com/spapas/django-test-rq"&gt;https://github.com/spapas/django-test-rq&lt;/a&gt;) which was implemented as a companion
 to help readers quickly test the concepts presented&amp;nbsp;here.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Django model auditing</title><link href="https://spapas.github.io/2015/01/21/django-model-auditing/" rel="alternate"></link><published>2015-01-21T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-21:2015/01/21/django-model-auditing/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Django model auditing</title><link href="https://spapas.github.io/2015/01/21/django-model-auditing/" rel="alternate"></link><updated>2015-01-21T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-21:2015/01/21/django-model-auditing/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id5"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2167,7 +2167,7 @@ django-reversion to save each version as a json object, so no extra tables will 
 do a migrate (&lt;tt class="docutils literal"&gt;python manage.py migrate&lt;/tt&gt; &amp;#8212; uses sqlite3 by default) and run the local development
 server (&lt;tt class="docutils literal"&gt;python manage.py ruinserver&lt;/tt&gt;).&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="auditing"></category></entry><entry><title>Django non-HTML responses</title><link href="https://spapas.github.io/2014/09/15/django-non-html-responses/" rel="alternate"></link><published>2014-09-15T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-09-15:2014/09/15/django-non-html-responses/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="auditing"></category></entry><entry><title>Django non-HTML responses</title><link href="https://spapas.github.io/2014/09/15/django-non-html-responses/" rel="alternate"></link><updated>2014-09-15T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-09-15:2014/09/15/django-non-html-responses/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2370,7 +2370,7 @@ object with the correct attributes and writes the &lt;span class="caps"&gt;CSV&l
 &lt;p&gt;Using the above techniques we can define CBVs that will output their content in various content types
 beyond &lt;span class="caps"&gt;HTML&lt;/span&gt;. This will help us write write clean and &lt;span class="caps"&gt;DRY&lt;/span&gt;&amp;nbsp;code.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>Django generic FormViews for objects</title><link href="https://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/" rel="alternate"></link><published>2014-04-11T10:23:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-04-11:2014/04/11/django-generic-formviews-for-objects/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>Django generic FormViews for objects</title><link href="https://spapas.github.io/2014/04/11/django-generic-formviews-for-objects/" rel="alternate"></link><updated>2014-04-11T10:23:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-04-11:2014/04/11/django-generic-formviews-for-objects/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2516,7 +2516,7 @@ classes. Some ideas is to check if the current user actually has access to modif
 &lt;tt class="docutils literal"&gt;get_object&lt;/tt&gt; method of &lt;tt class="docutils literal"&gt;SingleObjectMixin&lt;/tt&gt;) or render the form diffirently depending on the current user (hint:
 override the &lt;tt class="docutils literal"&gt;get_form_kwargs&lt;/tt&gt; method of &lt;tt class="docutils literal"&gt;FormView&lt;/tt&gt;).&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>Django dynamic forms</title><link href="https://spapas.github.io/2013/12/24/django-dynamic-forms/" rel="alternate"></link><published>2013-12-24T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-12-24:2013/12/24/django-dynamic-forms/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="cbv"></category><category term="class-based-views"></category></entry><entry><title>Django dynamic forms</title><link href="https://spapas.github.io/2013/12/24/django-dynamic-forms/" rel="alternate"></link><updated>2013-12-24T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-12-24:2013/12/24/django-dynamic-forms/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2728,7 +2728,7 @@ is &lt;span class="caps"&gt;POST&lt;/span&gt; so we pass the &lt;span class="cap
 we just create an empty form. As a result we just pass the data that was
 read from the form to the view for&amp;nbsp;presentation.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category><category term="forms"></category></entry><entry><title>Django authority data</title><link href="https://spapas.github.io/2013/11/05/django-authoritiy-data/" rel="alternate"></link><published>2013-11-05T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-11-05:2013/11/05/django-authoritiy-data/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+</summary><category term="django"></category><category term="python"></category><category term="forms"></category></entry><entry><title>Django authority data</title><link href="https://spapas.github.io/2013/11/05/django-authoritiy-data/" rel="alternate"></link><updated>2013-11-05T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2013-11-05:2013/11/05/django-authoritiy-data/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
