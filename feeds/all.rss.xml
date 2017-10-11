@@ -1,5 +1,465 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Tue, 04 Jul 2017 09:05:00 +0300</lastBuildDate><item><title>Automatically create a category table in Postgresql by extracting unique table values</title><link>https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/</link><description>&lt;p&gt;Recently I was given an &lt;span class="caps"&gt;SQL&lt;/span&gt; table containing some useful data. The problem with that table was that it was was non-properly normalized but was completely flat,
+<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Wed, 11 Oct 2017 14:20:00 +0300</lastBuildDate><item><title>My essential django package list</title><link>https://spapas.github.io/2017/10/11/essential-django-packages/</link><description>&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
+in most of my projects. I am using django for more than 5 years as my day to
+day work tool to develop applications for the public sector organization I work for.
+So please keep in mind that these packages are targeted to the &amp;#8220;enterpripse&amp;#8221;
+audience and some things that target public (open access) web apps may be&amp;nbsp;missing.&lt;/p&gt;
+&lt;p&gt;Some of these packages are included in
+&lt;a class="reference external" href="https://github.com/spapas/cookiecutter-django-starter"&gt;a django cookiecutter&lt;/a&gt; I am using to start new projects and also you can find
+example usage of some of these packages in my &lt;a class="reference external" href="https://github.com/spapas/mailer_server"&gt;Mailer Server&lt;/a&gt; project.
+I&amp;#8217;ll also be happy to answer any
+questions about these, preferably in &lt;a class="reference external" href="https://stackoverflow.com"&gt;stackoverflow&lt;/a&gt; if the questions are fit for that&amp;nbsp;site.&lt;/p&gt;
+&lt;p&gt;Finally, before going to the package list, notice that most of the following are django-related and I won&amp;#8217;t include any
+generic python packages (with the exception of xhtml2pdf which I discuss later). There
+are a bunch of python-generic packages that I usually use (xlrd, xlwt, requests, raven, unidecode,
+database connectors etc) but these won&amp;#8217;t be discussed&amp;nbsp;here.&lt;/p&gt;
+&lt;div class="contents topic" id="contents"&gt;
+&lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#packages-i-use-in-all-my-projects" id="id29"&gt;Packages I use in all my projects&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-tables2" id="id30"&gt;django-tables2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-filter" id="id31"&gt;django-filter&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-crispy-forms" id="id32"&gt;django-crispy-forms&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-extensions" id="id33"&gt;django-extensions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-autocomplete-light" id="id34"&gt;django-autocomplete-light&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-reversion" id="id35"&gt;django-reversion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-compressor" id="id36"&gt;django-compressor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-debug-toolbar" id="id37"&gt;django-debug-toolbar&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#packages-i-use-when-i-need-their-functionality" id="id38"&gt;Packages I use when I need their functionality&lt;/a&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#xhtml2pdf" id="id39"&gt;xhtml2pdf&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-auth-ldap" id="id40"&gt;django-auth-ldap&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-localflavor" id="id41"&gt;django-localflavor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-constance" id="id42"&gt;django-constance&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-rq" id="id43"&gt;django-rq&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-rules-light" id="id44"&gt;django-rules-light&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-generic-scaffold" id="id45"&gt;django-generic-scaffold&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-taggit" id="id46"&gt;django-taggit&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-sendfile" id="id47"&gt;django-sendfile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-reversion-compare" id="id48"&gt;django-reversion-compare&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-simple-history" id="id49"&gt;django-simple-history&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-import-export" id="id50"&gt;django-import-export&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-extra-views" id="id51"&gt;django-extra-views&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#easy-thumbnails" id="id52"&gt;easy-thumbnails&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-rest-framework" id="id53"&gt;django-rest-framework&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-waffle" id="id54"&gt;django-waffle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-allauth" id="id55"&gt;django-allauth&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-modeltranslation" id="id56"&gt;django-modeltranslation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-widget-tweaks" id="id57"&gt;django-widget-tweaks&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#django-simple-captcha" id="id58"&gt;django-simple-captcha&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference internal" href="#conclusion" id="id59"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="section" id="packages-i-use-in-all-my-projects"&gt;
+&lt;h2&gt;&lt;a class="toc-backref" href="#id29"&gt;Packages I use in all my&amp;nbsp;projects&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;These packages are used more or less in all my projects - I just install them when I
+create a new project (or create the project through the cookiecutter I mention&amp;nbsp;above)/&lt;/p&gt;
+&lt;div class="section" id="django-tables2"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id30"&gt;django-tables2&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/bradleyayers/django-tables2"&gt;django-tables2&lt;/a&gt;, along with django-filter (following) are the two packages
+I always use in my projets. You create a &lt;cite&gt;tables.py&lt;/cite&gt; module inside your applications
+where you define a bunch of tables using more or less the same methodology as with
+django-forms: For a &lt;cite&gt;Book&lt;/cite&gt; model, Create a &lt;cite&gt;BookTable&lt;/cite&gt; class, relate it with the model
+and, if needed override some of the columns it automatically generates. For example you
+can configure a column that will behave as a link to a detail view of the book, a column
+that will behave as a date (with the proper formatting) or even a column that will display
+a custom django template&amp;nbsp;snippet.&lt;/p&gt;
+&lt;p&gt;You&amp;#8217;ll then be
+able to configure the data (queryset) of this table and pass it your views context. Finally
+use &lt;tt class="docutils literal"&gt;{% render_table table %}&lt;/tt&gt; to actually display your table. What
+you&amp;#8217;ll get? The actual html table (with a nice style that can be configured if needed),
+free pagination and free column-header sorting. After you get the hang of it, you&amp;#8217;ll be
+able to add tables for your models in a couple of minutes - this is &lt;span class="caps"&gt;DRY&lt;/span&gt; for me. It also
+offers some &lt;a class="reference external" href="http://django-tables2.readthedocs.io/en/latest/pages/generic-mixins.html"&gt;class based views and mixins&lt;/a&gt; for even more &lt;span class="caps"&gt;DRY&lt;/span&gt; adding tables to your&amp;nbsp;views.&lt;/p&gt;
+&lt;p&gt;Finally, please notice that since version 1.8,
+django-tables2 &lt;a class="reference external" href="https://django-tables2.readthedocs.io/en/latest/pages/export.html"&gt;supports exporting data&lt;/a&gt; using &lt;a class="reference external" href="https://github.com/kennethreitz/tablib"&gt;tablib&lt;/a&gt;, an old requirement of most users
+of this&amp;nbsp;library.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-filter"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id31"&gt;django-filter&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/carltongibson/django-filter"&gt;django-filter&lt;/a&gt; is used to create filters for your data. It plays well with
+django-tables2 but you can use it to create filters for any kind of listing you want. It
+works similar to django-tables2: Create a &lt;tt class="docutils literal"&gt;filters.py&lt;/tt&gt; module in your application and define
+the a &lt;cite&gt;BookFilter&lt;/cite&gt; class there by relating it with the &lt;cite&gt;Book&lt;/cite&gt; model, specifying the fields
+of the model you want to filter with and maybe override some of the default options. New versions
+have some great built-in configuration functionality by customizing which method will be used for
+filtering or even adding multiple filter methods - for example you could define your
+&lt;tt class="docutils literal"&gt;BookFilter&lt;/tt&gt; like&amp;nbsp;this:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+class BookFilter(django_filters.FilterSet):
+    class Meta:
+        model = Book
+        fields = {
+            'name': ['icontains'],
+            'author__last_name': ['icontains', 'startswith'],
+            'publication_date': ['year', 'month', ],
+        }
+&lt;/pre&gt;
+&lt;p&gt;which will give you the following filter form&amp;nbsp;fields:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;an ilike &amp;#8216;%value%&amp;#8217; for the book&amp;nbsp;name&lt;/li&gt;
+&lt;li&gt;an ilike &amp;#8216;%value%&amp;#8217; for the author&amp;nbsp;name&lt;/li&gt;
+&lt;li&gt;a like &amp;#8216;value%&amp;#8217; for the author&amp;nbsp;name&lt;/li&gt;
+&lt;li&gt;a year(publication_date) = value for the&amp;nbsp;publication_date&lt;/li&gt;
+&lt;li&gt;a month(publication_date) = value for the&amp;nbsp;publication_date&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;and their (&lt;span class="caps"&gt;AND&lt;/span&gt;)&amp;nbsp;combinations!&lt;/p&gt;
+&lt;p&gt;The &lt;cite&gt;BookFilter&lt;/cite&gt; can be used to create a filter form in your template and then in your views
+pass to it the initial queryset along with &lt;cite&gt;request.&lt;span class="caps"&gt;GET&lt;/span&gt;&lt;/cite&gt; (which will contain the filter values)
+to return the filtered data (and usually pass it to the table). I&amp;#8217;ve created a sample project that
+uses both django-tables2 and django-filters for you to use: &lt;a class="reference external" href="https://github.com/spapas/django_table_filtering"&gt;https://github.com/spapas/django_table_filtering&lt;/a&gt;.
+Also, I&amp;#8217;ve written an article which describes a technique for &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;automatically creating a filter-table view&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-crispy-forms"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id32"&gt;django-crispy-forms&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;The forms that are created by default by django-forms are very basic and not styled properly.
+To overcome this and have better styles for my forms, I always use &lt;a class="reference external" href="https://github.com/django-crispy-forms/django-crispy-forms"&gt;django-crispy-forms&lt;/a&gt;. It actually has two modes: Using the crispy template filter and using
+the crispy template tag. Using the crispy template filter is very simple - just take a plain old django form and
+render it in your template like this &lt;cite&gt;{{ form|crispy }}&lt;/cite&gt;. If the django-crispy-forms has been configured correctly
+(with the correct template pack) the form you&amp;#8217;ll get will be much nicer than the django-default one. This is completely
+automatic, you don&amp;#8217;t need to do anything&amp;nbsp;else!&lt;/p&gt;
+&lt;p&gt;Now, if you have some special requirements from a form, for example
+multi-column rendering, adding tabs, accordions etc then you&amp;#8217;ll need to use the &lt;cite&gt;{% crispy %}&lt;/cite&gt; template tag. To use this
+you must create the layout of your form in the form&amp;#8217;s costructor using the FormHelper django-crispy-forms &lt;span class="caps"&gt;API&lt;/span&gt;. This may seem cumbersome
+at first (why not just create the form&amp;#8217;s layout in the django template) but using a class to define your form&amp;#8217;s layout
+has other advantages, for example all the form layout is in the actual form (not in the template) you can control
+programatically the layout of the form (f.e display some fields only for administrators), you can use inheritance and
+virtual methods to override how a form is rendered&amp;nbsp;etc.&lt;/p&gt;
+&lt;p&gt;To help you understand how a &lt;tt class="docutils literal"&gt;FormHelper&lt;/tt&gt; looks like, here&amp;#8217;s a form that is used to edit an access Card for visitors that
+displays all fields horizontally inside a panel (I am using Bootstrap for all styling and layout&amp;nbsp;purposes):&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+class CardForm(ModelForm):
+    class Meta:
+        model = Card
+        fields = ['card_number', 'card_text', 'enabled']
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Fieldset(
+                '',
+                HTML(u&amp;quot;&amp;quot;&amp;quot;&amp;lt;div class=&amp;quot;panel panel-primary&amp;quot;&amp;gt;
+                   &amp;lt;div class=&amp;quot;panel-heading&amp;quot;&amp;gt;
+                       &amp;lt;h3 class=&amp;quot;panel-title&amp;quot;&amp;gt;Add card&amp;lt;/h3&amp;gt;
+                   &amp;lt;/div&amp;gt;
+                   &amp;lt;div class=&amp;quot;panel-body&amp;quot;&amp;gt;&amp;quot;&amp;quot;&amp;quot;),
+                Div(
+                   Div('card_number', css_class='col-md-4'),
+                   Div('card_text', css_class='col-md-4'),
+                   Div('enable',css_class='col-md-4'),
+                   css_class='row'
+                ),
+            ),
+
+            FormActions(
+                Submit('submit', u'Save', css_class='btn btn-success'),
+                HTML(u&amp;quot;&amp;lt;a class='btn btn-primary' href='{% url \&amp;quot;card_list\&amp;quot; %}'&amp;gt;Return&amp;lt;/a&amp;gt;&amp;quot; ),
+            ),
+            HTML(u&amp;quot;&amp;lt;/div&amp;gt;&amp;lt;/div&amp;gt;&amp;quot;),
+        )
+
+        super(CardForm, self).__init__(*args, **kwargs)
+&lt;/pre&gt;
+&lt;p&gt;Notice that forms that will be rendered with a &lt;tt class="docutils literal"&gt;FormHelper&lt;/tt&gt; actually contain their &amp;lt;form&amp;gt; tag (you don&amp;#8217;t need
+to write it yourself like with plain django forms) so you have to define their method (post in this example) and submit&amp;nbsp;button.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-extensions"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id33"&gt;django-extensions&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/django-extensions/django-extensions"&gt;django-extensions&lt;/a&gt; is a swiss-army-knife of django tools. I use it &lt;em&gt;always&lt;/em&gt; in my projects because of the &lt;cite&gt;runserver_plus&lt;/cite&gt;
+and &lt;cite&gt;shell_plus&lt;/cite&gt; commands. The first uses the &lt;a class="reference external" href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/"&gt;Werkzeug debugger with django&lt;/a&gt; which makes django development an absolute joy
+(open a python shell wherever you want in your code and start writing commands)!
+The second opens a &lt;em&gt;better&lt;/em&gt; shell (your models and a bunch of django stuff are auto-imported, a better shall will be used if found&amp;nbsp;etc).&lt;/p&gt;
+&lt;p&gt;The
+&lt;cite&gt;runserver_plus&lt;/cite&gt; and &lt;cite&gt;shell_plus&lt;/cite&gt; alone will be more than enough for me to use this however it adds some more usefull management
+commands like: &lt;cite&gt;admin_generator&lt;/cite&gt; to quickly create an admin.py for your app, &lt;cite&gt;graph_models&lt;/cite&gt; to generate a graphviz dot file of your models,
+&lt;cite&gt;update_permissions&lt;/cite&gt; to synchronize the list of permissions if you have added one to an existing model and &lt;a class="reference external" href="http://django-extensions.readthedocs.io/en/latest/command_extensions.html"&gt;many, many others&lt;/a&gt;. Take a look
+at them and you&amp;#8217;ll probably find more useful&amp;nbsp;things!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-autocomplete-light"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id34"&gt;django-autocomplete-light&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/yourlabs/django-autocomplete-light"&gt;django-autocomplete-light&lt;/a&gt; is the best auto-complete library for django, especially after v3 was released (which greatly reduces the magic and
+uses normal CBVs for configuring the querysets). You will create
+an AutocompleteView for a model (similar to your other class based views) and then automatically use this view through a widget in the admin
+or in your own forms. It is fully configurable (both the results and the selection templates), supports many to many fields, creating new instances
+and even autocompleteing django-taggit tags! If for some reason it seems that it is not working please keep in mind that you need to includ
+jquery &lt;em&gt;and&lt;/em&gt; &lt;tt class="docutils literal"&gt;{{ form.media }}&lt;/tt&gt; to your templates or else the required client side code won&amp;#8217;t be&amp;nbsp;executed.&lt;/p&gt;
+&lt;p&gt;I think it is an essential for all cases because dropdowns with lots of choices have a very bad user experience - and the same is true with
+many to many fields (you could use the checkboxes widget to improve their behavior a little but you will have bad behavior when there are many&amp;nbsp;choices).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-reversion"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id35"&gt;django-reversion&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/etianen/django-reversion"&gt;django-reversion&lt;/a&gt; is a really important package for my projects. When it is configured properly (by adding a a reversion-middleware), it offers full auditing
+for all changes in the your model instances you select (and properly groups them in case of changes to multiple instances in a simple request).
+It saves a &lt;span class="caps"&gt;JSON&lt;/span&gt; representation
+of all the versions of an instance in your database. Keep in mind that this may increase your database size  but if you need full auditing
+then is is probably the best way to do it. I have written an article about &lt;a class="reference external" href="https://spapas.github.io/2015/01/21/django-model-auditing/"&gt;django model auditing&lt;/a&gt; that discusses this package and django-simple-history
+(following)&amp;nbsp;more.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-compressor"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id36"&gt;django-compressor&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/django-compressor/django-compressor/"&gt;django-compressor&lt;/a&gt; is package that combines and minifies your css and javascript (both files and line snippets) into static files. There are
+other tools for this but I have never used them since django-compressor satisfies my needs. Although I&amp;#8217;ve
+&lt;a class="reference external" href="https://spapas.github.io/2015/05/27/using-browserify-watchify/"&gt;written about browserify&lt;/a&gt; and friends from the node-js world I don&amp;#8217;t recommend using such tools in django to combine and minify your
+javascript and css &lt;em&gt;unless&lt;/em&gt; you specifically require&amp;nbsp;them.&lt;/p&gt;
+&lt;p&gt;It has an online and an offline mode. For the online mode, when a request is done it will check if the compressed file exist and if not it will
+create it. This may lead to problems with permissions if your application server user cannot write to your static folders and also
+your users will see exceptions if for some reason you have included a file that cannot be found. For the
+offline mode, you need to run a management command that will create the static files &lt;em&gt;while deploying&lt;/em&gt; the applications - this mode is
+recommended because any missing files problems etc will be resolved while deploying the&amp;nbsp;app.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-debug-toolbar"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id37"&gt;django-debug-toolbar&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/jazzband/django-debug-toolbar"&gt;django-debug-toolbar&lt;/a&gt;: This is a well known package for debugging django apps that is always included in the development configuration of my projects.
+It has various panels that help you debug your application but, at least for me, the most helpful is the one that displays you all &lt;span class="caps"&gt;SQL&lt;/span&gt; queries that
+are executed for a page load. Because of how the django orm is working it will go on and follow all relations something that will lead to
+hundreds of queries. For example, let&amp;#8217;s say that you have simple Book model with a foreign key to an Author model that has N instances in your
+database. If you do a &lt;tt class="docutils literal"&gt;Book.objects.all()&lt;/tt&gt;
+and want display the author name for each book in a template then you&amp;#8217;ll always do &lt;tt class="docutils literal"&gt;N+1&lt;/tt&gt; queries to the database! This is really easy to miss because
+in the django you&amp;#8217;ll just do &lt;tt class="docutils literal"&gt;{% for book in books &lt;span class="pre"&gt;%}{{&lt;/span&gt; &lt;span class="pre"&gt;book.name}},&lt;/span&gt; {{ book.author.name &lt;span class="pre"&gt;}}{%&lt;/span&gt; endif %}&lt;/tt&gt; &amp;#8212; however the &lt;tt class="docutils literal"&gt;{{ book.author.name }}&lt;/tt&gt; will go
+on and do an extra &lt;span class="caps"&gt;SQL&lt;/span&gt; query!!! Such cases are easily resolved by using &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/models/querysets/#select-related"&gt;select_related&lt;/a&gt; (and &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/models/querysets/#prefetch-related"&gt;prefetch_related&lt;/a&gt;) but you must be sure to use select_related
+for all your queries (and if you add some extra things to your template you must remember to also add them to your select_related clause for the&amp;nbsp;query).&lt;/p&gt;
+&lt;p&gt;So, what I recommend before going to production is to visit all your pages using django-debug-toolbar and take a quick look at the number of &lt;span class="caps"&gt;SQL&lt;/span&gt;
+queries. If you see something that does not make sense (for example you see more than 10 queries) then you&amp;#8217;ll need to think about the problem I just
+mentioned. Please notice that this, at least for me, is not premature optimization - this is not actually optimization! This is about writing correct
+code. Let&amp;#8217;s suppose that you could not use the django orm anymore and you had to use plain old &lt;span class="caps"&gt;SQL&lt;/span&gt; queries. Would you write &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;SELECT&lt;/span&gt; * &lt;span class="caps"&gt;FROM&lt;/span&gt; books&lt;/tt&gt; and
+then for each row do another &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;SELECT&lt;/span&gt; * &lt;span class="caps"&gt;FROM&lt;/span&gt; authors &lt;span class="caps"&gt;WHERE&lt;/span&gt; id=?&lt;/tt&gt; passing the author of each book &lt;em&gt;or&lt;/em&gt; do only &lt;tt class="docutils literal"&gt;select * from books b &lt;span class="caps"&gt;LEFT&lt;/span&gt; &lt;span class="caps"&gt;JOIN&lt;/span&gt;
+authors a on b.author_id = a.id&lt;/tt&gt;?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="packages-i-use-when-i-need-their-functionality"&gt;
+&lt;h2&gt;&lt;a class="toc-backref" href="#id38"&gt;Packages I use when I need their&amp;nbsp;functionality&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The packages following are also essential to me but only when I need their functionality. I don&amp;#8217;t use them in all my projects
+but, when I need the capabilities they offer then I will use these packages (and not some others). For example, if I need to
+render PDFs in my applications then I will use the xhtml2pdf, if I need to login through &lt;span class="caps"&gt;LDAP&lt;/span&gt; I will use django-auth-ldap&amp;nbsp;etc.&lt;/p&gt;
+&lt;div class="section" id="xhtml2pdf"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id39"&gt;xhtml2pdf&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/xhtml2pdf/xhtml2pdf"&gt;xhtml2pdf&lt;/a&gt; is the package I use for creating &lt;span class="caps"&gt;PDF&lt;/span&gt;&amp;#8217;s with django as I&amp;#8217;ve alreadly discussed in the &lt;a class="reference external" href="https://spapas.github.io/2015/11/27/pdf-in-django/"&gt;PDFs in Django&lt;/a&gt; article (this is not
+a django-specific package like most others I discuss here but it plays really good with django). You create a
+normal django template, add some styling to it and dump it to html. Notice that there&amp;#8217;s a &lt;a class="reference external" href="https://github.com/chrisglass/django-xhtml2pdf"&gt;django-xhtml2pdf&lt;/a&gt; project but has not been recently updated
+and after all as you can see in my article it is easy to just call xhtml2pdf directly. The xhtml2pdf library is actually a wrapper around the
+excellent &lt;a class="reference external" href="http://www.reportlab.com"&gt;reportlab&lt;/a&gt; library which does the low-level pdf&amp;nbsp;output.&lt;/p&gt;
+&lt;p&gt;Notice that the xhtml2pdf library had some maintenance problems
+(that&amp;#8217;s why some people are suggesting other &lt;span class="caps"&gt;PDF&lt;/span&gt; solutions like WeasyPrint) however they seem to have been fixed now. Also,
+I have found out that, at least for my needs (using Windows as my development environment), other soltuons are much inferior to xhtml2pdf.
+I urge you to try xhtml2pdf first and only if you find that it does not cover your needs (and have asked
+me about your problem) try the other&amp;nbsp;solutions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-auth-ldap"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id40"&gt;django-auth-ldap&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://bitbucket.org/psagers/django-auth-ldap/"&gt;django-auth-ldap&lt;/a&gt; is the package you&amp;#8217;ll want to use if your organization uses &lt;span class="caps"&gt;LDAP&lt;/span&gt; (or Active Directory) and you want to use it for
+logging in. Just configure your &lt;span class="caps"&gt;LDAP&lt;/span&gt; server settings,
+add the ldap authenticator and you&amp;#8217;ll be ready to go. Please notice that this package is a django wrapper of the python-ldap package
+which actually provides the &lt;span class="caps"&gt;LDAP&lt;/span&gt;&amp;nbsp;connection.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-localflavor"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id41"&gt;django-localflavor&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/django/django-localflavor"&gt;django-localflavor&lt;/a&gt; offers useful stuff for various countries, mainly form fields with the correct validation and lists of choices.
+For example, for my country (Greece) you&amp;#8217;ll get a &lt;tt class="docutils literal"&gt;GRPhoneNumberField&lt;/tt&gt;, a &lt;tt class="docutils literal"&gt;GRPostalCodeField&lt;/tt&gt; and a &lt;tt class="docutils literal"&gt;GRTaxNumberCodeField&lt;/tt&gt;. Use it instead of re-implementing
+the&amp;nbsp;behavior.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-constance"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id42"&gt;django-constance&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/jazzband/django-constance"&gt;django-constance&lt;/a&gt; is a simple package that enables you to add quick-configurable settings in your application. To change the settings.py file
+you need to edit the source and restart the application - for most installations this is a full re-deployment of the application. Fully
+re-deploying the app just to change a setting is not very good practice (depending on the setting of course but if it is a business setting
+it usually should be done by business users and not by&amp;nbsp;administrators).&lt;/p&gt;
+&lt;p&gt;That&amp;#8217;s where django-constance comes to help you. You can define some
+extra settings which can be changed through the django admin and their new value will be available immediately. Also you can configure where
+these settings will be saved. One option is the database but this is not recommended - instead you can use redis so that the settings values will be
+available much&amp;nbsp;quicker!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-rq"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id43"&gt;django-rq&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/ui/django-rq"&gt;django-rq&lt;/a&gt; is a django wrapper for the &lt;a class="reference external" href="https://github.com/nvie/rq"&gt;rq&lt;/a&gt; library. I use it when I need asynchronous tasks (which is on almost all of my projects). More
+info can be found on the two articles I have writtten about django rq (&lt;a class="reference external" href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/"&gt;asynchronous tasks in django&lt;/a&gt; and &lt;a class="reference external" href="https://spapas.github.io/2015/09/01/django-rq-redux/"&gt;django-rq redux&lt;/a&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-rules-light"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id44"&gt;django-rules-light&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;One of the least known packages from those I discuss here, &lt;a class="reference external" href="https://github.com/yourlabs/django-rules-light"&gt;django-rules-light&lt;/a&gt; is one of the most useful when is needed. This package
+allows you to define complex rules for doing actions on model instances. Each rule is a function that gets the user that wants to do the action
+and the object that the user wants to action on. The function returns True or False to allow or not allow the action. You can then use these in
+both your code to programatically check if the user can do the the action and your templates to decide what buttons and options you will display.
+There are also various helper methods for CBVs that make everything&amp;nbsp;easier.&lt;/p&gt;
+&lt;p&gt;To properly understand the value of django-rules-light you need to have some more complex than usual action rules. For example if your actions
+for an object are view / edit and all your users can view and edit their own objects then you don&amp;#8217;t really need this package. However, if your administrators
+can view all objects and your object can be finalized so no changes are allowed unless an administrator tries to change it then you&amp;#8217;ll greatly benefit
+from using&amp;nbsp;it!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-generic-scaffold"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id45"&gt;django-generic-scaffold&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/spapas/django-generic-scaffold"&gt;django-generic-scaffold&lt;/a&gt; is a package I have created that can be used to quickly (and DRYly) create &lt;span class="caps"&gt;CRUD&lt;/span&gt; CBVs for your models. I usually don&amp;#8217;t want to
+give access to the django-admin to non-technical users however sometimes I want to quickly create the required CBVs for them (list, detail, create, edit
+delete). Using django-generic-scaffold you can just create a scaffold which is related with a Model and all the views will be automagically created -
+you only need to link them to your urls.py. The created CBVs are fully configurable by adding extra mixins or even changing the parent class of each &lt;span class="caps"&gt;CBV&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Notice that this package does not create any source files - instead all CBVs are created on-the-fly using &lt;tt class="docutils literal"&gt;type&lt;/tt&gt;. For example, to create &lt;span class="caps"&gt;CRUD&lt;/span&gt; CBVs for
+a Book model you&amp;#8217;ll do this in&amp;nbsp;scaffolding.py:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+class BookCrudManager(CrudManager):
+    model = models.Book
+    prefix = 'books'
+&lt;/pre&gt;
+&lt;p&gt;and then in your urls.py you&amp;#8217;ll just append the generated urls to your url&amp;nbsp;list:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+book_crud = BookCrudManager()
+urlpatterns += book_crud.get_url_patterns()
+&lt;/pre&gt;
+&lt;p&gt;Now you can visit the corresponding views (for example /books or /bookscreate - depends on the prefix) to add/view/edit etc your&amp;nbsp;books!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-taggit"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id46"&gt;django-taggit&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/alex/django-taggit"&gt;django-taggit&lt;/a&gt; is the library you&amp;#8217;ll want to use if you have to use tags with your models. A tag is a synonym for keyword, i.e adding some
+words/phrases to your instances that are used to categorise and desribe em. The relation between your to-be-tagged-model and your tags is
+many to many. To use it, you just add &lt;cite&gt;tags = TaggableManager()&lt;/cite&gt; to your
+model and you are ready to go! Of course it will need some more configuration to be included in django admin and django forms but thankfully,
+autocomplete-lights can be &lt;a class="reference external" href="https://django-autocomplete-light.readthedocs.io/en/master/taggit.html"&gt;integrated with django-taggit&lt;/a&gt;!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-sendfile"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id47"&gt;django-sendfile&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/johnsensile/django-sendfile"&gt;django-sendfile&lt;/a&gt; is a very important - at least to - me library. Sometimes, user uploaded files (media in django) should not be visible to all users
+so you&amp;#8217;ll need to implement some access control through your django app. However, it is important to &lt;em&gt;not&lt;/em&gt; serve these media files through your application
+server (uwsi, gunicorn etc) but use a web server (nginx, apache ect) for serving them. This is needed because your application server&amp;#8217;s purpose is
+not serving files from the disk - keep in mind that the application server usually has a specified amount of workers (usually analogous to the number
+of CPUs of your server, for example 4 workers ) - think what will happen if some large media files are server through these workers to users with
+a slow connection! With 4 such concurrent connections your application won&amp;#8217;t be able to serve any other&amp;nbsp;content!&lt;/p&gt;
+&lt;p&gt;So this package (along with the support of X-Sendfile from the web servers) helps you fulfill the above requirements:
+It allowes you to check permissions to your media through your django application &lt;em&gt;but&lt;/em&gt; then offload the serving of your media files to the web server.
+More info about
+&lt;a class="reference external" href="https://stackoverflow.com/q/7296642/119071"&gt;django-sendfile can be found on this &lt;span class="caps"&gt;SO&lt;/span&gt; answer&lt;/a&gt; but with a few words, with django-sendfile you create a view that checks if a file is allowed to be served
+and, if yes, instruct the web server to actually serve that file by appending a specific header to the&amp;nbsp;response.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-reversion-compare"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id48"&gt;django-reversion-compare&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/jedie/django-reversion-compare"&gt;django-reversion-compare&lt;/a&gt; is an addon to django-reversion. It allows you to compare two different versions of a model instance
+and highlights their differences using various smart algorithms (so if you have a long text field you won&amp;#8217;t only see that these are different but
+you&amp;#8217;ll also see where exactly they differ, with output similar to the one you get when using&amp;nbsp;diff).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-simple-history"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id49"&gt;django-simple-history&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/treyhunner/django-simple-history"&gt;django-simple-history&lt;/a&gt; has similar capabilities with django-reversion - (auditing and keeping versions of models) with a very important
+difference: While django-reversion keeps a &lt;span class="caps"&gt;JSON&lt;/span&gt; representation of each version in the database (making querying very difficult), django-simple-history
+creates an extra, history table for each model instance you want to track and adds each change as a new row to that table. As can be understood this
+will make the history table really huge but has the advantage that you can easily query for old values. I usually use django-reversion unless I know
+that I will need the history&amp;nbsp;querying.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-import-export"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id50"&gt;django-import-export&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/django-import-export/django-import-export"&gt;django-import-export&lt;/a&gt; can be used to enchance your models with mass import and export capabilities (from example from/to &lt;span class="caps"&gt;CSV&lt;/span&gt;).
+You will add an ModelResource class that describes (and configures) how your Model should be imported/exported. The ModelResource class can
+then be easily used in your views and, more importantly, it is integrated to the django-admin. I have to confess that I have not used django-import-export
+for &lt;em&gt;importing&lt;/em&gt; data because I prefer implementing my own views for that (to have better control over the whole process and because the data
+I usually need to import does not usually map 1 to 1 with a model but I need to create more model instances etc). However I am using the export
+capabilities of django-import-export in various projects with great success, especially the admin integration which easily fulfills the exporting
+data capabilities of most&amp;nbsp;users.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-extra-views"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id51"&gt;django-extra-views&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Beyond django-forms, django supports a feature called &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/formsets/"&gt;Formsets&lt;/a&gt; which allows you to add/edit multiple object instances in
+a single view (by displaying all instances one after the other). The classic request/response cycle of django is preserved in Formsets, so
+your form instances will be submitted all together when you submit the form. The logic extension to the Formset is the &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/#model-formsets"&gt;ModelFormset&lt;/a&gt; i.e each form
+in a Formset is a ModelForm and &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/#inline-formsets"&gt;InlineFormSet&lt;/a&gt; where you have a Parent model that has a bunch of children and you are editing the Parent &lt;em&gt;and&lt;/em&gt;
+its children in a single Form. For example, you have a School and a Student model where each Student has a ForeignKey to School. The usual case
+would be to edit the Student model and select her school (through a drop down or even-better if you use django-autocomplete-light through a proper
+autocompelte widget). However, you may for some reason want to edit the School and display (and edit) the list of its Students &amp;#8212; that&amp;#8217;s where you&amp;#8217;ll
+use an&amp;nbsp;InlineFormSet!&lt;/p&gt;
+&lt;p&gt;The above features (Formsets, Modelformsets and Inlineformsets) are not supported natively by django CBVs &amp;#8212; that&amp;#8217;s where &lt;a class="reference external" href="https://github.com/AndrewIngram/django-extra-views"&gt;django-extra-views&lt;/a&gt; comes
+to the foreground. You can use the corresponding CBVs of django-extra-views to support the multiple-form workflows described above. Using these CBVs
+are more or less similar to using the good-old django&amp;nbsp;FormView.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="easy-thumbnails"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id52"&gt;easy-thumbnails&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/SmileyChris/easy-thumbnails"&gt;easy-thumbnails&lt;/a&gt; is a great library if you want to support thumbnails. Actually, thumbnails is not 100% correct - this package can be used to
+generate and manage various versions of your original images, for example you may have a small version of the image that will be used as a thumbnail,
+a larger version that will be used in a gallery-carousel view and an even larger version (but not the original one which could be huge) that will be used when
+the user clicks on the gallery to view a larger version of the image. To do that you define the image configurations you support in your settings.py and then
+you have access
+to your thumbnails both in your templates and in your views. Notice that a specific thumbnail congfiguration for an image will be created only once since
+the generated images are saved so each thumbnail will be generated on the first request it contains it and will be reused in the following such&amp;nbsp;requests.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-rest-framework"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id53"&gt;django-rest-framework&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/encode/django-rest-framework"&gt;django-rest-framework&lt;/a&gt; is definitely the best package for creating web APIs with django. I don&amp;#8217;t recommend using it if you want to create a quick &lt;span class="caps"&gt;JSON&lt;/span&gt; search
+&lt;span class="caps"&gt;API&lt;/span&gt; (take a look at &lt;a class="reference external" href="https://spapas.github.io/2014/09/15/django-non-html-responses/"&gt;django non-&lt;span class="caps"&gt;HTML&lt;/span&gt; responses&lt;/a&gt;) but if you want to go the &lt;span class="caps"&gt;SPA&lt;/span&gt; way or if you want to create multiple APIs for various models then
+this is the way to go. Integrating it to your project will need some effort (that&amp;#8217;s why I don&amp;#8217;t recommend it for quick and dirty APIs) because you&amp;#8217;ll
+need to create a serializers.py which will define the serializers (more or less the fields) for the models you&amp;#8217;ll want to expose through your &lt;span class="caps"&gt;API&lt;/span&gt; and
+then create the views (or the viewsets which are families of views for example list, detail, delete, update, create) and add them to your urls.py. You&amp;#8217;ll
+also need to configure authentication, authorization and probably filtering and pagination. This may seem like a lot of work but the result are
+excellent - you&amp;#8217;ll get a full &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt; supporting create, list, detail, update, delete for any complex configuration of your models.
+You can take a look at a sample application in my &lt;a class="reference external" href="https://github.com/spapas/react-tutorial"&gt;React tutorial&lt;/a&gt; repository (yes this is a repository that has a tutorial for React and
+friends but the back-end is in django and&amp;nbsp;django-rest-framework).&lt;/p&gt;
+&lt;p&gt;django-rest-framework integrates nicely with django-filter (mentioned above) to re-use the filters you have created for your model listings
+in your &lt;span class="caps"&gt;REST&lt;/span&gt; APIs - &lt;span class="caps"&gt;DRY&lt;/span&gt; at its&amp;nbsp;best!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-waffle"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id54"&gt;django-waffle&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/jsocol/django-waffle"&gt;django-waffle&lt;/a&gt; is described as a feature flipper. What does this mean? Let&amp;#8217;s say that you want to control at will when a specific view will be enabled
+- this is the library you&amp;#8217;ll want to use. Or you have developed a new feature and you want to give access to it only on a subset of users for a pilot run of
+the feature - once again you should use django flipper. It offers a nice admin interface where you can configure the flags that will be used for the various
+feature enabling/disabling (and if they are active or not) and various template tags and functions that you can use to test if the features should be activated
+or&amp;nbsp;not.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-allauth"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id55"&gt;django-allauth&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/pennersr/django-allauth"&gt;django-allauth&lt;/a&gt; should be used in two cases: When you want a &lt;em&gt;better&lt;/em&gt; user registration workflow than the default (non-existant) one or you want
+to integrate your application with an external OAuth provider (i.e allow your users to login through their facebook, google, twitter, github etc accounts). I
+have mainly used this package for the first case and I can confirm that it works great and you can create as complex flows as you want (for example, in
+one of my projects I have the following user registration-activation flow: A user registers using a custom form and using his email as username, he receives
+an email with a confirmation link,
+after he has confirmed his email he receivs a custom message to wait for his account activation and the administrators of the application are notified,
+the administrators enable the new user&amp;#8217;s account after checking some things and only then he&amp;#8217;ll be able to log-in). One thing that must be noticed about
+django-allauth is that it (in my opition) does not have very good documentation but there are lots of answers about &lt;a class="reference external" href="https://stackoverflow.com/questions/tagged/django-allauth"&gt;django-allauth in stackoverflow&lt;/a&gt; and the source code
+is very clear so you can always use the source as documentation for this&amp;nbsp;package.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-modeltranslation"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id56"&gt;django-modeltranslation&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;The &lt;a class="reference external" href="https://github.com/deschler/django-modeltranslation"&gt;django-modeltranslation&lt;/a&gt; library is the library I recommend for when you want to have translations to your models. To use it
+you add a translation.py file where you declare the models and their fields that should be translated. The, depending on which languages you have configured
+in your settings.py after you run makemigrations and migrate you&amp;#8217;ll see that django-modeltranslation will have included extra fields to the database, each one
+with the corresponding language name (for example if you have added a field &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; to the translations and have english and greek as language,
+django-modeltranslation will add the fields &lt;tt class="docutils literal"&gt;name_en&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name_el&lt;/tt&gt; to your table). You can the edit the i18n fields (using forms or the django admin) and
+depending on the current language of your site when you use &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; you&amp;#8217;ll get either &lt;tt class="docutils literal"&gt;name_el&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;name_en&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-widget-tweaks"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id57"&gt;django-widget-tweaks&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;If for some reason you don&amp;#8217;t want to do django-crispy-forms, or you have a form in which you want to do a specific layout change but without
+fully implementing the FormHelper then you can actually render the form in &lt;span class="caps"&gt;HTML&lt;/span&gt; and output the fields one by one. One thing that cannot
+be done though is passing custom options to the rendered form field. When you do a &lt;tt class="docutils literal"&gt;{{ form.field }}&lt;/tt&gt; to your template django will render
+the form field using its default options - yes this can be overriden using &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/forms/widgets/#base-widget-classes"&gt;custom widgets&lt;/a&gt; but I don&amp;#8217;t recommend it for example if you only
+want to add a class to the rendered &lt;tt class="docutils literal"&gt;&amp;lt;input&amp;gt;&lt;/tt&gt;!&lt;/p&gt;
+&lt;p&gt;Instead, you can use &lt;a class="reference external" href="https://github.com/jazzband/django-widget-tweaks"&gt;django-widget-tweaks&lt;/a&gt; to pass some specific class names or attributes to
+the rendered form fields - so if you use &lt;tt class="docutils literal"&gt;{{ &lt;span class="pre"&gt;form.field|add_class:&amp;quot;myclass&amp;quot;&lt;/span&gt; }}&lt;/tt&gt; the rendered &lt;tt class="docutils literal"&gt;&amp;lt;input&amp;gt;&lt;/tt&gt; will have a &lt;tt class="docutils literal"&gt;myclass&lt;/tt&gt; css&amp;nbsp;class.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="django-simple-captcha"&gt;
+&lt;h3&gt;&lt;a class="toc-backref" href="#id58"&gt;django-simple-captcha&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Use &lt;a class="reference external" href="https://github.com/mbi/django-simple-captcha"&gt;django-simple-captcha&lt;/a&gt; to add (configurable) captchas to your django forms. This is a very simple package that does not have any requirements
+beyond the Pillow library for the captcha image generator. The generated captchas are simple images with some added noise so it won&amp;#8217;t integrate
+&lt;a class="reference external" href="https://www.google.com/recaptcha/intro/"&gt;reCAPTCHA&lt;/a&gt; with which you may be more familiar. I deliberatly propose this package for captchas so you won&amp;#8217;t need to integrate with Google&amp;nbsp;services.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;&lt;a class="toc-backref" href="#id59"&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;The above packages should cover most of your django needs. I have listed only packages with good documentation,
+that have been recently updated
+and work with new django versions and should be fairly easy to integrate with your projects. If you need anything more or want to take a general
+look at some of the packages that have are availablie I recommend starting
+with the &lt;a class="reference external" href="https://djangopackages.org"&gt;django packages&lt;/a&gt;&amp;nbsp;site.&lt;/p&gt;
+&lt;p&gt;One important thing to notice here is that some of the above packages are not really complex and their functionality can be re-implemented
+by you in a couple of hours. For example, you could replicate the functionality of django-constance by adding a config dict and
+a couple of methods (and template tags) of storing and retrieving the keys of that dict with redis. Or add some custom clean methods to your
+forms instead of using the form fields from django-localflavor. Also, some of these packages have similar functionality and can be used (along
+with a little custom code) to replicate the functionality of other packages, for exmaple instead of using django-waffle you could use
+django-constance to configure if the features should be enabled or disabled and django-rules-light to control if the users have access to the feature.
+Also, you could probably use django-waffle for access control, i.e allow only admins to access a specific&amp;nbsp;views.&lt;/p&gt;
+&lt;p&gt;Please don&amp;#8217;t do this. This violates &lt;span class="caps"&gt;DRY&lt;/span&gt; and violates being disciplined.
+Each package has its purpose and being &lt;span class="caps"&gt;DRY&lt;/span&gt; means that you use it for its purpose, &lt;em&gt;not&lt;/em&gt; re-implementing it and &lt;em&gt;not&lt;/em&gt; re-using it for other purposes.
+When somebody (or you after some months) sees that package in requirements or INSTALLED_APPS he will conclude that you are using it for
+its intented purpose and thank you because you have saved him some time - please don&amp;#8217;t make him waste his time by needing to read your source code to understand
+any smart tricks or reinventing the&amp;nbsp;wheel.&lt;/p&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Wed, 11 Oct 2017 14:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</guid><category>django</category><category>python</category></item><item><title>Automatically create a category table in Postgresql by extracting unique table values</title><link>https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/</link><description>&lt;p&gt;Recently I was given an &lt;span class="caps"&gt;SQL&lt;/span&gt; table containing some useful data. The problem with that table was that it was was non-properly normalized but was completely flat,
 i.e all its columns contained varchar values while, some of them should have instead contained foreign keys to other tables. Here&amp;#8217;s an example of how this
 table looked&amp;nbsp;like:&lt;/p&gt;
 &lt;table border="1" class="docutils"&gt;
