@@ -4,29 +4,46 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
+<<<<<<< HEAD
 <loc>https://spapas.github.io/index.html</loc>
 <lastmod>2017-10-12T08:33:31-00:00</lastmod>
+=======
+<loc>https://spapas.github.io/</loc>
+<lastmod>2017-10-11T17:05:23-00:00</lastmod>
+>>>>>>> origin/master
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
+<<<<<<< HEAD
 <lastmod>2017-10-12T08:33:31-00:00</lastmod>
+=======
+<lastmod>2017-10-11T17:05:23-00:00</lastmod>
+>>>>>>> origin/master
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
+<<<<<<< HEAD
 <lastmod>2017-10-12T08:33:31-00:00</lastmod>
+=======
+<lastmod>2017-10-11T17:05:23-00:00</lastmod>
+>>>>>>> origin/master
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
+<<<<<<< HEAD
 <lastmod>2017-10-12T08:33:31-00:00</lastmod>
+=======
+<lastmod>2017-10-11T17:05:23-00:00</lastmod>
+>>>>>>> origin/master
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>

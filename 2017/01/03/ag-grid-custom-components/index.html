@@ -97,7 +97,7 @@ I will implement two components that can be included in your&nbsp;grid:</p>
 <div class="section" id="a-common-ground">
 <h2>A common&nbsp;ground</h2>
 <p>First of all, let&#8217;s create a simple example that will act as a common ground for our&nbsp;components:</p>
-<div class="jsfiddle"><iframe width="100%" height="300" src="http://jsfiddle.net/6vmvdmzj/6/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"></iframe></div><p>As you can see, I have defined a bunch of columns for the grid and then create a new grid passing it the <tt class="docutils literal">myGrid</tt> div
+<div class="jsfiddle"><iframe width="100%" height="300" src="//jsfiddle.net/6vmvdmzj/6/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"></iframe></div><p>As you can see, I have defined a bunch of columns for the grid and then create a new grid passing it the <tt class="docutils literal">myGrid</tt> div
 and the <tt class="docutils literal">gridOptions</tt> (which are kept to a minimum). Finally, there&#8217;s an event handler for button click that adds an
 empty&nbsp;row:</p>
 <div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">columns</span> <span class="o">=</span> <span class="p">[</span>
@@ -165,7 +165,7 @@ valid function could be different for different column&nbsp;types.</p>
 <p>The first component we&#8217;ll present here is an object renderer/editor. This component will receiver a list of fields and will
 allow the user to edit them in a popup grouped together. Here&#8217;s a fiddle with the Address of each employee using the
 object editing&nbsp;component:</p>
-<div class="jsfiddle"><iframe width="100%" height="300" src="http://jsfiddle.net/0o85uywr/4/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"></iframe></div><p>To integrate it with the ag-grid I&#8217;ve added an addressFields list containg the fields of the object like&nbsp;this:</p>
+<div class="jsfiddle"><iframe width="100%" height="300" src="//jsfiddle.net/0o85uywr/4/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"></iframe></div><p>To integrate it with the ag-grid I&#8217;ve added an addressFields list containg the fields of the object like&nbsp;this:</p>
 <div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">addressFields</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;address&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="o">:</span> <span class="s1">&#39;Address&#39;</span> <span class="p">},</span>
   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;zip&#39;</span><span class="p">,</span> <span class="s1">&#39;label&#39;</span><span class="o">:</span> <span class="s1">&#39;ZIP&#39;</span> <span class="p">},</span>
@@ -303,7 +303,7 @@ and can be used for cleaning up if needed and <tt class="docutils literal">isPop
 <h2>Creating the array-like cell&nbsp;editor</h2>
 <p>The multi-line renderer/editor will allow a cell to contain a list of values. Here&#8217;s the complete fiddle where the &#8220;children&#8221; column
 is using the multi-line&nbsp;component:</p>
-<div class="jsfiddle"><iframe width="100%" height="300" src="http://jsfiddle.net/a6s7r4tq/1/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"></iframe></div><p>To integrate it with ag-grid we just need to use the corresponding editor and&nbsp;renderer:</p>
+<div class="jsfiddle"><iframe width="100%" height="300" src="//jsfiddle.net/a6s7r4tq/1/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"></iframe></div><p>To integrate it with ag-grid we just need to use the corresponding editor and&nbsp;renderer:</p>
 <div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nx">headerName</span><span class="o">:</span> <span class="s2">&quot;Children&quot;</span><span class="p">,</span> <span class="nx">field</span><span class="o">:</span> <span class="s2">&quot;children&quot;</span><span class="p">,</span> <span class="nx">width</span><span class="o">:</span> <span class="mi">200</span><span class="p">,</span> <span class="nx">editable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nx">cellRenderer</span><span class="o">:</span> <span class="nx">MultiLineCellRenderer</span><span class="p">,</span>
