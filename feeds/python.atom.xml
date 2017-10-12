@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/python.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-10-11T14:20:00+03:00</updated><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><updated>2017-10-11T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/python.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-10-11T14:20:00+03:00</updated><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><published>2017-10-11T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
 in most of my projects. I am using django for more than 5 years as my day to
 day work tool to develop applications for the public sector organization I work for.
 So please keep in mind that these packages are targeted to the &amp;#8220;enterpripse&amp;#8221;
@@ -320,11 +320,7 @@ autocomplete-lights can be &lt;a class="reference external" href="https://django
 &lt;/div&gt;
 &lt;div class="section" id="django-sendfile"&gt;
 &lt;h3&gt;django-sendfile&lt;/h3&gt;
-<<<<<<< HEAD
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/johnsensible/django-sendfile"&gt;django-sendfile&lt;/a&gt; is a very important - at least to - me library. Sometimes, user uploaded files (media in django) should not be visible to all users
-=======
-&lt;p&gt;&lt;a class="reference external" href="https://github.com/johnsensile/django-sendfile"&gt;django-sendfile&lt;/a&gt; is a very important - at least to - me library. Sometimes, user uploaded files (media in django) should not be visible to all users
->>>>>>> origin/master
 so you&amp;#8217;ll need to implement some access control through your django app. However, it is important to &lt;em&gt;not&lt;/em&gt; serve these media files through your application
 server (uwsi, gunicorn etc) but use a web server (nginx, apache ect) for serving them. This is needed because your application server&amp;#8217;s purpose is
 not serving files from the disk - keep in mind that the application server usually has a specified amount of workers (usually analogous to the number
@@ -469,7 +465,7 @@ When somebody (or you after some months) sees that package in requirements or IN
 its intented purpose and thank you because you have saved him some time - please don&amp;#8217;t make him waste his time by needing to read your source code to understand
 any smart tricks or reinventing the&amp;nbsp;wheel.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="python"></category></entry><entry><title>A pandas pivot_table primer</title><link href="https://spapas.github.io/2016/09/21/pandas-pivot-table-primer/" rel="alternate"></link><updated>2016-09-21T11:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-21:2016/09/21/pandas-pivot-table-primer/</id><summary type="html">&lt;style type="text/css"&gt;/*!
+</summary><category term="django"></category><category term="python"></category></entry><entry><title>A pandas pivot_table primer</title><link href="https://spapas.github.io/2016/09/21/pandas-pivot-table-primer/" rel="alternate"></link><published>2016-09-21T11:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-21:2016/09/21/pandas-pivot-table-primer/</id><summary type="html">&lt;style type="text/css"&gt;/*!
 *
 * IPython notebook
 *
@@ -3526,21 +3522,21 @@ Name: pages, dtype: float64&lt;/pre&gt;
 &lt;th&gt;70&amp;#8217;s&lt;/th&gt;
 &lt;td&gt;None&lt;/td&gt;
 &lt;td&gt;None&lt;/td&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
 &lt;td&gt;None&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;th&gt;80&amp;#8217;s&lt;/th&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;th&gt;90&amp;#8217;s&lt;/th&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
-&lt;td&gt;&lt;class 'pandas.core.series.series'&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
+&lt;td&gt;&lt;class &amp;#x27;pandas.core.series.series&amp;#x27;&gt;&lt;/td&gt;
 &lt;td&gt;None&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
@@ -5980,34 +5976,34 @@ dtype: float64&lt;/pre&gt;
 &lt;div class="output"&gt;
 &lt;div class="output_area"&gt;&lt;div class="prompt"&gt;&lt;/div&gt;
 &lt;div class="output_subarea output_stream output_stdout output_text"&gt;
-&lt;pre&gt;&lt;class 'pandas.core.groupby.dataframegroupby'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("70's", 'Stephen King')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("80's", 'John Grisham')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("80's", 'Michael Crichton')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("80's", 'Stephen King')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("90's", 'George Pelecanos')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("90's", 'George R.R Martin')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("90's", 'John Grisham')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("90's", 'Michael Crichton')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
-type:  &lt;type 'tuple'&gt; len:  2
-first element of tuple &lt;type 'tuple'&gt; ("90's", 'Stephen King')
-second element of tuple &lt;class 'pandas.core.frame.dataframe'&gt;
+&lt;pre&gt;&lt;class &amp;#x27;pandas.core.groupby.dataframegroupby&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("70's", 'Stephen King')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("80's", 'John Grisham')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("80's", 'Michael Crichton')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("80's", 'Stephen King')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'George Pelecanos')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'George R.R Martin')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'John Grisham')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'Michael Crichton')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
+type:  &lt;type &amp;#x27;tuple&amp;#x27;&gt; len:  2
+first element of tuple &lt;type &amp;#x27;tuple&amp;#x27;&gt; ("90's", 'Stephen King')
+second element of tuple &lt;class &amp;#x27;pandas.core.frame.dataframe&amp;#x27;&gt;
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -12293,7 +12289,7 @@ SUVORK5CYII=
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
 &lt;/script&gt;
-</summary><category term="python"></category><category term="pandas"></category><category term="scipy"></category><category term="numpy"></category><category term="pivot"></category><category term="pivot_table"></category><category term="ipython"></category><category term="jupyter"></category><category term="notebook"></category></entry><entry><title>Splitting a query into individual fields in Django</title><link href="https://spapas.github.io/2016/09/12/django-split-query/" rel="alternate"></link><updated>2016-09-12T16:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-12:2016/09/12/django-split-query/</id><summary type="html">&lt;p&gt;As you should have already seen in &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;previous articles&lt;/a&gt;, I really like using &lt;a class="reference external" href="https://github.com/alex/django-filter"&gt;django-filter&lt;/a&gt; since it covers (nearly) all my queryset filtering needs.
+</summary><category term="python"></category><category term="pandas"></category><category term="scipy"></category><category term="numpy"></category><category term="pivot"></category><category term="pivot_table"></category><category term="ipython"></category><category term="jupyter"></category><category term="notebook"></category></entry><entry><title>Splitting a query into individual fields in Django</title><link href="https://spapas.github.io/2016/09/12/django-split-query/" rel="alternate"></link><published>2016-09-12T16:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-12:2016/09/12/django-split-query/</id><summary type="html">&lt;p&gt;As you should have already seen in &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;previous articles&lt;/a&gt;, I really like using &lt;a class="reference external" href="https://github.com/alex/django-filter"&gt;django-filter&lt;/a&gt; since it covers (nearly) all my queryset filtering needs.
 With django-filter, you define a bunch of fields and it will automatically create inputs for each one of these fields so that you can filter by each one of these fields individually or a
 combination of&amp;nbsp;them.&lt;/p&gt;
 &lt;p&gt;However, one thing that django-filter (and django in generally) lacks is the ability to &lt;em&gt;filter multiple fields using a single input&lt;/em&gt;. This functionality may be familiar to some readers from
@@ -12762,7 +12758,7 @@ searching for &amp;#8220;Under the Dome Stephen King&amp;#8221; will result to &
 &lt;/pre&gt;
 &lt;p&gt;This query has around 200 different &lt;span class="caps"&gt;OR&lt;/span&gt; parts!!! So please be careful on the amount of search fields you&amp;#8217;ll enable to works
 with this method or your database will really&amp;nbsp;struggle!&lt;/p&gt;
-</summary><category term="django"></category><category term="python"></category><category term="query"></category><category term="q"></category><category term="filter"></category></entry><entry><title>How to download all images of an imgur album</title><link href="https://spapas.github.io/2016/06/27/download-imgur-album-images/" rel="alternate"></link><updated>2016-06-27T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</id><summary type="html">&lt;p&gt;Recently I stubmled upon a great &lt;a class="reference external" href="http://imgur.com/"&gt;imgur&lt;/a&gt; album that contained
+</summary><category term="django"></category><category term="python"></category><category term="query"></category><category term="q"></category><category term="filter"></category></entry><entry><title>How to download all images of an imgur album</title><link href="https://spapas.github.io/2016/06/27/download-imgur-album-images/" rel="alternate"></link><published>2016-06-27T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-27:2016/06/27/download-imgur-album-images/</id><summary type="html">&lt;p&gt;Recently I stubmled upon a great &lt;a class="reference external" href="http://imgur.com/"&gt;imgur&lt;/a&gt; album that contained
 &lt;a class="reference external" href="http://imgur.com/a/aoi3T"&gt;379 movie stills that could be used for desktop background&lt;/a&gt;. I
 really liked the idea and wanted to download all the images in order
 to put them in a folder and use them as a slideshow for my Windows
@@ -12871,7 +12867,7 @@ the javascript console. Finally, don&amp;#8217;t forget to change the
 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts.aoi3T.images)&lt;/span&gt;&lt;/tt&gt;
 depending on your album id (also if the id is not a valid identifier, for example it
 starts with number, use &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;copy($r.props.album_image_store._.posts['aoi3T'].images&lt;/span&gt;&lt;/tt&gt;).&lt;/p&gt;
-</summary><category term="imgur"></category><category term="python"></category><category term="react"></category><category term="javascript"></category><category term="console"></category><category term="research"></category></entry><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><updated>2016-06-07T10:40:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+</summary><category term="imgur"></category><category term="python"></category><category term="react"></category><category term="javascript"></category><category term="console"></category><category term="research"></category></entry><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><published>2016-06-07T10:40:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive
 debugger - what this means is that when your python application throws an exception,
@@ -12954,7 +12950,7 @@ I sometimes prefer opening and interactive debugger to find out by trial and err
 &lt;p&gt;Finally, please notice that both Werkzeug and django-extensions offer many more tools beyond the interactive debugger presented here -
 I encourage you to research them since - if you follow my advice - you&amp;#8217;ll integrate these to &lt;em&gt;all&lt;/em&gt; your django&amp;nbsp;projects!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="django"></category><category term="debug"></category><category term="python"></category><category term="werkzeug"></category><category term="django-extensions"></category></entry><entry><title>Understanding nested list comprehension syntax in Python</title><link href="https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/" rel="alternate"></link><updated>2016-04-27T11:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</id><summary type="html">&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
+</summary><category term="django"></category><category term="debug"></category><category term="python"></category><category term="werkzeug"></category><category term="django-extensions"></category></entry><entry><title>Understanding nested list comprehension syntax in Python</title><link href="https://spapas.github.io/2016/04/27/python-nested-list-comprehensions/" rel="alternate"></link><published>2016-04-27T11:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-04-27:2016/04/27/python-nested-list-comprehensions/</id><summary type="html">&lt;p&gt;List comprehensions are one of the really nice and powerful features of Python. It
 is actually a smart way to introduce new users to functional programming concepts
 (after all a list comprehension is just a combination of map and filter) and compact&amp;nbsp;statements.&lt;/p&gt;
 &lt;p&gt;However, one thing that always troubled me when using list comprehensions is their
@@ -13007,7 +13003,7 @@ for-loop syntax for the nested list comprehensions we&amp;#8217;ll&amp;nbsp;get:
 &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;letter&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;idx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;enumerate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;strings&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;lst&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="nb"&gt;len&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;letter&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 &lt;span class="p"&gt;[(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;r&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;t&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;z&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;k&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;o&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
-</summary><category term="python"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Show 404 page on django when DEBUG=True</title><link href="https://spapas.github.io/2015/04/29/django-show-404-page/" rel="alternate"></link><updated>2015-04-29T10:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</id><summary type="html">&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
+</summary><category term="python"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Show 404 page on django when DEBUG=True</title><link href="https://spapas.github.io/2015/04/29/django-show-404-page/" rel="alternate"></link><published>2015-04-29T10:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</id><summary type="html">&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
 a template named &lt;tt class="docutils literal"&gt;404.html&lt;/tt&gt; to the top level directory of your templates.
 However, on your development environment you&amp;#8217;ll never be able to see this
 template because when &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;DEBUG&lt;/span&gt;=True&lt;/tt&gt; django will render the debug not found
@@ -13023,7 +13019,7 @@ pattern for django&amp;#8217;s default 404 view - just  add the following to you
 &lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You&amp;#8217;ll then be able to see your 404 page by visiting the defined &lt;span class="caps"&gt;URL&lt;/span&gt;!&lt;/p&gt;
-</summary><category term="django"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Calling the REST API of Pusher from python</title><link href="https://spapas.github.io/2015/02/06/python-pusher-rest/" rel="alternate"></link><updated>2015-02-06T12:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
+</summary><category term="django"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Calling the REST API of Pusher from python</title><link href="https://spapas.github.io/2015/02/06/python-pusher-rest/" rel="alternate"></link><published>2015-02-06T12:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-02-06:2015/02/06/python-pusher-rest/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://pusher.com/"&gt;Pusher&lt;/a&gt; is one of the best real time frameworks right now. Using it you can add real time
 events in your projects without the need to configure and use &lt;span class="caps"&gt;HTTP&lt;/span&gt; servers that support
@@ -13170,7 +13166,7 @@ presence&amp;nbsp;channel.&lt;/p&gt;
 channel in python but to also call any method we want from the Pusher &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt; by implementing a function
 similar to  &lt;tt class="docutils literal"&gt;get_users&lt;/tt&gt;.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="pusher"></category><category term="python"></category><category term="rest"></category></entry><entry><title>Retrieving Gmail blocked attachments</title><link href="https://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/" rel="alternate"></link><updated>2014-10-23T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</id><summary type="html">&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
+</summary><category term="pusher"></category><category term="python"></category><category term="rest"></category></entry><entry><title>Retrieving Gmail blocked attachments</title><link href="https://spapas.github.io/2014/10/23/retrieve-gmail-blocked-attachments/" rel="alternate"></link><published>2014-10-23T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-10-23:2014/10/23/retrieve-gmail-blocked-attachments/</id><summary type="html">&lt;p&gt;Before services like Dropbox were widely available, some people (including me) were using
 their Gmail account as a primitive backup solution: Compress your directory and send it to
 your gmail. There. Backup&amp;nbsp;complete.&lt;/p&gt;
 &lt;p&gt;However, nothing is so&amp;nbsp;easy&amp;#8230;&lt;/p&gt;

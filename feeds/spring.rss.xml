@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds/spring.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 31 Mar 2016 19:20:00 +0300</lastBuildDate><item><title>Configuring Spring Boot</title><link>https://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
+<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Thu, 31 Mar 2016 19:20:00 +0300</lastBuildDate><item><title>Configuring Spring Boot</title><link>https://spapas.github.io/2016/03/31/spring-boot-settings/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -328,7 +328,7 @@ advanced profiles techniques (multiple profiles, profile enabled
 some really complex configurations! Finally, you&amp;#8217;ll be able to really
 quickly deploy the resulting jar as an init.d system&amp;nbsp;service!&lt;/p&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid>tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category><category>deploy</category><category>init.d</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 31 Mar 2016 19:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2016-03-31:2016/03/31/spring-boot-settings/</guid><category>spring</category><category>spring-boot</category><category>java</category><category>ldap</category><category>profiles</category><category>settings</category><category>properties</category><category>yaml</category><category>configuration</category><category>deploy</category><category>init.d</category></item><item><title>Using custom authorities with spring-security LDAP authentication</title><link>https://spapas.github.io/2013/10/14/spring-ldap-custom-authorities/</link><description>&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id3"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -528,4 +528,4 @@ vertical-align: top; --&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;/div&gt;
-</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 14 Oct 2013 08:55:00 +0300</pubDate><guid>tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</guid><category>spring</category><category>spring-security</category><category>java</category><category>ldap</category><category>authentication</category></item></channel></rss>
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 14 Oct 2013 08:55:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2013-10-14:2013/10/14/spring-ldap-custom-authorities/</guid><category>spring</category><category>spring-security</category><category>java</category><category>ldap</category><category>authentication</category></item></channel></rss>
