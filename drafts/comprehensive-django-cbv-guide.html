@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="5_8DTmIiEq4gFvNAfxAD6TsGOgrMAjp8lQFQvfA6zZc" />
+  <title>A comprehensive Django CBV guide &mdash; /var/</title>
+  <meta name="author" content="Serafeim Papastefanos">
+
+
+
+
+
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="robots" content="noindex, nofollow" />
+
+    <link href="https://spapas.github.io/favicon.png" rel="icon">
+
+  <link href="https://spapas.github.io/theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+        
+  <link href="https://spapas.github.io/theme/css/extra_style.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+
+  <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Fira+Sans:400,700&amp;subset=greek" rel="stylesheet">
+  
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="https://spapas.github.io/">/var/</a></h1>
+    <h2>Various programming stuff</h2>
+</hgroup></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+</ul>
+
+
+<ul class="main-navigation">
+      <li >
+        <a href="https://spapas.github.io/category/css.html">Css</a>
+      </li>
+      <li class="active">
+        <a href="https://spapas.github.io/category/django.html">Django</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/flask.html">Flask</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/git.html">Git</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/javascript.html">Javascript</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/pelican.html">Pelican</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/postgresql.html">Postgresql</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/python.html">Python</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/spring.html">Spring</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/wagtail.html">Wagtail</a>
+      </li>
+</ul></nav>
+  <div id="main">
+    <div id="content">
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">A comprehensive Django CBV guide</h1>
+    <p class="meta">
+<time datetime="2017-11-29T11:20:00+02:00" pubdate>Τετ 29 Νοέμβριος 2017</time>    </p>
+</header>
+
+<div class="entry-content"><p>Class Based Views (<span class="caps">CBV</span>) is one of my favourite things about Django. I&#8217;ve heard
+various rants about them (mainly that they are too complex and difficult to use)
+but I believe that if they are used properly they grealy improve your Django
+experience. Also, they are the only way to properly override django views; if
+of course the views have been properly written (i.e they allow overriding) -
+more on this&nbsp;later.</p>
+<p>This guide has three&nbsp;parts:</p>
+<ul class="simple">
+<li>A gentle introduction to how CBVs are working and to the the problems that do solve. For this we&#8217;ll implement
+our own simple Custom Class Based View&nbsp;variant.</li>
+<li>A high level overview of the real Django CBVs using <a class="reference external" href="http://ccbv.co.uk`"><span class="caps">CBV</span> inspector</a> as our&nbsp;guide.</li>
+<li>A number of use cases where CBVs can be used to elegantly solve real world&nbsp;problems</li>
+</ul>
+<div class="section" id="a-gentle-introduction-to-cbvs">
+<h2>A gentle introduction to&nbsp;CBVs</h2>
+<p>In this part of the guide we&#8217;ll do a gentle introduction to (our own) class based views -
+along with it we&#8217;ll introduce some basic concepts of python (multiple) inheritance and how
+it applies to&nbsp;CBVs.</p>
+<p>Before continuing, let&#8217;s talk about the concept of the &#8220;view&#8221; in Django:
+Traditionally, a view in Django is a normal python function that takes a single parameter,
+the <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/request-response/#django.http.HttpRequest">request</a> object and must return a <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/request-response/#django.http.HttpResponse">response</a> object (notice that if the
+view takes request parameters for example the id of an object to be retrieved
+they will also be passed to the function). The responsibility of the
+view function is to properly parse the request parameters and construct the
+response object - as can be understood there is a lot of work that need to be
+done for each view (for example check if the method is <span class="caps">GET</span> or <span class="caps">POST</span>, if the user
+has access to that page, retrieve objects from the database, render a template&nbsp;etc).</p>
+<p>Now, since functional views are simple python functions it is <em>not</em> easy to override
+or extend their behavior. There are more or less two methods for this: Use function
+wrappers or pass extra parameters when adding the view to your urls. The first one
+creates an extra function that extends the initial one by adding some functionality
+(for example check if the current user has access) and then simply calls the initial one
+and returns the result (which could also be changed). For the second one you must
+write your function view in a way which allows it to be extended, for example instead
+of hard-coding the template name allow it to be passed by a parameter or instead
+of using a specific form class for a form make it configurable through a&nbsp;parameter.</p>
+<p>Both these methods have severe limitations and do not allow you to be as <span class="caps">DRY</span> as
+you should be. It is obvious that using the wrapped views you can&#8217;t actually
+change the functionality of the original view (since that original function needs
+to be called) by only do things before and after calling it. Also, using the
+parameters will lead to spaghetti code with multiple if / else conditions in order
+to take into account the various cases that may arise. All the above lead to
+very reduced re-usability and DRYness of functional views - usually the best thing
+you can do is to gather the common things in external functions that could be
+re-used from other functional views (actually gathering common code to re-usable
+functions is a practice that you should be doing&nbsp;anyway).</p>
+<p>Class based views solve the above problem of non-<span class="caps">DRY</span>-ness by using the well know
+concept of <span class="caps">OO</span> inheritance: The view is defined from a class which has methods
+for implementing the view functionality - you inherit from that class and override
+the parts you want so the inherited class based view will use the overriden methods instead
+of the original ones. You can also create re-usable classes (mixins) that offer a specific
+functionality to your class based view by implementing some of the methods of the
+original class. Each one of your class based views can inherit its functionality from
+multiple mixins thus allowing you to define a single class for each thing you need
+and re-using it&nbsp;everywhere.</p>
+<p>To make things more clear we&#8217;ll try to implement our own class based views hierarchy. Here&#8217;s
+a first&nbsp;try:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CustomClassView</span><span class="p">:</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;html&gt;</span>
+<span class="s2">                &lt;body&gt;</span>
+<span class="s2">                    &lt;h1&gt;{header}&lt;/h1&gt;</span>
+<span class="s2">                    {body}</span>
+<span class="s2">                &lt;/body&gt;</span>
+<span class="s2">            &lt;/html&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s1">&#39;&lt;br /&gt;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">),</span>
+            <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">as_view</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="p">):</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">view</span>
+</pre></div>
+<p>This class can be used to render a simple <span class="caps">HTML</span> template with a custom header and
+a list in the body (named <tt class="docutils literal">context</tt>). There are two things to notice here: The <tt class="docutils literal">__init__</tt> method (which
+will be called as the object&#8217;s constructor) will assign all the kwargs it receives
+as instance attributes (for example <tt class="docutils literal"><span class="pre">CustomClassView(header='hello')</span></tt> will create
+an instance with <tt class="docutils literal">'hello'</tt> as its header attribute). The <tt class="docutils literal">as_view</tt> is a classmethod
+(i.e it can be called on the <em>class</em> without the need to instantiate an object) that
+defined and returns the functional view that will be used in your urls. The returned
+view is very simple - it just instantiates a new instance of CustomClassView passing
+the kwargs it got in the constructor and then returns a normal <tt class="docutils literal">HttpResponse</tt> with
+the instance&#8217;s <tt class="docutils literal">render()</tt> result. The <tt class="docutils literal">render</tt> method will just output some html
+using the instance&#8217;s header and context to fill&nbsp;it.</p>
+<p>Notice that the instance above is not created using
+<tt class="docutils literal"><span class="pre">CustomClassView(**kwargs)</span></tt> but using <tt class="docutils literal"><span class="pre">cls(**kwargs)</span></tt> - cls is the name of the
+class that <tt class="docutils literal">as_view</tt> was called on and actually passed as a parameter for
+class methods (in a similar manner to how self is passed to instance methods).
+This is important to instantiate the correct
+object instance. For example, if you created a class that inherits from <tt class="docutils literal">CustomClassView</tt>
+and called its <tt class="docutils literal">as_view</tt> method then when you use the <tt class="docutils literal">cls</tt> parameter to instantiate
+the object it will correctly
+create an object of the <em>inherited</em> class and not the <em>base</em>&nbsp;class.</p>
+<p>To add the above class method in your urls, just use its <tt class="docutils literal">as_view()</tt> as you&#8217;d
+normally use a functional&nbsp;view:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">include</span><span class="p">,</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">views</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="s1">r&#39;^ccv-empty/$&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">CustomClassView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ccv-empty&#39;</span><span class="p">),</span>
+    <span class="c1"># ... other urls</span>
+<span class="p">]</span>
+</pre></div>
+<p>This doesn&#8217;t actually render anything since both header and context are empty on
+the created instance &#8212; remember that <tt class="docutils literal">as_view</tt> returns a functional view that
+instantiates a <tt class="docutils literal">CustomClassView</tt> objet and returns an <tt class="docutils literal">HttpResponse</tt> filling it
+with the object&#8217;s <tt class="docutils literal">render()</tt> reuslts. To add some functionality we can either
+create another class that inherits from <tt class="docutils literal">CustomClassView</tt> or
+initialize the attributes from the constructor of the class (using the kwargs functionality described&nbsp;above).</p>
+<p>The inherited class can just override the values of the&nbsp;attributes:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">InheritsCustomClassView</span><span class="p">(</span><span class="n">CustomClassView</span><span class="p">,</span> <span class="p">):</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;Hi&quot;</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="s1">&#39;test2&#39;</span> <span class="p">]</span>
+</pre></div>
+<p>And then just add the inherited class to your urls as&nbsp;before:</p>
+<div class="highlight"><pre><span></span><span class="n">url</span><span class="p">(</span><span class="s1">r&#39;^ccv-inherits/$&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">InheritsCustomClassView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ccv-inherits&#39;</span><span class="p">),</span>
+</pre></div>
+<p>The <tt class="docutils literal">as_view()</tt> method will create an instance of <tt class="docutils literal">InheritsCustomClassView</tt> that has
+the values configured in the class as attributes and return
+its <tt class="docutils literal">render()</tt> output as&nbsp;response.</p>
+<p>The other way to configure the attributes of the class is to
+pass them to the <tt class="docutils literal">as_view</tt> class method (which in turn will pass them to the instances
+constructor which will set the attributes in the instance). Here&#8217;s an&nbsp;example:</p>
+<div class="highlight"><pre><span></span><span class="n">url</span><span class="p">(</span><span class="s1">r&#39;^ccv-with-values/$&#39;</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">CustomClassView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Hello&#39;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;hello&#39;</span><span class="p">,</span> <span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="p">],</span> <span class="n">footer</span><span class="o">=</span><span class="s1">&#39;Bye&#39;</span><span class="p">,</span> <span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ccv-with-values&#39;</span><span class="p">),</span>
+</pre></div>
+<p>The above will create a <tt class="docutils literal">CustomClassView</tt> instance with the provided values as its attributes. This is more or less
+similar to how functional views are configured and is limited for the same reasons explained&nbsp;above.</p>
+<p>I don&#8217;t use this method of configuring class based views anymore but I want to discuss it a bit because
+it is supported (and used) in normal django CBVs (for example
+set the <tt class="docutils literal">template_name</tt> in a <tt class="docutils literal">TemplateView</tt>). I recommend you also avoid using it  because passing parameters
+to the <tt class="docutils literal">as_view</tt> method pollutes the urls.py with configuration
+that (at least in my opinion) should <em>not</em> be there and also, even for very simple views I know that after some time I&#8217;ll need
+to add some functionality that cannot be implemented by passing the parameters so I prefer to bite the
+bullet and define all my views as inherited classes so it will be easy for me to further customize them later (we&#8217;ll
+see how this is done in a second). In any case, I won&#8217;t discuss passing parameters to the <tt class="docutils literal">as_view</tt> method any more
+so from now on any class based views I define will be added to urls py using <tt class="docutils literal">ClassName.as_view()</tt>.</p>
+<p>Let&#8217;s now suppose that we wanted to allow our class based view to print something on the header even if no header is provided
+when you configure it. The naive way to do it would be to re-define the <tt class="docutils literal">render</tt> method and do something&nbsp;like</p>
+<div class="highlight"><pre><span></span><span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">else</span> <span class="s2">&quot;DEFAULT HEADER&quot;</span>
+</pre></div>
+<p>in the <tt class="docutils literal">render()</tt> method&#8217;s format.
+This is definitely not the way to do it because you more or less need to re-define the whole <tt class="docutils literal">render</tt> method and think
+what would happen if
+you wanted to print <tt class="docutils literal">&quot;<span class="caps">ANOTHER</span> <span class="caps">DEFAULT</span> <span class="caps">HEADER</span>&quot;</tt> as a default header for some other view&#8230; In fact, the above
+<tt class="docutils literal">CustomClassView</tt> is naively implemented because it does not allow proper customization through inheritance. For
+example, if you wanted to add an index number after all the numbers then you&#8217;ll need to again re-implement the
+whole <tt class="docutils literal">render</tt> method.</p>
+<p>This is definitely not <span class="caps">DRY</span>. If that was our only option then we could just stick to functional views. We can do
+much better if we define the class based view in such a way that allows inherited classes to override methods that
+define specific parts of the functionality. Here&#8217;s how we could improve the <tt class="docutils literal">CustomClassView</tt>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BetterCustomClassView</span><span class="p">(</span><span class="n">CustomClassView</span><span class="p">,</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;Better Custom Class View&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span> <span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">render_context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">context</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&lt;br /&gt;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;html&gt;</span>
+<span class="s2">                &lt;body&gt;</span>
+<span class="s2">                    &lt;h1&gt;{header}&lt;/h1&gt;</span>
+<span class="s2">                    {body}</span>
+<span class="s2">                &lt;/body&gt;</span>
+<span class="s2">            &lt;/html&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_header</span><span class="p">(),</span> <span class="n">body</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">render_context</span><span class="p">(),</span>
+            <span class="p">)</span>
+</pre></div>
+<p>So what happens here? First of all we inherit from <tt class="docutils literal">ClassClassView</tt> to keep the
+<tt class="docutils literal">as_view</tt> method which doesn&#8217;t need changing (for now). Beyond this, the render
+uses methods (<tt class="docutils literal">get_header</tt> and <tt class="docutils literal">render_context</tt>) to retrieve the values from the header and the body - this means
+that we could re-define these methods to an inherited class in order to override
+what these methods will return. Beyond <tt class="docutils literal">get_header</tt> and <tt class="docutils literal">render_contex</tt> I&#8217;ve added
+a <tt class="docutils literal">get_context</tt> method that is used by <tt class="docutils literal">render_context</tt> because, for example I may
+need to configure the context (add/remove items from the context). Of course this could
+be done from <tt class="docutils literal">render_context</tt> <em>but</em> this means that I would need to define my new functionality
+(modifying the context items) <em>and</em> re-defining the context list formatting. It is much
+better (in my opinion always) to keep properly seperate these&nbsp;things.</p>
+<p>Now, the above is a first try that I created to mainly fulfill my requirement of
+having a default header and some more examples I will discuss later. You could
+extract more functionality as methods-for-overriding, for example the render
+method could be written like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_template</span><span class="p">()</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_header</span><span class="p">(),</span> <span class="n">body</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">render_context</span><span class="p">(),</span>
+        <span class="p">)</span>
+</pre></div>
+<p>and add a <tt class="docutils literal">get_template</tt> method that will return the actual html template. There&#8217;s no
+hard rules here on what functionality should be extracted to a method (so it could
+be overriden) however I recommend to follow the <span class="caps">YAGNI</span> rule (so implement everything
+as normally and when you see that some functionality needs to be overriden then refactor
+your code to extract it to a separate&nbsp;method).</p>
+<p>Let&#8217;s see an example of adding the default header functionality by overriding <tt class="docutils literal">get_header</tt>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DefaultHeaderBetterCustomClassView</span><span class="p">(</span><span class="n">BetterCustomClassView</span><span class="p">,</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">else</span> <span class="s2">&quot;DEFAULT HEADER&quot;</span>
+</pre></div>
+<p>Now, classes inheriting from <tt class="docutils literal">DefaultHeaderBetterCustomClassView</tt> can choose to not
+actually define a header attribute so <tt class="docutils literal">&quot;<span class="caps">DEFAULT</span> <span class="caps">HEADER</span>&quot;</tt> will be printed instead. Keep in
+mind that for <tt class="docutils literal">DefaultHeaderBetterCustomClassView</tt> to be actually useful you&#8217;ll need to
+have more than one classes that need this default-header functionality (or else you could
+just set the header attribute of your class to <tt class="docutils literal">&quot;<span class="caps">DEFAULT</span> <span class="caps">HEADER</span>&quot;</tt> - this is not
+user generated input, this is your source&nbsp;code!).</p>
+<p>We have come now to a crucial point in this introduction, so please stick with me. Let&#8217;s say that you have
+<em>more than one</em> class based views that contain a header attribute. You want to include
+the default header functionality on all of them so, if they don&#8217;t define a header
+the default string will be output (I know that this may be a rather trivial example but I want
+to keep everything simple to make following easy - instead of the default header the functionality
+you want to override may be adding stuff to the context or filtering the objects you&#8217;ll retrieve
+from the&nbsp;database).</p>
+<p>Now, to re-use this default header funtionality from multiple classes you have <em>two</em> options:
+Either inherit all classes that need this functionality from <tt class="docutils literal">DefaultHeaderBetterCustomClassView</tt> or
+extract the custom <tt class="docutils literal">get_header</tt> method to a mixin and inherit from the mixin. A mixin is a class not
+related to the class based view hierarchy we are using - the mixin inherits from object (or from another
+mixin) and just defines the methods and attributes that need to be&nbsp;overriden.</p>
+<p>To not feel anxious about it I&#8217;m telling you right now that using mixins is the best solution for this. But why?
+Let&#8217;s suppose that you have a base class that renders the header and context as <span class="caps">JSON</span> instead of the <span class="caps">HTML</span>
+template, something like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">JsonCustomClassView</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">as_view</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="p">):</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+                <span class="s1">&#39;header&#39;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">get_header</span><span class="p">(),</span>
+                <span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">get_context</span><span class="p">(),</span>
+            <span class="p">}))</span>
+
+        <span class="k">return</span> <span class="n">view</span>
+</pre></div>
+<p>Notice that this class does not inherit from our previous hierarchy but from object since it provides
+its own <tt class="docutils literal">as_view</tt> method. Suppose we also wanted to use the default header functionality for this (since it
+has a <tt class="docutils literal">get_header</tt> we could override it if we wanted (duck typing)? Creating a class that
+inherits from both <tt class="docutils literal">JsonCustomClassView</tt> and <tt class="docutils literal">DefaultHeaderBetterCustomClassView</tt> using something&nbsp;like</p>
+<div class="highlight"><pre><span></span><span class="c1"># OPTION 1</span>
+<span class="k">class</span> <span class="nc">JsonDefaultHeaderCustomClassView</span><span class="p">(</span><span class="n">JsonCustomClassView</span><span class="p">,</span> <span class="n">DefaultHeaderBetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1"># OR</span>
+<span class="c1"># OPTION 2</span>
+<span class="k">class</span> <span class="nc">DefaultHeaderJsonCustomClassView</span><span class="p">(</span><span class="n">DefaultHeaderBetterCustomClassView</span><span class="p">,</span> <span class="n">JsonCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>is not the
+correct solution since the methods <tt class="docutils literal">get_header</tt> and <tt class="docutils literal">as_view</tt> exist in <em>both</em> ancestor classes so
+in the first option the <tt class="docutils literal">get_header</tt> and <tt class="docutils literal">as_view</tt> from <tt class="docutils literal">JsonCustomClassView</tt> will be used while
+in the second option the <tt class="docutils literal">get_header</tt> and <tt class="docutils literal">as_view</tt> from <tt class="docutils literal">DefaultHeaderBetterCustomClassView</tt> will
+be used. Notice that if these classes had a common ancestor (for example they both used
+<tt class="docutils literal">CustomClassView</tt>) you may actually get the correct behavior depending on the rather complex rules
+of python <span class="caps">MRO</span> (metod resolution order). The <span class="caps">MRO</span> is also what I used to know which <tt class="docutils literal">get_header</tt>
+and <tt class="docutils literal">as_view</tt> will be used in each ccase in the previous&nbsp;sample.</p>
+<p>What is <span class="caps">MRO</span>? For every class python tries to create a <em>list</em> of classes containing that class as
+the first element and its ancestors in a specific order I&#8217;ll discuss right next after that. When a method
+of an object of a specific class needs to be
+called, then the method will be seached in the list (from the first element ie starting that class) - when a class is found
+in the list that defines the method then that method (ie the method defined in this class) will be called and the search will stop (careful readers: I haven&#8217;t
+yet talked about <em>super</em> please be&nbsp;patient).</p>
+<p>Now, how is the <span class="caps">MRO</span> list created? As I explained, the first element
+is the class of the object. The second element is the <span class="caps">MRO</span> of the <em>leftmost</em> ancestor of that object (so <span class="caps">MRO</span> will
+run recursively on each ancenstor), the third element will be the <span class="caps">MRO</span> of the ancestor right next to the leftomost
+ancestor etc. There is one extra and important rule: When class is found multiple times in the <span class="caps">MRO</span> list (for example
+if some elements have a common ancestor) then <em>only the last occurence in the list will be kept</em> - so each class
+will be found only one time in the <span class="caps">MRO</span>&nbsp;list.</p>
+<p>Let&#8217;s see a quick example for <tt class="docutils literal">DefaultHeaderJsonCustomClassView</tt>:
+<tt class="docutils literal">DefaultHeaderJsonCustomClassView, DefaultHeaderBetterCustomClassView, BetterCustomClassView, CustomClassView, JsonCustomClassView, object</tt>
+and for <tt class="docutils literal">JsonDefaultHeaderCustomClassView</tt>:
+<tt class="docutils literal">JsonDefaultHeaderCustomClassView, JsonCustomClassView, DefaultHeaderBetterCustomClassView, BetterCustomClassView, CustomClassView, object</tt></p>
+<p>Let&#8217;s try an example that has the same base class twice in the hierarchy. For this, we&#8217;ll create a
+<tt class="docutils literal">DefaultContextBetterCustomClassView</tt> that returns a default context if the context is&nbsp;empty.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DefaultContextBetterCustomClassView</span><span class="p">(</span><span class="n">BetterCustomClassView</span><span class="p">,</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;DEFAULT CONTEXT&quot;</span><span class="p">]</span>
+</pre></div>
+<p>Now we&#8217;ll create a class that inherits from both of&nbsp;them:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DefaultHeaderContextCustomClassView</span><span class="p">(</span><span class="n">DefaultHeaderBetterCustomClassView</span><span class="p">,</span> <span class="n">DefaultContextBetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>Let&#8217;s do the <span class="caps">MRO</span> for the <tt class="docutils literal">DefaultHeaderContextCustomClassView</tt> class:</p>
+<p>Initially, the <span class="caps">MRO</span> will be the&nbsp;following:</p>
+<pre class="code literal-block">
+Starting with the initial class
+1. DefaultHeaderContextCustomClassView
+Follows the leftmost class MRO
+2. DefaultHeaderContextCustomClassView, 3. BetterCustomClassView, 4. CustomClassView, 5. object
+And finally the next class MRO
+6. DefaultContextBetterCustomClassView, 7. BetterCustomClassView, 8. CustomClassView, 9. object
+</pre>
+<p>Notice that classes <tt class="docutils literal">BetterCustomClassView</tt>, <tt class="docutils literal">CustomClassView</tt> and <tt class="docutils literal">object</tt> are repeated two times
+(on place 3,4,5 and 7,8,9) thus <em>only</em> their last occurence will be kept in the list. So the
+resulting <span class="caps">MRO</span> is the&nbsp;following:</p>
+<p><tt class="docutils literal">DefaultHeaderContextCustomClassView, DefaultHeaderBetterCustomClassView, DefaultContextBetterCustomClassView, BetterCustomClassView, CustomClassView, object</tt></p>
+<p>So the <tt class="docutils literal">DefaultHeaderContextCustomClassView</tt> <em>will</em> actually work properly because the
+<tt class="docutils literal">get_header</tt> will be found in <tt class="docutils literal">DefaultHeaderBetterCustomClassView</tt> and the
+<tt class="docutils literal">get_context</tt> will be found in <tt class="docutils literal">DefaultContextBetterCustomClassView</tt>.</p>
+<p>Yes it does work but at what cost? Do you really want to do the mental exercise
+of finding out the <span class="caps">MRO</span> for each class you define? Also, what would happen if the
+<tt class="docutils literal">DefaultHeaderContextCustomClassView</tt> class also had a <tt class="docutils literal">get_context</tt> method defined
+(hint: that <tt class="docutils literal">get_context</tt> would be used and the <tt class="docutils literal">get_context</tt> of <tt class="docutils literal">DefaultContextBetterCustomClassView</tt>
+would be&nbsp;ignored).</p>
+<p>That&#8217;s why I
+propose implementing common functionality that needs to be re-used between
+classes only with mixins (hint: that&#8217;s also what Django does). Each re-usable functionality
+will be implemented in its own mixin - class views that need to implement that
+functionality will just inherit from the mixin along with the class view. So each
+one of the view classes you define should inherit from <em>one and only one</em> other class
+view and any number of mixins you want. Make sure that the view class is righmost in
+the ancestors list and the mixins are to the left so that they will properly override
+its behavior). Keep in mind that the methods of the classes to the left override the methods of the
+classes on the right &#8212; and the methods of the defined class have of course the highest&nbsp;priority.</p>
+<p>Let&#8217;s try implementing the proposed mixins for a default header and&nbsp;context:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DefaultHeaderMixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="k">else</span> <span class="s2">&quot;DEFAULT HEADER&quot;</span>
+
+<span class="k">class</span> <span class="nc">DefaultContextMixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span> <span class="k">else</span> <span class="p">[</span><span class="s2">&quot;DEFAULT CONTEXT&quot;</span><span class="p">]</span>
+</pre></div>
+<p>and all the proposed use cases using the base class view and the&nbsp;mixins:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DefaultHeaderMixinBetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">DefaultHeaderMixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">DefaultContextMixinBetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">DefaultContextMixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">DefaultHeaderContextMixinBetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">DefaultHeaderMixin</span><span class="p">,</span> <span class="n">mixins</span><span class="o">.</span><span class="n">DefaultContextMixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">JsonDefaultHeaderMixinCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">DefaultHeaderMixin</span><span class="p">,</span> <span class="n">JsonCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>I believe that the above definitions are self-documented and it is very easy to know which
+method of the resulting class will be called each time: Start from the main class and if
+the method is not found there continue from left to right to the ancestor&nbsp;list.</p>
+<p>The final thing and extension I&#8217;d like to discuss for our custom class based views is the case
+where you want to use the functionality of more than one mixins. For example, let&#8217;s suppose
+that we had a mixin that added some data to the context and a different mixing that added
+some different data to the context. Both would use the <tt class="docutils literal">get_context</tt> method.
+How could we add implement these mixins and stay <span class="caps">DRY</span>? This is the same problem as
+if we wanted to inherit from a mixin (or a class view) and override one of its methods
+but <em>also</em> call its parent (overriden) method for example to get its output and use it as the base
+of the output for the overriden&nbsp;method.</p>
+<p>Both of the above are more or less the same requirement because what stays in the end is
+the <span class="caps">MRO</span> list. So, say we we had the following base&nbsp;clase</p>
+<pre class="code literal-block">
+class V:pass
+</pre>
+<p>and we wanted to override it either using mixins or by using normal&nbsp;inheritance.</p>
+<p>Using mixins we&#8217;ll have the following <span class="caps">MRO</span>:</p>
+<pre class="code literal-block">
+class M1:pass
+class M2:pass
+class MIXIN(M2, M1, V):pass
+
+# MIXIN.mro()
+# [MIXIN, M2, M1, V, ]
+</pre>
+<p>and using inheritance we&#8217;ll have the following <span class="caps">MRO</span>:</p>
+<pre class="code literal-block">
+class M1V(V):pass
+class M2M1V(M1V):pass
+class INHERITANCE(M2M1V):pass
+
+# INHERITANCE.mro()
+# [INHERITANCE, M2M1V, M1V, V, ]
+</pre>
+<p>As we can see in both cases the base class V is the last one and between there are
+the classes that define the extra (mixin) functionality: <tt class="docutils literal">M2</tt> and <tt class="docutils literal">M1</tt> (start from
+left to right) in the first case and <tt class="docutils literal"><span class="caps">M2M1V</span></tt> and <tt class="docutils literal"><span class="caps">M1V</span></tt> (follow the inheritance hierarchy)
+in the second case. So in both cases when calling a method they will be searched using
+the <span class="caps">MRO</span> list and when the method is found it will be exetuted and the search will&nbsp;stop.</p>
+<p>But what if we needed to re-use the functionality from <tt class="docutils literal">V</tt>? The answer to both cases is <tt class="docutils literal">super</tt>.</p>
+<p>The <tt class="docutils literal">super</tt> method can be used by a class to call a method of <em>its ancestors</em> respecting
+the <span class="caps">MRO</span>. Thus, running <tt class="docutils literal"><span class="pre">super().x()</span></tt> from a method instance will try to find method <tt class="docutils literal">x()</tt>
+on the <span class="caps">MRO</span> ancestors of this instance <em>even if the instance defines the &#8220;x()&#8220; method</em>. Notice
+that if the <tt class="docutils literal">x()</tt> method does not exist in the <span class="caps">MRO</span> chain you&#8217;ll get an attribute&nbsp;error.</p>
+<p>Let&#8217;s take a look at how <tt class="docutils literal">super()</tt> works by defining a method calld <tt class="docutils literal">x()</tt> on all classes
+of the previous&nbsp;example:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">V</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;From V&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">M1</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;From M1&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">M2</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;From M2&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">MIXIN</span><span class="p">(</span><span class="n">M2</span><span class="p">,</span> <span class="n">M1</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;From MIXIN&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">M1V</span><span class="p">(</span><span class="n">V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;From M1V&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">M2M1V</span><span class="p">(</span><span class="n">M1V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;From M2M1V&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">INHERITANCE</span><span class="p">(</span><span class="n">M2M1V</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s2">&quot;From INHERITANCE&quot;</span><span class="p">)</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s2">&quot;MIXIN OUTPUT&quot;</span><span class="p">)</span>
+<span class="n">MIXIN</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s2">&quot;INHERITANCE OUTPUT&quot;</span><span class="p">)</span>
+<span class="n">INHERITANCE</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+</pre></div>
+<p>Here&#8217;s the&nbsp;output:</p>
+<pre class="code literal-block">
+MIXIN OUTPUT
+From V
+From M1
+From M2
+From MIXIN
+INHERITANCE OUTPUT
+From V
+From M1V
+From M2M1V
+From INHERITANCE
+</pre>
+<p>Notice when each message is printed: Because x() first calls its <tt class="docutils literal">super()</tt> method
+and then it prints the message in both cases first the <tt class="docutils literal">From V</tt> message is printed
+from the base class and then from the following classes in the hierarch (as per the <span class="caps">MRO</span>)
+ending with the class of the isntance (either <tt class="docutils literal"><span class="caps">MIXIN</span></tt> or <tt class="docutils literal"><span class="caps">INHERITANCE</span></tt>).</p>
+<p>Using super and mixins it is easy to mix and match functionality to create new
+classes. For example, let&#8217;s suppose that sometimes we need to add a prefix to
+the header. Here&#8217;s how it should be&nbsp;imlemented:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HeaderPrefixMixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;PREFIX: &quot;</span> <span class="o">+</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span>
+</pre></div>
+<p>and here&#8217;s how it could be&nbsp;used:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HeaderPrefixBetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">HeaderPrefixMixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="n">header</span><span class="o">=</span><span class="s1">&#39;Hello!&#39;</span>
+</pre></div>
+<p>What if we wanted to re-use the default header mixin? First let&#8217;s change <tt class="docutils literal">DefaultHeaderMixin</tt>
+to properly use <tt class="docutils literal">super()</tt>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DefaultHeaderSuperMixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span> <span class="k">if</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_header</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;DEFAULT HEADER&quot;</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HeaderPrefixDefaultBetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">HeaderPrefixMixin</span><span class="p">,</span> <span class="n">mixins</span><span class="o">.</span><span class="n">DefaultHeaderSuperMixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>Notice the order of the ancestor classes. The <tt class="docutils literal">get_header()</tt> of  <tt class="docutils literal">HeaderPrefixMixin</tt> will be called which
+will call the <tt class="docutils literal">get_header()</tt> of
+<tt class="docutils literal">DefaultHeaderSuperMixin</tt> (which will call the <tt class="docutils literal">get_header()</tt> of <tt class="docutils literal">BetterCustomClassView</tt> which will return <tt class="docutils literal">None</tt>).
+So the result will be <tt class="docutils literal">&quot;<span class="caps">PREFIX</span>: <span class="caps">DEFAULT</span> <span class="caps">HEADER</span>&quot;</tt>. Now, if instead we had defined this clas like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HeaderPrefixDefaultBetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">DefaultHeaderSuperMixin</span><span class="p">,</span> <span class="n">mixins</span><span class="o">.</span><span class="n">HeaderPrefixMixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>Now the result would be <tt class="docutils literal">&quot;<span class="caps">PREFIX</span>: &quot;</tt>. Can you understand&nbsp;why?</p>
+<p>Let&#8217;s define a couple of mixins that add things to the&nbsp;context:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExtraContext1Mixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;data1&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ctx</span>
+
+
+<span class="k">class</span> <span class="nc">ExtraContext2Mixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;data2&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ctx</span>
+</pre></div>
+<p>The first one retrieves the ancestor context list and appends <tt class="docutils literal">'data1'</tt> to the
+it while the second one will insert <tt class="docutils literal">'data2'</tt> to the start of the list. To use
+these mixins just add them to the ancestor list of your class hierarchy as usually.
+One interesting thing to notice here is that because of how <tt class="docutils literal">get_context</tt> is
+defined we&#8217;ll get the same output no matter the order of the mixins in the hierarchy
+since <tt class="docutils literal">ExtraContext1Mixin</tt> will append <tt class="docutils literal">data1</tt> to the end of the context list and
+the <tt class="docutils literal">ExtraContext2Mixin</tt> will insert <tt class="docutils literal">data2</tt> to the start of the context&nbsp;list.</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExtraContext12BetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">ExtraContext1Mixin</span><span class="p">,</span> <span class="n">mixins</span><span class="o">.</span><span class="n">ExtraContext2Mixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">ExtraContext21BetterCustomClassView</span><span class="p">(</span><span class="n">mixins</span><span class="o">.</span><span class="n">ExtraContext2Mixin</span><span class="p">,</span> <span class="n">mixins</span><span class="o">.</span><span class="n">ExtraContext1Mixin</span><span class="p">,</span> <span class="n">BetterCustomClassView</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>Of course, since we&#8217;ve already defined <tt class="docutils literal">HeaderPrefixMixin</tt> and <tt class="docutils literal">DefaultHeaderSuperMixin</tt> nothing stops us
+from using all those mixins&nbsp;together!</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AllTogetherNowBetterCustomClassView</span><span class="p">(</span>
+        <span class="n">mixins</span><span class="o">.</span><span class="n">HeaderPrefixMixin</span><span class="p">,</span>
+        <span class="n">mixins</span><span class="o">.</span><span class="n">DefaultHeaderSuperMixin</span><span class="p">,</span>
+        <span class="n">mixins</span><span class="o">.</span><span class="n">ExtraContext1Mixin</span><span class="p">,</span>
+        <span class="n">mixins</span><span class="o">.</span><span class="n">ExtraContext2Mixin</span><span class="p">,</span>
+        <span class="n">BetterCustomClassView</span>
+    <span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="section" id="a-high-level-overview-of-cbvs">
+<h2>A high level overview of&nbsp;CBVs</h2>
+<p>After the previous rather long (but I hope gentle enough) introduction to implementing
+our own class based view hierarchy using inheritance, mixins, <span class="caps">MRO</span>, method overriding
+and super we can now start talking about the Django Class Based Views (CBVs). Our
+guide will be the <cite><span class="caps">CBV</span> inspector</cite> application which displays all classes and mixins
+that Django CBVs are using along with their methods and attributes. Using this application
+and after reading this article you should be able to quickly and definitely know
+which method or attribute you need to define to each one of your mixins or&nbsp;views.</p>
+<p>To use <span class="caps">CBV</span> inspector, just click on a class name (for example <tt class="docutils literal">CreateView</tt>) - you will
+immediately see its <span class="caps">MRO</span> ancestors, its list of attributes (and the class that defines
+each one) and finally a list of methods that this class and all its ancestors define.
+Of course when a method is defined by multiple classes the <span class="caps">MRO</span> ordering will be used -
+super is used when the functionality of the ancestor classes is also used. The <span class="caps">CBV</span>
+inspector uses Python 2 syntax which uses the following syntax to call super for method <tt class="docutils literal">x()</tt>:</p>
+<div class="highlight"><pre><span></span><span class="nb">super</span><span class="p">(</span><span class="n">ClassName</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+</pre></div>
+<p>this is the same as&nbsp;calling</p>
+<div class="highlight"><pre><span></span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
+</pre></div>
+<p>in Python&nbsp;3.</p>
+<p>In any case, our travel starts from the central <span class="caps">CBV</span> class which is (intuitively) called &#8230; <a class="reference external" href="https://ccbv.co.uk/View">View</a>!</p>
+</div>
+<div class="section" id="real-world-use-cases">
+<h2>Real world use&nbsp;cases</h2>
+</div>
+</div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        Serafeim Papastefanos
+    </span>
+  </span>
+<time datetime="2017-11-29T11:20:00+02:00" pubdate>Τετ 29 Νοέμβριος 2017</time>  <span class="categories">
+    <a class='category' href='https://spapas.github.io/category/django.html'>django</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="https://spapas.github.io/tag/python.html">python</a>,    <a class="category" href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a class="category" href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a class="category" href="https://spapas.github.io/tag/django.html">django</a>  </span>
+</p><div class="sharing">
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://spapas.github.io/drafts/comprehensive-django-cbv-guide.html" data-via="" data-counturl="https://spapas.github.io/drafts/comprehensive-django-cbv-guide.html" >Tweet</a>
+</div>    </footer>
+  </article>
+
+</div>
+<aside class="sidebar">
+  <section>
+  <br />
+  <a href='/feeds/all.atom.xml'>Atom</a> 
+  |
+  <a href='/feeds/all.rss.xml'>RSS</a> 
+  </section>
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+      <li class="post">
+          <a href="https://spapas.github.io/2017/12/20/python-2-3-windows/">Using both Python 2 and 3 in Windows</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2017/10/11/essential-django-packages/">My essential django package list</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/">Automatically create a category table in Postgresql by extracting unique table values</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2017/01/03/ag-grid-custom-components/">Creating custom components for ag-grid</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2016/11/02/postgresql-backup/">Getting a logical backup of all databases of your Postgresql server</a>
+      </li>
+    </ul>
+  </section>
+  <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+        <li><a href="https://spapas.github.io/category/css.html">css</a></li>
+        <li><a href="https://spapas.github.io/category/django.html">django</a></li>
+        <li><a href="https://spapas.github.io/category/flask.html">flask</a></li>
+        <li><a href="https://spapas.github.io/category/git.html">git</a></li>
+        <li><a href="https://spapas.github.io/category/javascript.html">javascript</a></li>
+        <li><a href="https://spapas.github.io/category/pelican.html">pelican</a></li>
+        <li><a href="https://spapas.github.io/category/postgresql.html">postgresql</a></li>
+        <li><a href="https://spapas.github.io/category/python.html">python</a></li>
+        <li><a href="https://spapas.github.io/category/spring.html">spring</a></li>
+        <li><a href="https://spapas.github.io/category/wagtail.html">wagtail</a></li>
+    </ul>
+  </section>
+ 
+
+  <section>
+  <h1>Tags</h1>
+    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/python-2.html">python-2</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/grid.html">grid</a>,    <a href="https://spapas.github.io/tag/ag-grid.html">ag-grid</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/python-3.html">python-3</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/component.html">component</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/plpgsql.html">plpgsql</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+
+
+
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy;  2013&ndash;2017  Serafeim Papastefanos &mdash;
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  <script src="https://spapas.github.io/theme/js/modernizr-2.0.js"></script>
+  <script src="https://spapas.github.io/theme/js/ender.js"></script>
+  <script src="https://spapas.github.io/theme/js/octopress.js" type="text/javascript"></script>
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44750952-1', 'auto');
+
+    ga('send', 'pageview');
+    </script>
+  <script type="text/javascript">
+    var disqus_shortname = 'spapas-github-io';
+    var disqus_identifier = '/drafts/comprehensive-django-cbv-guide.html';
+    var disqus_url = 'https://spapas.github.io/drafts/comprehensive-django-cbv-guide.html';
+    var disqus_title = 'A comprehensive Django <span class="caps">CBV</span>&nbsp;guide';
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = "//" + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+  </script>
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+</body>
+</html>
