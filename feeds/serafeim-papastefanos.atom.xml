@@ -1,5 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
 <feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-10-11T14:20:00+03:00</updated><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><updated>2017-10-11T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
+=======
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-12-20T11:20:00+02:00</updated><entry><title>Using both Python 2 and 3 in Windows</title><link href="https://spapas.github.io/2017/12/20/python-2-3-windows/" rel="alternate"></link><published>2017-12-20T11:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-12-20:2017/12/20/python-2-3-windows/</id><summary type="html">&lt;p&gt;The release of Django 2.0 was a milestone in the history of Python since it
+completely dropped support for Python 2.x. I am a long time user of Django
+and, loyal to the philosophy of &amp;#8220;if it is working don&amp;#8217;t change&amp;#8221; I was always
+using Python&amp;nbsp;2.x.&lt;/p&gt;
+&lt;p&gt;Of course right now this needs to change since new applications will need to
+be developed to the latest version of Django (and Python). I am using
+Windows for development (almost exclusively) and what I wanted was to
+be able to create and use virtual environments for both my old projects
+(using Python 2) and new projects (using Python&amp;nbsp;3).&lt;/p&gt;
+&lt;p&gt;The above requirement is not as straight-forward as I&amp;#8217;d like - actually it is
+if you know what you need to do and which tools you must use. That&amp;#8217;s why I
+decided to write a quick step by step tutorial on how to use both versions
+of Python in your Windows environment. Notice that I am using Windows 10,
+Python 2.7.14 an Python&amp;nbsp;3.6.4.&lt;/p&gt;
+&lt;p&gt;First of all, let&amp;#8217;s download both versions of Python
+from the &lt;a class="reference external" href="https://www.python.org/downloads/"&gt;Python download page&lt;/a&gt;. I downloaded the files
+python-2.7.14.msi and python-3.6.4.exe (not sure why the one is .msi and the other
+is .exe it doesn&amp;#8217;t matter&amp;nbsp;anyway).&lt;/p&gt;
+&lt;p&gt;Firstly I am installing Python 2.7.14 and&amp;nbsp;selecting:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Install for all&amp;nbsp;users&lt;/li&gt;
+&lt;li&gt;Install to default&amp;nbsp;folder&lt;/li&gt;
+&lt;li&gt;Press next to following screen (install default&amp;nbsp;customizations)&lt;/li&gt;
+&lt;li&gt;This won&amp;#8217;t add the python.exe of Python 2.7 to&amp;nbsp;path&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Next I am install Python&amp;nbsp;3.6.4:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Make sure to click &amp;#8220;Install launcher for all users&amp;nbsp;(recommended)&amp;#8221;&lt;/li&gt;
+&lt;li&gt;I also check &amp;#8220;Add Python 3.6to &lt;span class="caps"&gt;PATH&lt;/span&gt;&amp;#8221; (to add the Python 3.6 executable to&amp;nbsp;path)&lt;/li&gt;
+&lt;li&gt;I then just click &amp;#8220;Install Now&amp;#8221; (this will put Python 3.6 to&amp;nbsp;c:)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Right now if you open a terminal window (Windows+r, cmd.exe) and run Python you will
+initiate the Python 3.6 interpreter. This is useful for just dropping in a Python&amp;nbsp;interpreter.&lt;/p&gt;
+&lt;p&gt;Remember the &amp;#8220;Install launcher for all users (recommended)&amp;#8221; we clicked before? This installs
+the python launcher which is used to select between Python versions.
+If you run it without parameters the Python 3.6 interpreter will by started. You can pass
+the -2 parameter to start the python 2.x interpreter or -3 to explicitly declare the
+python 3.x&amp;nbsp;interpreter:&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+C:\Users\Serafeim&amp;gt;py -2
+Python 2.7.14 (v2.7.14:84471935ed, Sep 16 2017, 20:19:30) [MSC v.1500 32 bit (Intel)] on win32
+Type &amp;quot;help&amp;quot;, &amp;quot;copyright&amp;quot;, &amp;quot;credits&amp;quot; or &amp;quot;license&amp;quot; for more information.
+&amp;gt;&amp;gt;&amp;gt; ^Z
+
+
+C:\Users\Serafeim&amp;gt;py -3
+Python 3.6.4 (v3.6.4:d48eceb, Dec 19 2017, 06:04:45) [MSC v.1900 32 bit (Intel)] on win32
+Type &amp;quot;help&amp;quot;, &amp;quot;copyright&amp;quot;, &amp;quot;credits&amp;quot; or &amp;quot;license&amp;quot; for more information.
+&amp;gt;&amp;gt;&amp;gt; ^Z
+&lt;/pre&gt;
+&lt;p&gt;With py we can easily start the Python interpreter we want. This is not enough though - we
+need to use virtualenv and create proper virtual environments for our projects. To do this
+you can add the -m option to py to run a module with the proper python version. For example,
+to start an http server with Python 2 you would use the module &lt;tt class="docutils literal"&gt;SimpleHTTPServer&lt;/tt&gt; while
+for python 3 you would use &lt;tt class="docutils literal"&gt;http.server&lt;/tt&gt; (&lt;a class="reference external" href="https://stackoverflow.com/questions/7943751/what-is-the-python-3-equivalent-of-python-m-simplehttpserver"&gt;as per this&lt;/a&gt;):&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+C:\progr\py\pelican\spapas.github.io&amp;gt;py -2 -m SimpleHTTPServer
+Serving HTTP on 0.0.0.0 port 8000 ...
+
+C:\progr\py\pelican\spapas.github.io&amp;gt;py -3 -m http.server
+Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+&lt;/pre&gt;
+&lt;p&gt;Now, to create the virtual environments we&amp;#8217;ll use the virtualenv module which is installed
+by default in Python 2.x (try running &lt;tt class="docutils literal"&gt;py &lt;span class="pre"&gt;-2&lt;/span&gt; &lt;span class="pre"&gt;-m&lt;/span&gt; pip freeze&lt;/tt&gt; to see the list of installed
+packages for Python 2.x) and the venv module which is included in the Python 3.x core. So
+to create a virtualenv for Python 2 we&amp;#8217;ll run &lt;tt class="docutils literal"&gt;py &lt;span class="pre"&gt;-2&lt;/span&gt; &lt;span class="pre"&gt;-m&lt;/span&gt; virtualenv &lt;span class="pre"&gt;name-of-virtualenv&lt;/span&gt;&lt;/tt&gt;
+and for Python 3 &lt;tt class="docutils literal"&gt;py &lt;span class="pre"&gt;-3&lt;/span&gt; &lt;span class="pre"&gt;-m&lt;/span&gt; venv &lt;span class="pre"&gt;name-of-virtualenv&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;pre class="code literal-block"&gt;
+C:\progr\py&amp;gt;py -2 -m virtualenv venv-2
+New python executable in C:\progr\py\venv-2\Scripts\python.exe
+Installing setuptools, pip, wheel...done.
+
+C:\progr\py&amp;gt;py -3 -m venv venv-3
+
+C:\progr\py&amp;gt;venv-2\Scripts\activate
+
+(venv-2) C:\progr\py&amp;gt;python -V
+Python 2.7.14
+
+(venv-2) C:\progr\py&amp;gt;deactivate
+
+C:\progr\py&amp;gt;venv-3\Scripts\activate
+
+(venv-3) C:\progr\py&amp;gt;python -V
+Python 3.6.4
+&lt;/pre&gt;
+&lt;p&gt;That&amp;#8217;s how easy it is to have both Python 2.7 and Python 3.6 in your&amp;nbsp;Windows!&lt;/p&gt;
+</summary><category term="python"></category><category term="python-2"></category><category term="python-3"></category><category term="windows"></category></entry><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><published>2017-10-11T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
+>>>>>>> origin/master
 in most of my projects. I am using django for more than 5 years as my day to
 day work tool to develop applications for the public sector organization I work for.
 So please keep in mind that these packages are targeted to the &amp;#8220;enterpripse&amp;#8221;
