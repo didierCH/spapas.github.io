@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
 <feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/django.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-10-11T14:20:00+03:00</updated><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><updated>2017-10-11T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
-=======
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/django.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-10-11T14:20:00+03:00</updated><entry><title>My essential django package list</title><link href="https://spapas.github.io/2017/10/11/essential-django-packages/" rel="alternate"></link><published>2017-10-11T14:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-10-11:2017/10/11/essential-django-packages/</id><summary type="html">&lt;p&gt;In this article I&amp;#8217;d like to present a list of django packages (add-ons) that I use
->>>>>>> origin/master
 in most of my projects. I am using django for more than 5 years as my day to
 day work tool to develop applications for the public sector organization I work for.
 So please keep in mind that these packages are targeted to the &amp;#8220;enterpripse&amp;#8221;
@@ -469,11 +465,7 @@ When somebody (or you after some months) sees that package in requirements or IN
 its intented purpose and thank you because you have saved him some time - please don&amp;#8217;t make him waste his time by needing to read your source code to understand
 any smart tricks or reinventing the&amp;nbsp;wheel.&lt;/p&gt;
 &lt;/div&gt;
-<<<<<<< HEAD
 </summary><category term="django"></category><category term="python"></category></entry><entry><title>Splitting a query into individual fields in Django</title><link href="https://spapas.github.io/2016/09/12/django-split-query/" rel="alternate"></link><updated>2016-09-12T16:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-12:2016/09/12/django-split-query/</id><summary type="html">&lt;p&gt;As you should have already seen in &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;previous articles&lt;/a&gt;, I really like using &lt;a class="reference external" href="https://github.com/alex/django-filter"&gt;django-filter&lt;/a&gt; since it covers (nearly) all my queryset filtering needs.
-=======
-</summary><category term="django"></category><category term="python"></category></entry><entry><title>Splitting a query into individual fields in Django</title><link href="https://spapas.github.io/2016/09/12/django-split-query/" rel="alternate"></link><published>2016-09-12T16:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-09-12:2016/09/12/django-split-query/</id><summary type="html">&lt;p&gt;As you should have already seen in &lt;a class="reference external" href="https://spapas.github.io/2015/10/05/django-dynamic-tables-similar-models/"&gt;previous articles&lt;/a&gt;, I really like using &lt;a class="reference external" href="https://github.com/alex/django-filter"&gt;django-filter&lt;/a&gt; since it covers (nearly) all my queryset filtering needs.
->>>>>>> origin/master
 With django-filter, you define a bunch of fields and it will automatically create inputs for each one of these fields so that you can filter by each one of these fields individually or a
 combination of&amp;nbsp;them.&lt;/p&gt;
 &lt;p&gt;However, one thing that django-filter (and django in generally) lacks is the ability to &lt;em&gt;filter multiple fields using a single input&lt;/em&gt;. This functionality may be familiar to some readers from
@@ -942,11 +934,7 @@ searching for &amp;#8220;Under the Dome Stephen King&amp;#8221; will result to &
 &lt;/pre&gt;
 &lt;p&gt;This query has around 200 different &lt;span class="caps"&gt;OR&lt;/span&gt; parts!!! So please be careful on the amount of search fields you&amp;#8217;ll enable to works
 with this method or your database will really&amp;nbsp;struggle!&lt;/p&gt;
-<<<<<<< HEAD
 </summary><category term="django"></category><category term="python"></category><category term="query"></category><category term="q"></category><category term="filter"></category></entry><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><updated>2016-06-07T10:40:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
-=======
-</summary><category term="django"></category><category term="python"></category><category term="query"></category><category term="q"></category><category term="filter"></category></entry><entry><title>Using Werkzeug debugger with Django</title><link href="https://spapas.github.io/2016/06/07/django-werkzeug-debugger/" rel="alternate"></link><published>2016-06-07T10:40:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-06-07:2016/06/07/django-werkzeug-debugger/</id><summary type="html">&lt;div class="section" id="introduction"&gt;
->>>>>>> origin/master
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a class="reference external" href="http://werkzeug.pocoo.org/"&gt;Werkzeug&lt;/a&gt; is a &lt;span class="caps"&gt;WSGI&lt;/span&gt; utility library for Python. Beyond others, it includes an interactive
 debugger - what this means is that when your python application throws an exception,
@@ -1029,11 +1017,7 @@ I sometimes prefer opening and interactive debugger to find out by trial and err
 &lt;p&gt;Finally, please notice that both Werkzeug and django-extensions offer many more tools beyond the interactive debugger presented here -
 I encourage you to research them since - if you follow my advice - you&amp;#8217;ll integrate these to &lt;em&gt;all&lt;/em&gt; your django&amp;nbsp;projects!&lt;/p&gt;
 &lt;/div&gt;
-<<<<<<< HEAD
 </summary><category term="django"></category><category term="debug"></category><category term="python"></category><category term="werkzeug"></category><category term="django-extensions"></category></entry><entry><title>PDFs in Django: The essential guide</title><link href="https://spapas.github.io/2015/11/27/pdf-in-django/" rel="alternate"></link><updated>2015-11-27T10:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
-=======
-</summary><category term="django"></category><category term="debug"></category><category term="python"></category><category term="werkzeug"></category><category term="django-extensions"></category></entry><entry><title>PDFs in Django: The essential guide</title><link href="https://spapas.github.io/2015/11/27/pdf-in-django/" rel="alternate"></link><published>2015-11-27T10:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-11-27:2015/11/27/pdf-in-django/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
->>>>>>> origin/master
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id4"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -2388,11 +2372,7 @@ queued
 task adventures with rq. I&amp;#8217;ll try to keep this article updated with
 any new techniques or tools I find in the&amp;nbsp;future!&lt;/p&gt;
 &lt;/div&gt;
-<<<<<<< HEAD
 </summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Show 404 page on django when DEBUG=True</title><link href="https://spapas.github.io/2015/04/29/django-show-404-page/" rel="alternate"></link><updated>2015-04-29T10:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</id><summary type="html">&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
-=======
-</summary><category term="django"></category><category term="python"></category><category term="tasks"></category><category term="jobs"></category><category term="rq"></category><category term="django-rq"></category><category term="asynchronous"></category><category term="scheduling"></category><category term="redis"></category></entry><entry><title>Show 404 page on django when DEBUG=True</title><link href="https://spapas.github.io/2015/04/29/django-show-404-page/" rel="alternate"></link><published>2015-04-29T10:20:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-04-29:2015/04/29/django-show-404-page/</id><summary type="html">&lt;p&gt;The default 404 error page on django can be &lt;a class="reference external" href="https://docs.djangoproject.com/en/1.8/topics/http/views/#the-http404-exception"&gt;easily overriden&lt;/a&gt; by adding
->>>>>>> origin/master
 a template named &lt;tt class="docutils literal"&gt;404.html&lt;/tt&gt; to the top level directory of your templates.
 However, on your development environment you&amp;#8217;ll never be able to see this
 template because when &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;DEBUG&lt;/span&gt;=True&lt;/tt&gt; django will render the debug not found
@@ -2408,11 +2388,7 @@ pattern for django&amp;#8217;s default 404 view - just  add the following to you
 &lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;You&amp;#8217;ll then be able to see your 404 page by visiting the defined &lt;span class="caps"&gt;URL&lt;/span&gt;!&lt;/p&gt;
-<<<<<<< HEAD
 </summary><category term="django"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Asynchronous tasks in django with django-rq</title><link href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/" rel="alternate"></link><updated>2015-01-27T14:20:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
-=======
-</summary><category term="django"></category><category term="debug"></category><category term="404"></category><category term="error"></category><category term="python"></category></entry><entry><title>Asynchronous tasks in django with django-rq</title><link href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/" rel="alternate"></link><published>2015-01-27T14:20:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2015-01-27:2015/01/27/async-tasks-with-django-rq/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
->>>>>>> origin/master
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;

@@ -888,6 +888,37 @@ to override for your&nbsp;needs.</p>
 </div>
 <div class="section" id="real-world-use-cases">
 <h2>Real world use&nbsp;cases</h2>
+<p>In this section I am going to present a number of use cases demonstrating the usefulness of Django CBVs. In most of
+these examples I am goint to override one of the methods of the mixins I discussed in the previous section. There
+are <em>two</em> methods you can use for integrating the following use cases to your&nbsp;application.</p>
+<p>Create your own class inheriting from one of the Django CBVs and add to it directly the method to override. For example,
+if you wanted to override the <tt class="docutils literal">get_queryset()</tt> method a <tt class="docutils literal">ListView</tt> you would do&nbsp;a:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">GetQuerysetOverrideListView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;PUBLISHED&#39;</span><span class="p">)</span>
+</pre></div>
+<p>This is useful if you know that you aren&#8217;t going to need the overriden <tt class="docutils literal">get_queryset</tt> functionality to a different
+method and following the <span class="caps">YAGNI</span> principle. However, if you know that there may be more CBVs that would need their
+queryset filtered by <tt class="docutils literal"><span class="pre">status='<span class="caps">PUBLISHED</span>'</span></tt> then you should add a mixin that would be used by your&nbsp;CBVs:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">GetQuerysetOverrideMixin</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">qs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;PUBLISHED&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">GetQuerysetOverrideListView</span><span class="p">(</span><span class="n">GetQuerysetOverrideMixin</span><span class="p">,</span> <span class="n">ListView</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>Now, one thing that needs some discussion here is that the method <tt class="docutils literal">get_queryset</tt> is provided by a mixin (in fact
+it is provided by two mixins: <tt class="docutils literal">MultipleObjectMixin</tt> for <tt class="docutils literal">ListView</tt> and <tt class="docutils literal">SingleObjectMixin</tt> for <tt class="docutils literal">DetailView</tt>,
+<tt class="docutils literal">UpdateView</tt> and <tt class="docutils literal">DeleteView</tt>). Because of how <span class="caps">MRO</span> works, I won&#8217;t need to inhert <tt class="docutils literal">GetQuerysetOverrideMixin</tt> from
+<tt class="docutils literal">MultipleObjectMixin</tt> (or <tt class="docutils literal">SingleObjectMixin</tt> but let&#8217;s ignore that for now) but I can just inherit from object
+and make sure that, as already discussed, put the mixin <em>before</em> (to the left) of the <span class="caps">CBV</span>. Notice that even if I had
+defined <tt class="docutils literal">GetQuerysetOverrideMixin</tt> as <tt class="docutils literal">GetQuerysetOverrideMixin(MultipleObjectMixin)</tt> the <tt class="docutils literal">MultipleObjectMixin</tt> class would
+be found <em>twice</em> in the <span class="caps">MRO</span> list so only the rightmost instance would remain. So the <span class="caps">MRO</span> for both <tt class="docutils literal">GetQuerysetOverrideMixin(object, )</tt>
+and <tt class="docutils literal">GetQuerysetOverrideMixin(MultipleObjectMixin)</tt> <em>would be the same</em>! Also, inheriting directly from object makes
+our <tt class="docutils literal">GetQuerysetOverrideMixin</tt> more <span class="caps">DRY</span> since if it inherited from <tt class="docutils literal">MultipleObjectMixin</tt> we&#8217;d need to create <em>another</em>
+version of it that would inherit from <tt class="docutils literal">SingleObjectMixin</tt>; this is because <tt class="docutils literal">get_queryset</tt> exists in both these&nbsp;mixins.</p>
 </div>
 </div>
     <footer>

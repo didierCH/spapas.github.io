@@ -4,46 +4,29 @@ xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitem
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<<<<<<< HEAD
 <loc>https://spapas.github.io/</loc>
-<lastmod>2017-10-13T00:10:40-00:00</lastmod>
-=======
-<loc>https://spapas.github.io/index.html</loc>
-<lastmod>2018-01-30T12:14:41-00:00</lastmod>
->>>>>>> origin/master
+<lastmod>2018-02-26T11:09:44-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<<<<<<< HEAD
-<lastmod>2017-10-13T00:10:40-00:00</lastmod>
-=======
-<lastmod>2018-01-30T12:14:41-00:00</lastmod>
->>>>>>> origin/master
+<lastmod>2018-02-26T11:09:44-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<<<<<<< HEAD
-<lastmod>2017-10-13T00:10:40-00:00</lastmod>
-=======
-<lastmod>2018-01-30T12:14:41-00:00</lastmod>
->>>>>>> origin/master
+<lastmod>2018-02-26T11:09:44-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<<<<<<< HEAD
-<lastmod>2017-10-13T00:10:40-00:00</lastmod>
-=======
-<lastmod>2018-01-30T12:14:41-00:00</lastmod>
->>>>>>> origin/master
+<lastmod>2018-02-26T11:09:44-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -351,11 +334,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/category/python.html</loc>
-<<<<<<< HEAD
-<lastmod>2016-09-21T11:20:00+01:35</lastmod>
-=======
 <lastmod>2017-12-20T11:20:00+01:35</lastmod>
->>>>>>> origin/master
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>

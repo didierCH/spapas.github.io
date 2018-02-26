@@ -1886,7 +1886,7 @@ sum     305.0        160.0
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Comprehending-pivot_table">Comprehending <code>pivot_table</code><a class="anchor-link" href="#Comprehending-pivot_table">¶</a></h1><p>After this (rather long) introduction to using and manipulating DataFrames, the time has come to see <code>pivot_table</code>. The <code>pivot_table</code> method is applied to a DataFrame and its purpose is to &#8220;reshape&#8221; and &#8220;aggregate&#8221; the values of a DataFrame . More on reshaping can be found <a href="http://pandas.pydata.org/pandas-docs/stable/reshaping.html">here</a> and it means changing the indexes/columns of the DataFrame to create a new DataFrame that fits our needs. Aggregate on the other hand means that for each of the cells of the new DataFrame we&#8217;ll create a summary of the data that should have appeared&nbsp;there.</p>
-<p>Let&#8217;s start by creating a nice set of data we&#8217;ll use for the <code>pivot_table</code> operations:</p>
+<p>We&#8217;ll start by explaining how to create a nice set of data for the <code>pivot_table</code> operations!</p>
 </div>
 </div>
 </div>
@@ -3139,21 +3139,21 @@ Name: pages, dtype: float64</pre>
 <th>70&#8217;s</th>
 <td>None</td>
 <td>None</td>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
+<td><class 'pandas.core.series.series'></td>
 <td>None</td>
 </tr>
 <tr>
 <th>80&#8217;s</th>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
+<td><class 'pandas.core.series.series'></td>
+<td><class 'pandas.core.series.series'></td>
+<td><class 'pandas.core.series.series'></td>
+<td><class 'pandas.core.series.series'></td>
 </tr>
 <tr>
 <th>90&#8217;s</th>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
-<td><class &#x27;pandas.core.series.series&#x27;></td>
+<td><class 'pandas.core.series.series'></td>
+<td><class 'pandas.core.series.series'></td>
+<td><class 'pandas.core.series.series'></td>
 <td>None</td>
 </tr>
 </tbody>
@@ -5593,34 +5593,34 @@ dtype: float64</pre>
 <div class="output">
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre><class &#x27;pandas.core.groupby.dataframegroupby&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("70's", 'Stephen King')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("80's", 'John Grisham')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("80's", 'Michael Crichton')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("80's", 'Stephen King')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("90's", 'George Pelecanos')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("90's", 'George R.R Martin')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("90's", 'John Grisham')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("90's", 'Michael Crichton')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
-type:  <type &#x27;tuple&#x27;> len:  2
-first element of tuple <type &#x27;tuple&#x27;> ("90's", 'Stephen King')
-second element of tuple <class &#x27;pandas.core.frame.dataframe&#x27;>
+<pre><class 'pandas.core.groupby.dataframegroupby'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("70's", 'Stephen King')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("80's", 'John Grisham')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("80's", 'Michael Crichton')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("80's", 'Stephen King')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("90's", 'George Pelecanos')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("90's", 'George R.R Martin')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("90's", 'John Grisham')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("90's", 'Michael Crichton')
+second element of tuple <class 'pandas.core.frame.dataframe'>
+type:  <type 'tuple'> len:  2
+first element of tuple <type 'tuple'> ("90's", 'Stephen King')
+second element of tuple <class 'pandas.core.frame.dataframe'>
 </pre>
 </div>
 </div>
