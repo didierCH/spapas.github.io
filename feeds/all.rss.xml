@@ -13,7 +13,7 @@ to &lt;span class="caps"&gt;OSX&lt;/span&gt; or Linux users with minor&amp;nbsp;
 &lt;div class="section" id="installation"&gt;
 &lt;h2&gt;Installation&lt;/h2&gt;
 &lt;p&gt;To install youtube-dl I recommend installing it in your global python (2 or 3) package list using pip. Please read my
-&lt;a class="reference external" href="https://spapas.github.io/2017/12/20/python-2-3-windows/"&gt;previous1&lt;/a&gt;&amp;nbsp;article&lt;/p&gt;
+&lt;a class="reference external" href="https://spapas.github.io/2017/12/20/python-2-3-windows/"&gt;previous&lt;/a&gt;&amp;nbsp;article&lt;/p&gt;
 &lt;p&gt;to see how you should install and use Python 2 or 3
 on Windows. Following the instructions from there, you can do the following to install youtube-dl in your global
 Python 3&amp;nbsp;packages:&lt;/p&gt;
