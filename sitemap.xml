@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/</loc>
-<lastmod>2018-03-01T23:05:31-00:00</lastmod>
+<lastmod>2018-03-06T12:49:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2018-03-01T23:05:31-00:00</lastmod>
+<lastmod>2018-03-06T12:49:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2018-03-01T23:05:31-00:00</lastmod>
+<lastmod>2018-03-06T12:49:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2018-03-01T23:05:31-00:00</lastmod>
+<lastmod>2018-03-06T12:49:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2018/03/06/easy-youtube-mp3-downloading/</loc>
+<lastmod>2018-03-06T12:20:00+02:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -341,7 +348,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/category/python.html</loc>
-<lastmod>2017-12-20T11:20:00+01:35</lastmod>
+<lastmod>2018-03-06T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -466,8 +473,15 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/youtube-dl.html</loc>
+<lastmod>2018-03-06T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/python.html</loc>
-<lastmod>2018-03-01T22:40:00+01:35</lastmod>
+<lastmod>2018-03-06T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -907,6 +921,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/ffmpeg.html</loc>
+<lastmod>2018-03-06T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/profiles.html</loc>
 <lastmod>2016-03-31T19:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -1089,6 +1110,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/youtube.html</loc>
+<lastmod>2018-03-06T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/django.html</loc>
 <lastmod>2018-03-01T22:40:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -1125,7 +1153,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2018-03-01T22:40:00+01:35</lastmod>
+<lastmod>2018-03-06T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
