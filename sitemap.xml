@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/</loc>
-<lastmod>2018-03-06T12:55:34-00:00</lastmod>
+<lastmod>2018-03-19T12:20:54-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2018-03-06T12:55:34-00:00</lastmod>
+<lastmod>2018-03-19T12:20:54-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2018-03-06T12:55:34-00:00</lastmod>
+<lastmod>2018-03-19T12:20:54-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2018-03-06T12:55:34-00:00</lastmod>
+<lastmod>2018-03-19T12:20:54-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2018/03/19/comprehensive-django-cbv-guide/</loc>
+<lastmod>2018-03-19T12:20:00+02:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -306,7 +313,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/category/django.html</loc>
-<lastmod>2018-03-01T22:40:00+01:35</lastmod>
+<lastmod>2018-03-19T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -481,7 +488,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/python.html</loc>
-<lastmod>2018-03-06T12:20:00+01:35</lastmod>
+<lastmod>2018-03-19T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -495,7 +502,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/class-based-views.html</loc>
-<lastmod>2014-09-15T14:20:00+01:35</lastmod>
+<lastmod>2018-03-19T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -949,8 +956,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/cbv.html</loc>
-<lastmod>2014-09-15T14:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/asynchronous.html</loc>
+<lastmod>2015-09-01T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -984,8 +991,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/asynchronous.html</loc>
-<lastmod>2015-09-01T14:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/cbv.html</loc>
+<lastmod>2018-03-19T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1118,7 +1125,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/django.html</loc>
-<lastmod>2018-03-01T22:40:00+01:35</lastmod>
+<lastmod>2018-03-19T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1153,7 +1160,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2018-03-06T12:20:00+01:35</lastmod>
+<lastmod>2018-03-19T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
