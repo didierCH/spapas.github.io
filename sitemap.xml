@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/</loc>
-<lastmod>2018-04-05T12:13:23-00:00</lastmod>
+<lastmod>2018-04-05T12:14:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2018-04-05T12:13:23-00:00</lastmod>
+<lastmod>2018-04-05T12:14:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2018-04-05T12:13:23-00:00</lastmod>
+<lastmod>2018-04-05T12:14:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2018-04-05T12:13:23-00:00</lastmod>
+<lastmod>2018-04-05T12:14:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2018/04/05/easy-immutable-objects/</loc>
+<lastmod>2018-04-05T12:20:00+03:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -334,7 +341,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/category/javascript.html</loc>
-<lastmod>2017-01-03T09:55:00+01:35</lastmod>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -466,8 +473,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/spring-security.html</loc>
-<lastmod>2013-10-14T08:55:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/immutable.html</loc>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -585,8 +592,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/google.html</loc>
-<lastmod>2014-10-23T14:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/hyperapp.html</loc>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -698,7 +705,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/javascript.html</loc>
-<lastmod>2017-01-03T09:55:00+01:35</lastmod>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -754,7 +761,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/es6.html</loc>
-<lastmod>2016-03-02T11:20:00+01:35</lastmod>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -825,6 +832,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/nodejs.html</loc>
 <lastmod>2014-12-16T16:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/google.html</loc>
+<lastmod>2014-10-23T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -937,6 +951,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/profiles.html</loc>
 <lastmod>2016-03-31T19:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/spring-security.html</loc>
+<lastmod>2013-10-14T08:55:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1069,7 +1090,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/react.html</loc>
-<lastmod>2016-06-27T14:20:00+01:35</lastmod>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1146,7 +1167,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/redux.html</loc>
-<lastmod>2016-03-02T11:20:00+01:35</lastmod>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1160,7 +1181,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2018-03-19T12:20:00+01:35</lastmod>
+<lastmod>2018-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
