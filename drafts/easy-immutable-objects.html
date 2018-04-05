@@ -80,7 +80,7 @@
 <header>
       <h1 class="entry-title">Easy immutable objects in Javascript</h1>
     <p class="meta">
-<time datetime="2018-03-30T13:20:00+03:00" pubdate>Παρ 30 Μάρτιος 2018</time>    </p>
+<time datetime="2018-04-05T12:20:00+03:00" pubdate>Πεμ 05 Απρίλιος 2018</time>    </p>
 </header>
 
 <div class="entry-content"><p>With the rise of <a class="reference external" href="https://redux.js.org">Redux</a> and other similar Javascript frameworks (e.g <a class="reference external" href="https://hyperapp.js.org">Hyperapp</a>) that
@@ -224,12 +224,14 @@ previous example, <tt class="docutils literal"><span class="pre">[...x]</span></
 thus to re-generate the previous example you&#8217;ll do something&nbsp;like</p>
 <div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">y</span><span class="o">=</span><span class="p">[...</span><span class="nx">x</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="p">...</span><span class="nx">x</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)]</span>
 </pre></div>
-<p>Both the slice or the spread syntax slice will do a shallow copy (similar to how Object.assign works) so the same
-conclusions from the previous section are true&nbsp;here.</p>
+<p>All three of concat, slice or the spread syntax will do a shallow copy (similar to how Object.assign works) so the same
+conclusions from the previous section are true here: If you have arrays inside other arrays (or objects) you&#8217;ll need to copy the inner
+arrays&nbsp;recursively.</p>
 </div>
 <div class="section" id="more-complex-cases">
 <h2>More complex&nbsp;cases</h2>
-<p>We&#8217;ll now take a look at some more complex cases and see how quickly it gets difficult. Let&#8217;s suppose that our state is the&nbsp;following:</p>
+<p>We&#8217;ll now take a look at some more complex cases and see how quickly it gets difficult because of the shallow copying.
+Let&#8217;s suppose that our state is the&nbsp;following:</p>
 <div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
   <span class="s1">&#39;user&#39;</span><span class="o">:</span> <span class="p">{</span>
     <span class="s1">&#39;first_name&#39;</span><span class="o">:</span> <span class="s1">&#39;John&#39;</span><span class="p">,</span>
@@ -289,9 +291,8 @@ conclusions from the previous section are true&nbsp;here.</p>
 <span class="p">}</span>
 </pre></div>
 <p>The single step assignment is the combination of the two step described above. It is a little more complex
-but it saves typing and is prefered because it allows the reducer function to have a single expression. This
-will be made more clear with the third example, trying to modify the user&#8217;s zip code. Let&#8217;s do it in three
-steps&nbsp;first:</p>
+but it saves typing and is prefered because it allows the reducer function to have a single expression. Now
+let&#8217;s try to modify the user&#8217;s zip code. We&#8217;ll do it in three steps&nbsp;first:</p>
 <div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">address</span> <span class="o">=</span><span class="p">{...</span><span class="nx">state</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">][</span><span class="s1">&#39;address&#39;</span><span class="p">],</span> <span class="s1">&#39;zip&#39;</span><span class="o">:</span> <span class="s1">&#39;54321&#39;</span><span class="p">}</span>
 <span class="nx">user</span> <span class="o">=</span><span class="p">{...</span><span class="nx">state</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">],</span> <span class="nx">address</span><span class="p">}</span>
 <span class="nx">state</span> <span class="o">=</span> <span class="p">{...</span><span class="nx">state</span><span class="p">,</span> <span class="nx">user</span><span class="p">}</span>
@@ -304,7 +305,7 @@ steps&nbsp;first:</p>
 <span class="p">}}</span>
 </pre></div>
 <p>Now, as can be seen in the above examples, modifying (without mutating) a compex state object
-this is not very easy - it needs much thinking and is too error prone! This will be even more
+is not very easy - it needs much thinking and is too error prone! This will be even more
 apparent when we also get the array modifications into the equation, for example by adding another
 two&nbsp;groups:</p>
 <div class="highlight"><pre><span></span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
@@ -315,7 +316,8 @@ two&nbsp;groups:</p>
   <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
-<p>The state now will&nbsp;be</p>
+<p>The above copies the existing state and assigns to it a new <tt class="docutils literal">groups</tt> object by copying
+the existing groups and appending two more groups to that array! The state now will&nbsp;be:</p>
 <div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nx">user</span><span class="o">:</span> <span class="p">{</span>
     <span class="nx">first_name</span><span class="o">:</span> <span class="s1">&#39;Jack&#39;</span><span class="p">,</span>
@@ -329,7 +331,8 @@ two&nbsp;groups:</p>
   <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
-<p>How can we add the missing <tt class="docutils literal">id</tt> attribute to the first group? &#8220;Easy&#8221; (depending on what your defintion of easy&nbsp;is):</p>
+<p>As a final examply, how can we add the missing <tt class="docutils literal">id</tt> attribute to the first group?
+Following the above&nbsp;techniques:</p>
 <div class="highlight"><pre><span></span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span>
   <span class="p">...</span><span class="nx">state</span><span class="p">,</span> <span class="nx">groups</span><span class="o">:</span> <span class="p">[</span>
     <span class="p">{...</span><span class="nx">state</span><span class="p">[</span><span class="s1">&#39;groups&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span>
@@ -340,10 +343,11 @@ two&nbsp;groups:</p>
 <p>One more time what the above&nbsp;does?</p>
 <ul class="simple">
 <li>Creates a new object and copies all existing properties of state to&nbsp;it</li>
-<li>Creates a new array which assigns it to the new state&#8217;s&nbsp;groups</li>
+<li>Creates a new array which assigns it to the new state&#8217;s <tt class="docutils literal">groups</tt> attribute</li>
 <li>For the first element of that array it copies all attributes of the first element of state[&#8216;groups&#8217;] and assings it an <tt class="docutils literal">id=1</tt> attribute</li>
 <li>For the remaining elements of that array it copies all elements of state[&#8216;groups] after the first&nbsp;one</li>
 </ul>
+<p>Now think what would happen if we had an even more complex state with 3 or 4 nested&nbsp;levels!</p>
 </div>
 <div class="section" id="immutability-s-little-helpers">
 <h2>Immutability&#8217;s little&nbsp;helpers</h2>
@@ -351,16 +355,17 @@ two&nbsp;groups:</p>
 the toy examples. Actually, drilling down into complex immutable
 objects and returning new ones that have
 some values changed  is a well-known problem in the functional world and has already a solution
-called &#8220;lenses&#8221;. This is a funny name but it more or less means that you use a lens to look at
-exactly the value you want and modify it. The problem with lenses is that although they solve
+called &#8220;lenses&#8221;. This is a funny name but it more or less means that you use a magnifying lens to look at
+exactly the value you want and modify or retrieve it. The problem with lenses is that although they solve
 the problem I mention is that if you want to use them you&#8217;ll need to dive deep into functional
 programming and also you&#8217;ll need to include an extra library to your project (even if you only
 want this specific&nbsp;capability).</p>
 <p>For completeness, here&#8217;s the <a class="reference external" href="http://ramdajs.com/docs/#lens">the docs on lens</a> from <a class="reference external" href="http://ramdajs.com">Ramda</a> which is a well known Javascript functional library.
 This needs you to understand what is <tt class="docutils literal">prop</tt>, what is <tt class="docutils literal">assoc</tt> and then how to use the lens with <tt class="docutils literal">view</tt>,
-<tt class="docutils literal">set</tt> and <tt class="docutils literal">over</tt>. For me, these are way too much things to remember for such a specific thing. Yes if I wanted
-to fully use Ramda or a similar library I&#8217;d be delighted to use all these techniques - however most people
-prefer to stick with more familiar (and more procodural)&nbsp;concepts.</p>
+<tt class="docutils literal">set</tt> and <tt class="docutils literal">over</tt>. For me, these are way too much things to remember for such a specific thing. Also, notice
+that the minified version of Ramda is around 45 kb which is not small. Yes, if I wanted
+to fully use Ramda or a similar library I&#8217;d be delighted to use all these techniques and include it as a
+dependency - however most people prefer to stick with more familiar (and more procedural)&nbsp;concepts.</p>
 <p>The helpers I&#8217;m going to present here are more or less a poor man&#8217;s lens, i.e you will be able to use the basic
 functionality of a lens&nbsp;but&#8230;</p>
 <ul class="simple">
@@ -371,12 +376,13 @@ functionality of a lens&nbsp;but&#8230;</p>
 <p>Pretty good deal,&nbsp;no?</p>
 <p>In any case, a lens has two parts, a get and a set. The get will be used to drill down and retrieve a value from a
 complex object while the set will be used to drill down and assign a value to a complex object. The set does not
-modify the object but returns a new&nbsp;one.</p>
-<p>We&#8217;ll start with the get which seems easier. For this, I&#8217;ll just create a function that get an object and
-a path inside that object and retrieves the value at that path. The path could be either a string of the form
+modify the object but returns a new one. The get lens is not really needed since you can easily drill down to an
+object using the good old index syntax but I&#8217;ll include it here for&nbsp;completenes.</p>
+<p>We&#8217;ll start with the get which seems easier. For this, I&#8217;ll just create a function that will take an object and
+a path inside that object as parameter and retrieve the value at that path. The path could be either a string of the form
 &#8216;a.0.c.d&#8217; or an array [&#8216;a&#8217;, &#8216;0&#8217;, &#8216;c&#8217;, &#8216;d&#8217;] - for numerical indeces we&#8217;ll consider an array at that&nbsp;point.</p>
 <p>Thus, for the object <tt class="docutils literal">{'a': <span class="pre">[{'b':</span> {'c': {'d': 32} <span class="pre">}}]}</span></tt> when the lens getter is called with either
-<tt class="docutils literal">'a.0.b.c'</tt> or [&#8216;a&#8217;, 0, &#8216;b&#8217;, &#8216;c&#8217;] as the path it should return <tt class="docutils literal">{'d': 32}</tt>.</p>
+<tt class="docutils literal">'a.0.b.c'</tt> or [&#8216;a&#8217;, 0, &#8216;b&#8217;, &#8216;c&#8217;] as the path, it should return <tt class="docutils literal">{'d': 32}</tt>.</p>
 <p>To implement the get helper I will use a functional concept, <tt class="docutils literal">reduce</tt>. I&#8217;ve already explained this concept
 in my <a class="reference external" href="https://spapas.github.io/2016/03/02/react-redux-tutorial/#interlude-so-what-s-a-reducer">previous react-redux tutorial</a> so I urge you to read that article for more info. Using reduce we
 can apply one by one accumulatively the members of the path to the initial object and the result will be
@@ -427,10 +433,9 @@ the following values each&nbsp;time:</p>
 </tbody>
 </table>
 <p>Thus the result will be exactly what we wanted <tt class="docutils literal">{'d' :32}</tt>. An interesting thing is that it&#8217;s working
-fine without the need to differentiate between arrays and objects because of how index access <tt class="docutils literal">[]</tt> work.</p>
+fine without the need to differentiate between arrays and objects because of how index access <tt class="docutils literal">[]</tt> works.</p>
 <p>Continuing for the set lens (which will be more difficult), I&#8217;ll first represent a simple version that
-works only with objects but displays the main idea of how this will work: It uses recursion i.e it will
-call itself to gradually build the new object. Here&#8217;s how it is&nbsp;implemented</p>
+works only with objects and an array path but displays the main idea of how this will work: It uses recursion i.e it will call itself to gradually build the new object. Here&#8217;s how it is&nbsp;implemented:</p>
 <div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">pset0</span> <span class="o">=</span> <span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">path</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="kd">let</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -447,9 +452,11 @@ call itself to gradually build the new object. Here&#8217;s how it is&nbsp;imple
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
-<p>I have assumed that the path is an array of indeces and that the <tt class="docutils literal">obj</tt> is a complex object (no arrays in it please); the
-function returns a new object with the old object&#8217;s value at the path be replaced with <tt class="docutils literal">val</tt>. Let&#8217;s see how it works
-for the following&nbsp;call:</p>
+<p>As already explained, I have assumed that the path is an array of indeces and that the <tt class="docutils literal">obj</tt> is a complex object
+(no arrays in it please); the function returns a new object with the old object&#8217;s value at the path be replaced
+with <tt class="docutils literal">val</tt>. This function checks to see if the path has only one element, if yes it will assign the value to that
+attribute of the object it retrieve. If not, it will call itself recursively by skipping the current index and assign the return value to the
+current index of the curent object. Let&#8217;s see how it works for the following&nbsp;call:</p>
 <div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">s2</span> <span class="o">=</span> <span class="p">{</span><span class="nx">a0</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">a</span><span class="o">:</span> <span class="p">{</span><span class="nx">b0</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">b</span><span class="o">:</span> <span class="p">{</span><span class="nx">c0</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">c</span><span class="o">:</span> <span class="mi">3</span><span class="p">}}}</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">pset0</span><span class="p">(</span><span class="nx">s2</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
 </pre></div>
@@ -490,7 +497,7 @@ and setting the <tt class="docutils literal">'c'</tt> index to <tt class="docuti
 <p>Now that we&#8217;ve understood the logic we can extend the above function with the following&nbsp;extras:</p>
 <ul class="simple">
 <li>support for arrays in the object using numerical&nbsp;indeces</li>
-<li>support for array (<tt class="docutils literal">['a', 'b']</tt>) or string path (<tt class="docutils literal">'a.b'</tt>)</li>
+<li>support for array (<tt class="docutils literal">['a', 'b']</tt>) or string path (<tt class="docutils literal">'a.b'</tt>)&nbsp;parameter</li>
 <li>support for a direct value to set on the path or a function that will be applied on that&nbsp;value</li>
 </ul>
 <p>Here&#8217;s the resulting set&nbsp;lens:</p>
@@ -527,14 +534,14 @@ and setting the <tt class="docutils literal">'c'</tt> index to <tt class="docuti
 will just check to see if the path is an array or a string and split the string to its parts.
 The <tt class="docutils literal">cset</tt> function that follows is a local function that is used to make the copy of the object
 or array and set the new value. Here&#8217;s how it is working: It will first check to see if the <tt class="docutils literal">val</tt>
-parameter is a function or a not. If it is a function it apply this function to the object&#8217;s index
+parameter is a function or a not. If it is a function it will apply this function to the object&#8217;s index
 to get the <tt class="docutils literal">newvalue</tt> else it will just use <tt class="docutils literal">val</tt> as the <tt class="docutils literal">newvalue</tt>. After that it checks if the
 object it got is an array or not. If it is an array it will do the slice trick we saw before to copy
 the elements of the array except the <tt class="docutils literal">newval</tt> which will put it at the index (notice that the index
 at that point must be numerical but that&#8217;s up to you to assert). If the current <tt class="docutils literal">obj</tt> is not an array
 then it must be an object thus it uses the spread syntax to copy the object&#8217;s attributes and reassign
 the current index to <tt class="docutils literal">newval</tt>.</p>
-<p>The last part of <tt class="docutils literal">pset</tt> is similar to the <tt class="docutils literal">pset0</tt> it just uses <tt class="docutils literal">cset</tt> to do the new objec/array
+<p>The last part of <tt class="docutils literal">pset</tt> is similar to the <tt class="docutils literal">pset0</tt> it just uses <tt class="docutils literal">cset</tt> to do the new object/array
 generation instead of doing it in place like <tt class="docutils literal">pset0</tt> - as already explained, <tt class="docutils literal">pset</tt> is called recursively
 until only one element remains on the path in which case the <tt class="docutils literal">newval</tt> will be assigned to the current index of
 the current <tt class="docutils literal">obj</tt>.</p>
@@ -560,7 +567,7 @@ the current <tt class="docutils literal">obj</tt>.</p>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
-<p>Let&#8217;s call it three times one after the other to change various attributes one after the&nbsp;other:</p>
+<p>Let&#8217;s call it three times one after the other to change various&nbsp;attributes:</p>
 <div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">new_state2</span> <span class="o">=</span> <span class="nx">pset</span><span class="p">(</span>
     <span class="nx">pset</span><span class="p">(</span>
         <span class="nx">pset</span><span class="p">(</span>
@@ -594,9 +601,20 @@ the current <tt class="docutils literal">obj</tt>.</p>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
+<p>This should be self&nbsp;explanatory.</p>
+<p>I&#8217;ve published the above immutable little helpers as an npm package: <a class="reference external" href="https://www.npmjs.com/package/poor-man-lens">https://www.npmjs.com/package/poor-man-lens</a> (yes I
+decided to use the poor man lens name instead of the immutable little helpers) - they are too simple and could be easily
+copied and pasted to your project but I&#8217;ve seen even smaller npm packages and I wanted to try to see if it is easy to
+publish a package to npm (answer: it is very easy - easier than python&#8217;s pip). Also there&#8217;s a github repository for
+these utils in case somebody wants to contribute anything or look at the source: <a class="reference external" href="https://github.com/spapas/poor-man-lens">https://github.com/spapas/poor-man-lens</a>.</p>
+<p>Notice that this package has been written in <span class="caps">ES5</span> (and actually has a polyfil for Object.assign) thus you should probably
+be able to use it anywhere you want, even directly from the browser by directly including the <tt class="docutils literal">pml.js</tt> file.</p>
 </div>
 <div class="section" id="conclusion">
 <h2>Conclusion</h2>
+<p>Using the above techniques you should be able to easily keep your state objects immutable. For simple cases you
+can stick to the spread syntax or Object.assign / Array.slice but for more complex cases you may want to consider
+either copying directly the pset and pget utils I explained above or just using the <a class="reference external" href="https://www.npmjs.com/package/poor-man-lens">poor-man-lens npm package</a>.</p>
 </div>
 </div>
     <footer>
@@ -606,7 +624,7 @@ the current <tt class="docutils literal">obj</tt>.</p>
         Serafeim Papastefanos
     </span>
   </span>
-<time datetime="2018-03-30T13:20:00+03:00" pubdate>Παρ 30 Μάρτιος 2018</time>  <span class="categories">
+<time datetime="2018-04-05T12:20:00+03:00" pubdate>Πεμ 05 Απρίλιος 2018</time>  <span class="categories">
     <a class='category' href='https://spapas.github.io/category/javascript.html'>javascript</a>
   </span>
   <span class="categories">
