@@ -1,5 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Thu, 05 Apr 2018 12:20:00 +0300</lastBuildDate><item><title>Easy immutable objects in Javascript</title><link>https://spapas.github.io/2018/04/05/easy-immutable-objects/</link><description>&lt;p&gt;With the rise of &lt;a class="reference external" href="https://redux.js.org"&gt;Redux&lt;/a&gt; and other similar Javascript frameworks (e.g &lt;a class="reference external" href="https://hyperapp.js.org"&gt;Hyperapp&lt;/a&gt;) that
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><atom:link href="https://spapas.github.io/feeds/all.rss.xml" rel="self"></atom:link><lastBuildDate>Tue, 08 May 2018 23:20:00 +0300</lastBuildDate><item><title>Adding a delay to Django HTTP responses</title><link>https://spapas.github.io/2018/05/08/django-reponse-add-delay/</link><description>&lt;p&gt;Sometimes you&amp;#8217;d like to make your Django views more slow by adding a fake delay. This may
+sound controversial (why would somebody want to make some of his views slower) however it is a real requirement,
+at least when developing an&amp;nbsp;application.&lt;/p&gt;
+&lt;p&gt;For example, you may be using a &lt;span class="caps"&gt;REST&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt; and you want to implement a spinner while your form is loading. However, usually when
+developing your responses will load so soon that you won&amp;#8217;t be able to admire your spinner in all its glory! Also, when you
+submit a &lt;span class="caps"&gt;POST&lt;/span&gt; form (i.e a form that changes your data), it is advisable to disable your submit button so that when your users
+double click it the form won&amp;#8217;t be submitted two times (it may seem strange to some people but this is a very common error that
+has bitten me many times; there are many users that think that they need to double click the buttons; thus I always disable
+my submit buttons after somebody clicks them); in this case you also need to make your response a little slower to make sure
+that the button is actually&amp;nbsp;disabled!&lt;/p&gt;
+&lt;p&gt;I will propose two methods for adding this delay to your responses. One that will affect all (or most) your views using
+a &lt;a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/"&gt;middleware&lt;/a&gt; and another that you can add to any &lt;span class="caps"&gt;CBV&lt;/span&gt; you want using a mixin; please see my previous &lt;a class="reference external" href="https://spapas.github.io/2018/03/19/comprehensive-django-cbv-guide/"&gt;&lt;span class="caps"&gt;CBV&lt;/span&gt; guide&lt;/a&gt; for more on
+Django CBVs and mixins. For the middleware solution we&amp;#8217;ll also take a quick look at what is the Django middleware mechanism and
+how it can be used to add&amp;nbsp;functionality.&lt;/p&gt;
+&lt;div class="section" id="using-middleware"&gt;
+&lt;h2&gt;Using&amp;nbsp;middleware&lt;/h2&gt;
+&lt;p&gt;The Django &lt;a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/"&gt;middleware&lt;/a&gt; is a mechanism for adding your own code to the Django request / response cycle. I&amp;#8217;ll try to explain
+this a bit; Django is waiting for an &lt;span class="caps"&gt;HTTP&lt;/span&gt; Request (i.e &lt;span class="caps"&gt;GET&lt;/span&gt; a url with these headers and these query parameters), it will
+parse this &lt;span class="caps"&gt;HTTP&lt;/span&gt; Request and prepare an &lt;span class="caps"&gt;HTTP&lt;/span&gt; Response (i.e some headers and a Payload). Your view will be the main actor for
+retrieving the &lt;span class="caps"&gt;HTTP&lt;/span&gt; response and returning the &lt;span class="caps"&gt;HTTP&lt;/span&gt; request. However, using this middleware mechanism Django allows you to
+enable other actors (the middleware) that will universally modify the &lt;span class="caps"&gt;HTTP&lt;/span&gt; request before passing it to your view and will also
+modify the view&amp;#8217;s &lt;span class="caps"&gt;HTTP&lt;/span&gt; respone before sending it back to the&amp;nbsp;client.&lt;/p&gt;
+&lt;p&gt;Actually, a list of middleware called &amp;#8230; &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MIDDLEWARE&lt;/span&gt;&lt;/tt&gt; is &lt;a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/#activating-middleware"&gt;defined by default&lt;/a&gt; in the &lt;tt class="docutils literal"&gt;settings.py&lt;/tt&gt; of all new Django
+projects; these are used to add various capabilities
+that are universally needed, for example session support, various security enablers, django message support and others. You
+can easily attach your own middleware to that list to add extra functionality. Notice that the order of the middleware in the &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MIDDLEWARE&lt;/span&gt;&lt;/tt&gt;
+list actually matters. Middleware later in the list will be executed after the ones previous in the list; we&amp;#8217;ll see some consequences of this&amp;nbsp;later.&lt;/p&gt;
+&lt;p&gt;Now the time has come to take a quick look at how to implement a middleware, &lt;a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/#writing-your-own-middleware"&gt;taken from the Django docs&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;SimpleMiddleware&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;
+        &lt;span class="c1"&gt;# One-time configuration and initialization.&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__call__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="c1"&gt;# Code to be executed for each request before&lt;/span&gt;
+        &lt;span class="c1"&gt;# the view (and later middleware) are called.&lt;/span&gt;
+
+        &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+        &lt;span class="c1"&gt;# Code to be executed for each request/response after&lt;/span&gt;
+        &lt;span class="c1"&gt;# the view is called.&lt;/span&gt;
+
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Actually you can implement the middleware as a nested function however I prefer the classy version. The comments should be really enlightening:
+When your project is started the constructor (&lt;tt class="docutils literal"&gt;__init__&lt;/tt&gt;) will be called once, for example if you want to read a configuration setting from the database
+then you should do it in the &lt;tt class="docutils literal"&gt;__init__&lt;/tt&gt; to avoid calling the database everytime your middleware is executed (i.e for &lt;em&gt;every&lt;/em&gt; request). The &lt;tt class="docutils literal"&gt;__call__&lt;/tt&gt; is
+a special method that gets translated to calling this class instance as a function, i.e if you do something&amp;nbsp;like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;sm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SimpleMiddleware&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="n"&gt;sm&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Then &lt;tt class="docutils literal"&gt;sm()&lt;/tt&gt; will execute the &lt;tt class="docutils literal"&gt;__call__&lt;/tt&gt;; there are various similar &lt;a class="reference external" href="http://www.diveintopython3.net/special-method-names.html"&gt;python special methods&lt;/a&gt;, for example &lt;tt class="docutils literal"&gt;__len__&lt;/tt&gt;, &lt;tt class="docutils literal"&gt;__eq__&lt;/tt&gt; etc&lt;/p&gt;
+&lt;p&gt;Now, as you can see the &lt;tt class="docutils literal"&gt;__call__&lt;/tt&gt; special method has four&amp;nbsp;parts:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Code that is executed &lt;em&gt;before&lt;/em&gt; the &lt;tt class="docutils literal"&gt;self.get_response()&lt;/tt&gt; method is called; here you should modify the request object. Middleware will reach this point in the order they are&amp;nbsp;listed.&lt;/li&gt;
+&lt;li&gt;The actual call to &lt;tt class="docutils literal"&gt;self.get_response()&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;Code that is executed &lt;em&gt;after&lt;/em&gt; the &lt;tt class="docutils literal"&gt;self.get_response()&lt;/tt&gt; method is called; here you should modify the response object. Middleware will reach this point in the reverse order they are&amp;nbsp;listed.&lt;/li&gt;
+&lt;li&gt;Returning the response to be used by the next&amp;nbsp;middleware&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice that &lt;tt class="docutils literal"&gt;get_response&lt;/tt&gt; will call the next middleware; while the &lt;tt class="docutils literal"&gt;get_response&lt;/tt&gt; for the last middleware will actually call the view. Then
+the view will return a response which could be modified (if needed) by the middlewares in the opposite order of their definition&amp;nbsp;list.&lt;/p&gt;
+&lt;p&gt;As an example, let&amp;#8217;s define two simple&amp;nbsp;middlewares:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;M1&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__call__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;M1 before response&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;M1 after response&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;M2&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__call__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;M2 before response&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;M2 after response&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;When you define &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MIDDLEWARE&lt;/span&gt; = ['M1', 'M2']&lt;/tt&gt; you&amp;#8217;ll see the&amp;nbsp;following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="c1"&gt;# Got the request&lt;/span&gt;
+&lt;span class="n"&gt;M1&lt;/span&gt; &lt;span class="n"&gt;before&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;span class="n"&gt;M2&lt;/span&gt; &lt;span class="n"&gt;before&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;span class="c1"&gt;# The view is rendered to the response now&lt;/span&gt;
+&lt;span class="n"&gt;M2&lt;/span&gt; &lt;span class="n"&gt;after&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;span class="n"&gt;M1&lt;/span&gt; &lt;span class="n"&gt;after&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;span class="c1"&gt;# Return the response&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Please notice a middleware may not call &lt;tt class="docutils literal"&gt;self.get_response&lt;/tt&gt; to continue the chain but return directly a response (for example a 403 Forbiden&amp;nbsp;response).&lt;/p&gt;
+&lt;p&gt;After this quick introduction to how middleware works, let&amp;#8217;s take a look at a skeleton for the time-delay&amp;nbsp;middleware:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TimeDelayMiddleware&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__call__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This is really simple, I&amp;#8217;ve just added an extra line to the previous middleware. This line adds a one-second delay to all responses. I&amp;#8217;ve
+added it before &lt;tt class="docutils literal"&gt;self.get_response&lt;/tt&gt; - because this delay does not depend on anything, I could have added it after &lt;tt class="docutils literal"&gt;self.get_response&lt;/tt&gt;
+without changes in the behavior. Also, the order of this middleware in the &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MIDDLEWARE&lt;/span&gt;&lt;/tt&gt; list doesn&amp;#8217;t matter since it doesn&amp;#8217;t depend on
+other middleware (it just needs to run to add the&amp;nbsp;delay).&lt;/p&gt;
+&lt;p&gt;This middleware may have a little more functionality, for example to configure the delay from the settings or add the delay only for
+specific urls (by checking the &lt;tt class="docutils literal"&gt;request.path&lt;/tt&gt;).
+Here&amp;#8217;s how these extra features could be&amp;nbsp;implemented:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;django.conf&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;settings&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TimeDelayMiddleware&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_response&lt;/span&gt;
+        &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delay&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;settings&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;REQUEST_TIME_DELAY&lt;/span&gt;
+
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__call__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;/api/&amp;#39;&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delay&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="n"&gt;response&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_response&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;response&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The above will add the delay only to requests whose path contains &lt;tt class="docutils literal"&gt;'/api'&lt;/tt&gt;. Another case is if you want to
+only add the delay for &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;POST&lt;/span&gt;&lt;/tt&gt; requests by checking that &lt;tt class="docutils literal"&gt;request.method == '&lt;span class="caps"&gt;POST&lt;/span&gt;'&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;Now, to install this middleware, you can configure your &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MIDDLEWARE&lt;/span&gt;&lt;/tt&gt; like this in your &lt;tt class="docutils literal"&gt;settings.py&lt;/tt&gt;
+(let&amp;#8217;s say that you have an application named &lt;tt class="docutils literal"&gt;core&lt;/tt&gt; containing a module named &lt;tt class="docutils literal"&gt;middleware&lt;/tt&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;MIDDLEWARE&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;django.middleware.security.SecurityMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;django.contrib.sessions.middleware.SessionMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;django.middleware.common.CommonMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;django.middleware.csrf.CsrfViewMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;django.contrib.auth.middleware.AuthenticationMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;django.contrib.messages.middleware.MessageMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="s1"&gt;&amp;#39;django.middleware.clickjacking.XFrameOptionsMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+    &lt;span class="s1"&gt;&amp;#39;core.middleware.TimeDelayMiddleware&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The other middleware are the default ones in Django. One more thing to consider is that if
+you have a single settings.py this middleware will be called; one way to override the delay
+is to check for settings.&lt;span class="caps"&gt;DEBUG&lt;/span&gt; and only call &lt;tt class="docutils literal"&gt;time.sleep&lt;/tt&gt; when &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;DEBUG&lt;/span&gt; == True&lt;/tt&gt;. However,
+the proper way to do it is to have different settings for your development and production
+environments and add the &lt;tt class="docutils literal"&gt;TimeDelayMiddleware&lt;/tt&gt; only to your development &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;MIDDLEWARE&lt;/span&gt;&lt;/tt&gt; list.
+Having different settings for each development is a &lt;a class="reference external" href="https://medium.com/&amp;#64;ayarshabeer/django-best-practice-settings-file-for-multiple-environments-6d71c6966ee2"&gt;common practice in Django&lt;/a&gt; and I totally
+recommend to use&amp;nbsp;it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="using-cbvs"&gt;
+&lt;h2&gt;Using&amp;nbsp;CBVs&lt;/h2&gt;
+&lt;p&gt;Another method to add a delay to the execution of a view is to implement a TimeDelayMixin and inherit
+your Class Based View from it. As we&amp;#8217;ve seen in the &lt;a class="reference external" href="https://spapas.github.io/2018/03/19/comprehensive-django-cbv-guide/"&gt;&lt;span class="caps"&gt;CBV&lt;/span&gt; guide&lt;/a&gt;, the &lt;tt class="docutils literal"&gt;dispatch&lt;/tt&gt; method is the one
+that is always called when your &lt;span class="caps"&gt;CBV&lt;/span&gt; is rendered, thus your &lt;tt class="docutils literal"&gt;TimeDelayMixin&lt;/tt&gt; could be implemented like&amp;nbsp;this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;time&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;TimeDelayMixin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;object&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;):&lt;/span&gt;
+
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+        &lt;span class="n"&gt;time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sleep&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nb"&gt;super&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;request&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;kwargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This is very simple (and you can use similar techniques as described for the middleware above to configure
+the delay time or add the delay only when &lt;tt class="docutils literal"&gt;settings.&lt;span class="caps"&gt;DEBUG&lt;/span&gt; == True&lt;/tt&gt; etc) - to actually use it, just inherit your
+view from this mixin,&amp;nbsp;f.e:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DelayedSampleListView&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;TimeDelayMixin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ListView&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Sample&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now whenever you call your &lt;tt class="docutils literal"&gt;DelayedSampleListView&lt;/tt&gt; you&amp;#8217;ll see it after the configured&amp;nbsp;delay!&lt;/p&gt;
+&lt;p&gt;What is really interesting is that the &lt;tt class="docutils literal"&gt;dispatch&lt;/tt&gt; method actually exists (and has the same functionality) also
+in Django Rest Framework CBVs, thus using the same mixin you can add the delay not only your normal CBVs but
+also your &lt;span class="caps"&gt;DRF&lt;/span&gt; &lt;span class="caps"&gt;API&lt;/span&gt;&amp;nbsp;views!&lt;/p&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 08 May 2018 23:20:00 +0300</pubDate><guid>tag:spapas.github.io,2018-05-08:2018/05/08/django-reponse-add-delay/</guid><category>python</category><category>django</category><category>cbv</category><category>middleware</category><category>class-based-views</category></item><item><title>Easy immutable objects in Javascript</title><link>https://spapas.github.io/2018/04/05/easy-immutable-objects/</link><description>&lt;p&gt;With the rise of &lt;a class="reference external" href="https://redux.js.org"&gt;Redux&lt;/a&gt; and other similar Javascript frameworks (e.g &lt;a class="reference external" href="https://hyperapp.js.org"&gt;Hyperapp&lt;/a&gt;) that
 try to be a little more &lt;em&gt;functional&lt;/em&gt; (functional as in functional programming), a
 new problem was introduced to Javascript programmers (at least to those that weren&amp;#8217;t
 familair with functional programming): How to keep their application&amp;#8217;s

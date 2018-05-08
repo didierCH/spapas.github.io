@@ -76,6 +76,193 @@
   		<article>
 <header>
       <h1 class="entry-title">
+        <a href="https://spapas.github.io/2018/05/08/django-reponse-add-delay/">Adding a delay to Django HTTP responses</a>
+      </h1>
+    <p class="meta">
+<time datetime="2018-05-08T23:20:00+03:00" pubdate>Τρι 08 Μάιος 2018</time>    </p>
+</header>
+
+<div class="entry-content"><p>Sometimes you&#8217;d like to make your Django views more slow by adding a fake delay. This may
+sound controversial (why would somebody want to make some of his views slower) however it is a real requirement,
+at least when developing an&nbsp;application.</p>
+<p>For example, you may be using a <span class="caps">REST</span> <span class="caps">API</span> and you want to implement a spinner while your form is loading. However, usually when
+developing your responses will load so soon that you won&#8217;t be able to admire your spinner in all its glory! Also, when you
+submit a <span class="caps">POST</span> form (i.e a form that changes your data), it is advisable to disable your submit button so that when your users
+double click it the form won&#8217;t be submitted two times (it may seem strange to some people but this is a very common error that
+has bitten me many times; there are many users that think that they need to double click the buttons; thus I always disable
+my submit buttons after somebody clicks them); in this case you also need to make your response a little slower to make sure
+that the button is actually&nbsp;disabled!</p>
+<p>I will propose two methods for adding this delay to your responses. One that will affect all (or most) your views using
+a <a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/">middleware</a> and another that you can add to any <span class="caps">CBV</span> you want using a mixin; please see my previous <a class="reference external" href="https://spapas.github.io/2018/03/19/comprehensive-django-cbv-guide/"><span class="caps">CBV</span> guide</a> for more on
+Django CBVs and mixins. For the middleware solution we&#8217;ll also take a quick look at what is the Django middleware mechanism and
+how it can be used to add&nbsp;functionality.</p>
+<div class="section" id="using-middleware">
+<h2>Using&nbsp;middleware</h2>
+<p>The Django <a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/">middleware</a> is a mechanism for adding your own code to the Django request / response cycle. I&#8217;ll try to explain
+this a bit; Django is waiting for an <span class="caps">HTTP</span> Request (i.e <span class="caps">GET</span> a url with these headers and these query parameters), it will
+parse this <span class="caps">HTTP</span> Request and prepare an <span class="caps">HTTP</span> Response (i.e some headers and a Payload). Your view will be the main actor for
+retrieving the <span class="caps">HTTP</span> response and returning the <span class="caps">HTTP</span> request. However, using this middleware mechanism Django allows you to
+enable other actors (the middleware) that will universally modify the <span class="caps">HTTP</span> request before passing it to your view and will also
+modify the view&#8217;s <span class="caps">HTTP</span> respone before sending it back to the&nbsp;client.</p>
+<p>Actually, a list of middleware called &#8230; <tt class="docutils literal"><span class="caps">MIDDLEWARE</span></tt> is <a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/#activating-middleware">defined by default</a> in the <tt class="docutils literal">settings.py</tt> of all new Django
+projects; these are used to add various capabilities
+that are universally needed, for example session support, various security enablers, django message support and others. You
+can easily attach your own middleware to that list to add extra functionality. Notice that the order of the middleware in the <tt class="docutils literal"><span class="caps">MIDDLEWARE</span></tt>
+list actually matters. Middleware later in the list will be executed after the ones previous in the list; we&#8217;ll see some consequences of this&nbsp;later.</p>
+<p>Now the time has come to take a quick look at how to implement a middleware, <a class="reference external" href="https://docs.djangoproject.com/en/2.0/topics/http/middleware/#writing-your-own-middleware">taken from the Django docs</a>:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleMiddleware</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span> <span class="o">=</span> <span class="n">get_response</span>
+        <span class="c1"># One-time configuration and initialization.</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="c1"># Code to be executed for each request before</span>
+        <span class="c1"># the view (and later middleware) are called.</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+        <span class="c1"># Code to be executed for each request/response after</span>
+        <span class="c1"># the view is called.</span>
+
+        <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+<p>Actually you can implement the middleware as a nested function however I prefer the classy version. The comments should be really enlightening:
+When your project is started the constructor (<tt class="docutils literal">__init__</tt>) will be called once, for example if you want to read a configuration setting from the database
+then you should do it in the <tt class="docutils literal">__init__</tt> to avoid calling the database everytime your middleware is executed (i.e for <em>every</em> request). The <tt class="docutils literal">__call__</tt> is
+a special method that gets translated to calling this class instance as a function, i.e if you do something&nbsp;like:</p>
+<div class="highlight"><pre><span></span><span class="n">sm</span> <span class="o">=</span> <span class="n">SimpleMiddleware</span><span class="p">()</span>
+<span class="n">sm</span><span class="p">()</span>
+</pre></div>
+<p>Then <tt class="docutils literal">sm()</tt> will execute the <tt class="docutils literal">__call__</tt>; there are various similar <a class="reference external" href="http://www.diveintopython3.net/special-method-names.html">python special methods</a>, for example <tt class="docutils literal">__len__</tt>, <tt class="docutils literal">__eq__</tt> etc</p>
+<p>Now, as you can see the <tt class="docutils literal">__call__</tt> special method has four&nbsp;parts:</p>
+<ul class="simple">
+<li>Code that is executed <em>before</em> the <tt class="docutils literal">self.get_response()</tt> method is called; here you should modify the request object. Middleware will reach this point in the order they are&nbsp;listed.</li>
+<li>The actual call to <tt class="docutils literal">self.get_response()</tt></li>
+<li>Code that is executed <em>after</em> the <tt class="docutils literal">self.get_response()</tt> method is called; here you should modify the response object. Middleware will reach this point in the reverse order they are&nbsp;listed.</li>
+<li>Returning the response to be used by the next&nbsp;middleware</li>
+</ul>
+<p>Notice that <tt class="docutils literal">get_response</tt> will call the next middleware; while the <tt class="docutils literal">get_response</tt> for the last middleware will actually call the view. Then
+the view will return a response which could be modified (if needed) by the middlewares in the opposite order of their definition&nbsp;list.</p>
+<p>As an example, let&#8217;s define two simple&nbsp;middlewares:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">M1</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span> <span class="o">=</span> <span class="n">get_response</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;M1 before response&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;M1 after response&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+<span class="k">class</span> <span class="nc">M2</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span> <span class="o">=</span> <span class="n">get_response</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;M2 before response&quot;</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;M2 after response&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+<p>When you define <tt class="docutils literal"><span class="caps">MIDDLEWARE</span> = ['M1', 'M2']</tt> you&#8217;ll see the&nbsp;following:</p>
+<div class="highlight"><pre><span></span><span class="c1"># Got the request</span>
+<span class="n">M1</span> <span class="n">before</span> <span class="n">response</span>
+<span class="n">M2</span> <span class="n">before</span> <span class="n">response</span>
+<span class="c1"># The view is rendered to the response now</span>
+<span class="n">M2</span> <span class="n">after</span> <span class="n">response</span>
+<span class="n">M1</span> <span class="n">after</span> <span class="n">response</span>
+<span class="c1"># Return the response</span>
+</pre></div>
+<p>Please notice a middleware may not call <tt class="docutils literal">self.get_response</tt> to continue the chain but return directly a response (for example a 403 Forbiden&nbsp;response).</p>
+<p>After this quick introduction to how middleware works, let&#8217;s take a look at a skeleton for the time-delay&nbsp;middleware:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">class</span> <span class="nc">TimeDelayMiddleware</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span> <span class="o">=</span> <span class="n">get_response</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+<p>This is really simple, I&#8217;ve just added an extra line to the previous middleware. This line adds a one-second delay to all responses. I&#8217;ve
+added it before <tt class="docutils literal">self.get_response</tt> - because this delay does not depend on anything, I could have added it after <tt class="docutils literal">self.get_response</tt>
+without changes in the behavior. Also, the order of this middleware in the <tt class="docutils literal"><span class="caps">MIDDLEWARE</span></tt> list doesn&#8217;t matter since it doesn&#8217;t depend on
+other middleware (it just needs to run to add the&nbsp;delay).</p>
+<p>This middleware may have a little more functionality, for example to configure the delay from the settings or add the delay only for
+specific urls (by checking the <tt class="docutils literal">request.path</tt>).
+Here&#8217;s how these extra features could be&nbsp;implemented:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+
+<span class="k">class</span> <span class="nc">TimeDelayMiddleware</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_response</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span> <span class="o">=</span> <span class="n">get_response</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delay</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">REQUEST_TIME_DELAY</span>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;/api/&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_response</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+<p>The above will add the delay only to requests whose path contains <tt class="docutils literal">'/api'</tt>. Another case is if you want to
+only add the delay for <tt class="docutils literal"><span class="caps">POST</span></tt> requests by checking that <tt class="docutils literal">request.method == '<span class="caps">POST</span>'</tt>.</p>
+<p>Now, to install this middleware, you can configure your <tt class="docutils literal"><span class="caps">MIDDLEWARE</span></tt> like this in your <tt class="docutils literal">settings.py</tt>
+(let&#8217;s say that you have an application named <tt class="docutils literal">core</tt> containing a module named <tt class="docutils literal">middleware</tt>):</p>
+<div class="highlight"><pre><span></span><span class="n">MIDDLEWARE</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;django.middleware.security.SecurityMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions.middleware.SessionMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.common.CommonMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.csrf.CsrfViewMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages.middleware.MessageMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;</span><span class="p">,</span>
+
+    <span class="s1">&#39;core.middleware.TimeDelayMiddleware&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+<p>The other middleware are the default ones in Django. One more thing to consider is that if
+you have a single settings.py this middleware will be called; one way to override the delay
+is to check for settings.<span class="caps">DEBUG</span> and only call <tt class="docutils literal">time.sleep</tt> when <tt class="docutils literal"><span class="caps">DEBUG</span> == True</tt>. However,
+the proper way to do it is to have different settings for your development and production
+environments and add the <tt class="docutils literal">TimeDelayMiddleware</tt> only to your development <tt class="docutils literal"><span class="caps">MIDDLEWARE</span></tt> list.
+Having different settings for each development is a <a class="reference external" href="https://medium.com/&#64;ayarshabeer/django-best-practice-settings-file-for-multiple-environments-6d71c6966ee2">common practice in Django</a> and I totally
+recommend to use&nbsp;it.</p>
+</div>
+<div class="section" id="using-cbvs">
+<h2>Using&nbsp;CBVs</h2>
+<p>Another method to add a delay to the execution of a view is to implement a TimeDelayMixin and inherit
+your Class Based View from it. As we&#8217;ve seen in the <a class="reference external" href="https://spapas.github.io/2018/03/19/comprehensive-django-cbv-guide/"><span class="caps">CBV</span> guide</a>, the <tt class="docutils literal">dispatch</tt> method is the one
+that is always called when your <span class="caps">CBV</span> is rendered, thus your <tt class="docutils literal">TimeDelayMixin</tt> could be implemented like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+
+<span class="k">class</span> <span class="nc">TimeDelayMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+<p>This is very simple (and you can use similar techniques as described for the middleware above to configure
+the delay time or add the delay only when <tt class="docutils literal">settings.<span class="caps">DEBUG</span> == True</tt> etc) - to actually use it, just inherit your
+view from this mixin,&nbsp;f.e:</p>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DelayedSampleListView</span><span class="p">(</span><span class="n">TimeDelayMixin</span><span class="p">,</span> <span class="n">ListView</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Sample</span>
+</pre></div>
+<p>Now whenever you call your <tt class="docutils literal">DelayedSampleListView</tt> you&#8217;ll see it after the configured&nbsp;delay!</p>
+<p>What is really interesting is that the <tt class="docutils literal">dispatch</tt> method actually exists (and has the same functionality) also
+in Django Rest Framework CBVs, thus using the same mixin you can add the delay not only your normal CBVs but
+also your <span class="caps">DRF</span> <span class="caps">API</span>&nbsp;views!</p>
+</div>
+</div>
+  		</article>
+  		<article>
+<header>
+      <h1 class="entry-title">
         <a href="https://spapas.github.io/2018/04/05/easy-immutable-objects/">Easy immutable objects in Javascript</a>
       </h1>
     <p class="meta">
@@ -3250,104 +3437,6 @@ leaving it as an exercise to the&nbsp;reader.</p>
 </div>
 </div>
   		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="https://spapas.github.io/2017/12/20/python-2-3-windows/">Using both Python 2 and 3 in Windows</a>
-      </h1>
-    <p class="meta">
-<time datetime="2017-12-20T11:20:00+02:00" pubdate>Τετ 20 Δεκέμβριος 2017</time>    </p>
-</header>
-
-<div class="entry-content"><p>The release of Django 2.0 was a milestone in the history of Python since it
-completely dropped support for Python 2.x. I am a long time user of Django
-and, loyal to the philosophy of &#8220;if it is working don&#8217;t change&#8221; I was always
-using Python&nbsp;2.x.</p>
-<p>Of course right now this needs to change since new applications will need to
-be developed to the latest version of Django (and Python). I am using
-Windows for development (almost exclusively) and what I wanted was to
-be able to create and use virtual environments for both my old projects
-(using Python 2) and new projects (using Python&nbsp;3).</p>
-<p>The above requirement is not as straight-forward as I&#8217;d like - actually it is
-if you know what you need to do and which tools you must use. That&#8217;s why I
-decided to write a quick step by step tutorial on how to use both versions
-of Python in your Windows environment. Notice that I am using Windows 10,
-Python 2.7.14 an Python&nbsp;3.6.4.</p>
-<p>First of all, let&#8217;s download both versions of Python
-from the <a class="reference external" href="https://www.python.org/downloads/">Python download page</a>. I downloaded the files
-python-2.7.14.msi and python-3.6.4.exe (not sure why the one is .msi and the other
-is .exe it doesn&#8217;t matter&nbsp;anyway).</p>
-<p>Firstly I am installing Python 2.7.14 and&nbsp;selecting:</p>
-<ul class="simple">
-<li>Install for all&nbsp;users</li>
-<li>Install to default&nbsp;folder</li>
-<li>Press next to following screen (install default&nbsp;customizations)</li>
-<li>This won&#8217;t add the python.exe of Python 2.7 to&nbsp;path</li>
-</ul>
-<p>Next I am install Python&nbsp;3.6.4:</p>
-<ul class="simple">
-<li>Make sure to click &#8220;Install launcher for all users&nbsp;(recommended)&#8221;</li>
-<li>I also check &#8220;Add Python 3.6to <span class="caps">PATH</span>&#8221; (to add the Python 3.6 executable to&nbsp;path)</li>
-<li>I then just click &#8220;Install Now&#8221; (this will put Python 3.6 to&nbsp;c:)</li>
-</ul>
-<p>Right now if you open a terminal window (Windows+r, cmd.exe) and run Python you will
-initiate the Python 3.6 interpreter. This is useful for just dropping in a Python&nbsp;interpreter.</p>
-<p>Remember the &#8220;Install launcher for all users (recommended)&#8221; we clicked before? This installs
-the python launcher which is used to select between Python versions.
-If you run it without parameters the Python 3.6 interpreter will by started. You can pass
-the -2 parameter to start the python 2.x interpreter or -3 to explicitly declare the
-python 3.x&nbsp;interpreter:</p>
-<pre class="code literal-block">
-C:\Users\Serafeim&gt;py -2
-Python 2.7.14 (v2.7.14:84471935ed, Sep 16 2017, 20:19:30) [MSC v.1500 32 bit (Intel)] on win32
-Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
-&gt;&gt;&gt; ^Z
-
-
-C:\Users\Serafeim&gt;py -3
-Python 3.6.4 (v3.6.4:d48eceb, Dec 19 2017, 06:04:45) [MSC v.1900 32 bit (Intel)] on win32
-Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
-&gt;&gt;&gt; ^Z
-</pre>
-<p>With py we can easily start the Python interpreter we want. This is not enough though - we
-need to use virtualenv and create proper virtual environments for our projects. To do this
-you can add the -m option to py to run a module with the proper python version. For example,
-to start an http server with Python 2 you would use the module <tt class="docutils literal">SimpleHTTPServer</tt> while
-for python 3 you would use <tt class="docutils literal">http.server</tt> (<a class="reference external" href="https://stackoverflow.com/questions/7943751/what-is-the-python-3-equivalent-of-python-m-simplehttpserver">as per this</a>):</p>
-<pre class="code literal-block">
-C:\progr\py\pelican\spapas.github.io&gt;py -2 -m SimpleHTTPServer
-Serving HTTP on 0.0.0.0 port 8000 ...
-
-C:\progr\py\pelican\spapas.github.io&gt;py -3 -m http.server
-Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
-</pre>
-<p>Now, to create the virtual environments we&#8217;ll use the virtualenv module which is installed
-by default in Python 2.x (try running <tt class="docutils literal">py <span class="pre">-2</span> <span class="pre">-m</span> pip freeze</tt> to see the list of installed
-packages for Python 2.x) and the venv module which is included in the Python 3.x core. So
-to create a virtualenv for Python 2 we&#8217;ll run <tt class="docutils literal">py <span class="pre">-2</span> <span class="pre">-m</span> virtualenv <span class="pre">name-of-virtualenv</span></tt>
-and for Python 3 <tt class="docutils literal">py <span class="pre">-3</span> <span class="pre">-m</span> venv <span class="pre">name-of-virtualenv</span></tt>.</p>
-<pre class="code literal-block">
-C:\progr\py&gt;py -2 -m virtualenv venv-2
-New python executable in C:\progr\py\venv-2\Scripts\python.exe
-Installing setuptools, pip, wheel...done.
-
-C:\progr\py&gt;py -3 -m venv venv-3
-
-C:\progr\py&gt;venv-2\Scripts\activate
-
-(venv-2) C:\progr\py&gt;python -V
-Python 2.7.14
-
-(venv-2) C:\progr\py&gt;deactivate
-
-C:\progr\py&gt;venv-3\Scripts\activate
-
-(venv-3) C:\progr\py&gt;python -V
-Python 3.6.4
-</pre>
-<p>That&#8217;s how easy it is to have both Python 2.7 and Python 3.6 in your&nbsp;Windows!</p>
-</div>
-  		</article>
 <div class="pagination">
     <a class="prev" href="https://spapas.github.io/index2.html">&larr; Older</a>
 
@@ -3371,6 +3460,9 @@ Python 3.6.4
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
       <li class="post">
+          <a href="https://spapas.github.io/2018/05/08/django-reponse-add-delay/">Adding a delay to Django HTTP responses</a>
+      </li>
+      <li class="post">
           <a href="https://spapas.github.io/2018/04/05/easy-immutable-objects/">Easy immutable objects in Javascript</a>
       </li>
       <li class="post">
@@ -3381,9 +3473,6 @@ Python 3.6.4
       </li>
       <li class="post">
           <a href="https://spapas.github.io/2018/03/01/django-rest-auth/">Authentication for django-rest-framework with django-rest-auth</a>
-      </li>
-      <li class="post">
-          <a href="https://spapas.github.io/2017/12/20/python-2-3-windows/">Using both Python 2 and 3 in Windows</a>
       </li>
     </ul>
   </section>
@@ -3407,7 +3496,7 @@ Python 3.6.4
 
   <section>
   <h1>Tags</h1>
-    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/python-2.html">python-2</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/immutable.html">immutable</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/youtube-dl.html">youtube-dl</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/grid.html">grid</a>,    <a href="https://spapas.github.io/tag/ag-grid.html">ag-grid</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/hyperapp.html">hyperapp</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/python-3.html">python-3</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/component.html">component</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/django-rest-auth.html">django-rest-auth</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/ffmpeg.html">ffmpeg</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/plpgsql.html">plpgsql</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/youtube.html">youtube</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/python-2.html">python-2</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/immutable.html">immutable</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/youtube-dl.html">youtube-dl</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/grid.html">grid</a>,    <a href="https://spapas.github.io/tag/ag-grid.html">ag-grid</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/hyperapp.html">hyperapp</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/python-3.html">python-3</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/component.html">component</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/django-rest-auth.html">django-rest-auth</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/ffmpeg.html">ffmpeg</a>,    <a href="https://spapas.github.io/tag/middleware.html">middleware</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/plpgsql.html">plpgsql</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/youtube.html">youtube</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
 
 
 
