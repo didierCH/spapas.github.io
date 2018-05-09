@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/flask.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2014-06-30T15:23:00+03:00</updated><entry><title>Implementing a simple, Heroku-hosted REST service using Flask and mongoDB</title><link href="https://spapas.github.io/2014/06/30/rest-flask-mongodb-heroku/" rel="alternate"></link><updated>2014-06-30T15:23:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-06-30:2014/06/30/rest-flask-mongodb-heroku/</id><summary type="html">&lt;div class="contents topic" id="contents"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/ - flask</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/flask.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2014-06-30T15:23:00+03:00</updated><entry><title>Implementing a simple, Heroku-hosted REST service using Flask and mongoDB</title><link href="https://spapas.github.io/2014/06/30/rest-flask-mongodb-heroku/" rel="alternate"></link><published>2014-06-30T15:23:00+03:00</published><updated>2014-06-30T15:23:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2014-06-30:/2014/06/30/rest-flask-mongodb-heroku/</id><summary type="html">&lt;p class="first last"&gt;An implementation &lt;span class="amp"&gt;&amp;amp;&lt;/span&gt; discussion of a simple &lt;span class="caps"&gt;REST&lt;/span&gt; service with Flask that is hosted on Heroku and is using mongoDB for&amp;nbsp;persistance.&lt;/p&gt;
+</summary><content type="html">&lt;div class="contents topic" id="contents"&gt;
 &lt;p class="topic-title first"&gt;Contents&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference internal" href="#introduction" id="id1"&gt;Introduction&lt;/a&gt;&lt;/li&gt;
@@ -206,4 +207,4 @@ heroku open
 &lt;/pre&gt;
 &lt;p&gt;If everything was ok you should see an status-&lt;span class="caps"&gt;OK&lt;/span&gt; &lt;span class="caps"&gt;JSON&lt;/span&gt;&amp;nbsp;!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="flask"></category><category term="mongodb"></category><category term="heroku"></category><category term="python"></category><category term="rest"></category></entry></feed>
+</content><category term="flask"></category><category term="mongodb"></category><category term="heroku"></category><category term="python"></category><category term="rest"></category></entry></feed>

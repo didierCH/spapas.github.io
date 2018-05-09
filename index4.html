@@ -548,7 +548,7 @@ a number using two buttons to support the&nbsp;above:</p>
 <span class="p">&lt;</span><span class="nt">button</span> <span class="na">onclick</span><span class="o">=</span><span class="s">&#39;decrease()&#39;</span><span class="p">&gt;</span>-<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
 </pre></div>
 <p>while its javascript (es6) code&nbsp;is:</p>
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">case</span> <span class="s1">&#39;INCREASE&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">state</span><span class="o">+</span><span class="mi">1</span>
     <span class="k">case</span> <span class="s1">&#39;DECREASE&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">state</span><span class="o">-</span><span class="mi">1</span>
@@ -556,14 +556,14 @@ a number using two buttons to support the&nbsp;above:</p>
   <span class="p">}</span>
 <span class="p">}</span>
 <span class="kd">let</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">Redux</span><span class="p">.</span><span class="nx">createStore</span><span class="p">(</span><span class="nx">reducer</span><span class="p">)</span>
-<span class="kd">let</span> <span class="nx">unsubscribe</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span>
+<span class="kd">let</span> <span class="nx">unsubscribe</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="p">=&gt;</span>
   <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;state_container&#39;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span>
 <span class="p">)</span>
-<span class="nb">window</span><span class="p">.</span><span class="nx">increase</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">=&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">increase</span> <span class="o">=</span> <span class="nx">e</span> <span class="p">=&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span>
   <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;INCREASE&#39;</span>
 <span class="p">})</span>
 
-<span class="nb">window</span><span class="p">.</span><span class="nx">decrease</span> <span class="o">=</span> <span class="nx">e</span> <span class="o">=&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">decrease</span> <span class="o">=</span> <span class="nx">e</span> <span class="p">=&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">({</span>
   <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;DECREASE&#39;</span>
 <span class="p">})</span>
 </pre></div>
@@ -582,7 +582,7 @@ and decrease methods that are called when the butts are clicked
 will just dispatch the corresponding&nbsp;action.</p>
 <p>Please notice that in the above example I didn&#8217;t use action creators for
 simplicity. For completeness, the action creator for increase would be something&nbsp;like</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">increaseCreator</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">increaseCreator</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
   <span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;INCREASE&#39;</span>
 <span class="p">}</span>
 </pre></div>
@@ -659,7 +659,7 @@ have been passed to the context by the ``Provider</tt>.</p>
 <p>How react-redux is used be made more clear with another jsfiddle that will convert the previous example to React and&nbsp;react-redux:</p>
 <div class="jsfiddle"><iframe width="100%" height="300" src="//jsfiddle.net/8aba3sp6/2/embedded/js,resources,html,css,result/light/" allowfullscreen="allowfullscreen" frameborder="0"></iframe></div><p>The html is just <tt class="docutils literal">&lt;div <span class="pre">id='container'&gt;&lt;/div&gt;</span></tt> since the components will
 be rendered through react, while the es6/jsx code&nbsp;is:</p>
-<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">reducer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
   <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">case</span> <span class="s1">&#39;INCREASE&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">state</span><span class="o">+</span><span class="mi">1</span>
     <span class="k">case</span> <span class="s1">&#39;DECREASE&#39;</span><span class="o">:</span> <span class="k">return</span> <span class="nx">state</span><span class="o">-</span><span class="mi">1</span>
@@ -674,19 +674,19 @@ be rendered through react, while the es6/jsx code&nbsp;is:</p>
     <span class="kd">let</span> <span class="p">{</span><span class="nx">number</span><span class="p">,</span> <span class="nx">increase</span><span class="p">,</span> <span class="nx">decrease</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span>
     <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
       <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">number</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/div&gt;</span>
-      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span><span class="o">=&gt;</span><span class="nx">increase</span><span class="p">()}</span><span class="o">&gt;+&lt;</span><span class="err">/button&gt;</span>
-      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span><span class="o">=&gt;</span><span class="nx">decrease</span><span class="p">()}</span><span class="o">&gt;</span> <span class="o">-</span> <span class="o">&lt;</span><span class="err">/button&gt;</span>
+      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span><span class="p">=&gt;</span><span class="nx">increase</span><span class="p">()}</span><span class="o">&gt;+&lt;</span><span class="err">/button&gt;</span>
+      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span><span class="p">=&gt;</span><span class="nx">decrease</span><span class="p">()}</span><span class="o">&gt;</span> <span class="o">-</span> <span class="o">&lt;</span><span class="err">/button&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kd">let</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">=&gt;</span> <span class="p">({</span>
+<span class="kd">let</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="p">=&gt;</span> <span class="p">({</span>
   <span class="nx">number</span><span class="o">:</span> <span class="nx">state</span>
 <span class="p">})</span>
 
-<span class="kd">let</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="o">=&gt;</span> <span class="p">({</span>
-  <span class="nx">increase</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;INCREASE&#39;</span><span class="p">}),</span>
-  <span class="nx">decrease</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;DECREASE&#39;</span><span class="p">})</span>
+<span class="kd">let</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="p">=&gt;</span> <span class="p">({</span>
+  <span class="nx">increase</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">dispatch</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;INCREASE&#39;</span><span class="p">}),</span>
+  <span class="nx">decrease</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">dispatch</span><span class="p">({</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;DECREASE&#39;</span><span class="p">})</span>
 <span class="p">})</span>
 
 <span class="kr">const</span> <span class="nx">ConnectedRootComponent</span> <span class="o">=</span> <span class="nx">ReactRedux</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span>
@@ -810,8 +810,8 @@ need it in your&nbsp;project.</p>
 action objects but can do various other things, like calling other actions or
 dispatching actions conditionally. When using redux-thunk, an action returns a function
 that can do any of the above mentioned things, something like&nbsp;this:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">thunkAction</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">thunkAction</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="c1">// here you may</span>
     <span class="c1">// dispatch other actions (more than one) using the provided dispatch() parameter</span>
     <span class="c1">// or</span>
@@ -828,9 +828,9 @@ then we need to create a normal function that gets <tt class="docutils literal">
 like&nbsp;this:</p>
 <div class="highlight"><pre><span></span><span class="kr">import</span> <span class="p">{</span><span class="nx">showLoadingAction</span><span class="p">,</span> <span class="nx">hideLoadingAction</span><span class="p">,</span> <span class="nx">showDataAction</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./actions&#39;</span>
 
-<span class="kr">const</span> <span class="nx">getData</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">getData</span> <span class="o">=</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
   <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showLoadingAction</span><span class="p">())</span>
-  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">data_url</span><span class="p">,</span> <span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">data_url</span><span class="p">,</span> <span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
       <span class="nx">dispatch</span><span class="p">(</span><span class="nx">hideLoadingAction</span><span class="p">())</span>
       <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showDataAction</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
   <span class="p">})</span>
@@ -843,10 +843,10 @@ since it actually returns nothing (so nothing will be dispatched),
 so you&#8217;ll need to remember to call it directly
 and pass it the <tt class="docutils literal">dispatch</tt> <em>instead of</em> passing its return value to <tt class="docutils literal">dispatch</tt>!</p>
 <p>If however we used thunk, then we&#8217;d have something like&nbsp;this:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">getDataThunk</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">getDataThunk</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showLoadingAction</span><span class="p">())</span>
-    <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">data_url</span><span class="p">,</span> <span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">data_url</span><span class="p">,</span> <span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">hideLoadingAction</span><span class="p">())</span>
         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showDataAction</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
     <span class="p">})</span>
@@ -884,7 +884,7 @@ is defined and the application is mounted to the <span class="caps">DOM</span>:<
 <tt class="docutils literal">browserify main.js <span class="pre">-o</span> bundle.js</tt> ) and uses components defined elsewhere to
 create the basic structure of our application. Let&#8217;s take a look at the important
 part of&nbsp;it:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">About</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">About</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="nx">h2</span><span class="o">&gt;</span><span class="nx">About</span><span class="o">&lt;</span><span class="err">/h2&gt;</span>
         <span class="o">&lt;</span><span class="nx">Link</span> <span class="nx">to</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="o">&gt;</span><span class="nx">Home</span><span class="o">&lt;</span><span class="err">/Link&gt;</span>
@@ -1059,15 +1059,15 @@ as values and returns a reducer function that passes the action along with
 the correct state slice to each of the sub-reducers and creates the global state object by
 combining the output of each&nbsp;sub-reducer.</p>
 <p>This may be clarified more with our own version of a combine reducers&nbsp;function:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">combineReducers2</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-      <span class="kr">const</span> <span class="nx">mapped</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">o</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">k</span> <span class="o">=&gt;</span> <span class="p">(</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">combineReducers2</span> <span class="o">=</span> <span class="nx">o</span> <span class="p">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">mapped</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">o</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">k</span> <span class="p">=&gt;</span> <span class="p">(</span>
           <span class="p">{</span>
               <span class="nx">key</span><span class="o">:</span> <span class="nx">k</span><span class="p">,</span>
               <span class="nx">slice</span><span class="o">:</span> <span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">](</span><span class="nx">state</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">action</span><span class="p">)</span> <span class="c1">// call k sub-reducer and get result</span>
           <span class="p">}</span>
       <span class="p">))</span>
-      <span class="kr">const</span> <span class="nx">reduced</span> <span class="o">=</span> <span class="nx">mapped</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">s</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">reduced</span> <span class="o">=</span> <span class="nx">mapped</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">s</span><span class="p">,</span> <span class="nx">x</span><span class="p">)=&gt;{</span>
           <span class="nx">s</span><span class="p">[</span><span class="nx">x</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]]</span><span class="o">=</span><span class="nx">x</span><span class="p">[</span><span class="s1">&#39;slice&#39;</span><span class="p">]</span>
           <span class="k">return</span> <span class="nx">s</span>
       <span class="p">},</span> <span class="p">{})</span>
@@ -1084,9 +1084,9 @@ as input and returns a function (that function is the resulting reducer)&nbsp;th
 </ul>
 <p>To show-off the <span class="caps">ES6</span> code (and my most sadistic tendencies),
 the above code could be also writen like&nbsp;this:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">combineReducers3</span> <span class="o">=</span> <span class="nx">o</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">o</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">k</span> <span class="o">=&gt;</span> <span class="p">[</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">combineReducers3</span> <span class="o">=</span> <span class="nx">o</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">o</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">k</span> <span class="p">=&gt;</span> <span class="p">[</span>
     <span class="nx">k</span><span class="p">,</span> <span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">](</span><span class="nx">state</span><span class="p">[</span><span class="nx">k</span><span class="p">],</span> <span class="nx">action</span><span class="p">)</span>
-<span class="p">]).</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">s</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="p">{</span>
+<span class="p">]).</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">s</span><span class="p">,</span> <span class="nx">x</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">s</span><span class="p">,</span> <span class="p">{</span>
     <span class="p">[</span><span class="nx">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">:</span> <span class="nx">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="p">}),</span> <span class="p">{})</span>
 </pre></div>
@@ -1112,10 +1112,10 @@ that gets a store as an input and
 returns the same store with its <tt class="docutils literal">dispatch</tt> method modified so that it will
 call each middleware and pass the result to the next. So, in our case the
 resulting store&#8217;s dispatch function would be something&nbsp;like:</p>
-<div class="highlight"><pre><span></span><span class="p">(</span><span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">reduxRouterMiddleware</span><span class="p">(</span><span class="nx">thunk</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">)))</span>
+<div class="highlight"><pre><span></span><span class="p">(</span><span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">reduxRouterMiddleware</span><span class="p">(</span><span class="nx">thunk</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">action</span><span class="p">)))</span>
 </pre></div>
 <p>Now, a middleware function looks like&nbsp;this:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">middleware</span> <span class="o">=</span> <span class="nx">store</span> <span class="o">=&gt;</span> <span class="nx">next</span> <span class="o">=&gt;</span> <span class="nx">action</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">middleware</span> <span class="o">=</span> <span class="nx">store</span> <span class="p">=&gt;</span> <span class="nx">next</span> <span class="p">=&gt;</span> <span class="nx">action</span> <span class="p">=&gt;</span> <span class="p">{</span>
   <span class="c1">//</span>
 <span class="p">}</span>
 </pre></div>
@@ -1136,7 +1136,7 @@ explanation of the above is that a&nbsp;middleware:</p>
 </ul>
 <p>Let&#8217;s take a look at the thunk middleware to actually see what it looks&nbsp;like:</p>
 <div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">thunkMiddleware</span><span class="p">({</span> <span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span> <span class="p">})</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">next</span> <span class="o">=&gt;</span> <span class="nx">action</span> <span class="o">=&gt;</span>
+  <span class="k">return</span> <span class="nx">next</span> <span class="p">=&gt;</span> <span class="nx">action</span> <span class="p">=&gt;</span>
     <span class="k">typeof</span> <span class="nx">action</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span> <span class="o">?</span>
       <span class="nx">action</span><span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">:</span>
       <span class="nx">next</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
@@ -1154,7 +1154,7 @@ If this action is not a function
 (so it is a normal object) it just returns <tt class="docutils literal">dispatch(action)</tt> to dispatch&nbsp;it.</p>
 <p>Finally, we&#8217;ll create a simple middleware that will output the action type and the
 state for every&nbsp;dispatch:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">logStateMiddleware</span> <span class="o">=</span> <span class="p">({</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">next</span> <span class="o">=&gt;</span> <span class="nx">action</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">logStateMiddleware</span> <span class="o">=</span> <span class="p">({</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="nx">next</span> <span class="p">=&gt;</span> <span class="nx">action</span> <span class="p">=&gt;</span> <span class="p">{</span>
   <span class="c1">// log the action type</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">,</span> <span class="nx">getState</span><span class="p">())</span>
   <span class="c1">// now we must call next(action) to propagate and finally dispatch the action object</span>
@@ -1171,7 +1171,7 @@ in the previous paragraph (<tt class="docutils literal">books, notification, ui,
 the global reducer of the application. I&#8217;ve put everything in a single file, however
 it is more common to create a <tt class="docutils literal">reducers</tt> directory and put every sub-reducer inside it
 as a different module. Let&#8217;s start reviewing the code of the <tt class="docutils literal">reducers.js</tt> module:</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kr">const</span> <span class="nx">notification</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kr">const</span> <span class="nx">notification</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="s1">&#39;SHOW_NOTIFICATION&#39;</span><span class="o">:</span>
             <span class="kd">let</span> <span class="p">{</span> <span class="nx">notification_type</span><span class="p">,</span> <span class="nx">message</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">action</span>
@@ -1186,7 +1186,7 @@ as a different module. Let&#8217;s start reviewing the code of the <tt class="do
 <span class="p">}</span>
 
 
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">ui</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">ui</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="p">{},</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="s1">&#39;IS_LOADING&#39;</span><span class="o">:</span>
             <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
@@ -1254,7 +1254,7 @@ gets the <tt class="docutils literal">sorting</tt> and the <tt class="docutils l
 to be initialized from the <span class="caps">URL</span> (so that using a url like <tt class="docutils literal"><span class="pre">#?search=foo</span></tt> will show all books
 containing <tt class="docutils literal">foo</tt>). To get the parameters from the <span class="caps">URL</span> I&#8217;m using the <tt class="docutils literal">getParameterByName</tt>
 function. Now, the actual reducer&nbsp;is:</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kr">const</span> <span class="nx">books</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="nx">BOOKS_INITIAL</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kr">const</span> <span class="nx">books</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="nx">BOOKS_INITIAL</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="k">switch</span> <span class="p">(</span><span class="nx">action</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">case</span> <span class="s1">&#39;SHOW_BOOKS&#39;</span><span class="o">:</span>
@@ -1293,7 +1293,7 @@ function. Now, the actual reducer&nbsp;is:</p>
                 <span class="p">]</span>
             <span class="p">});</span>
         <span class="k">case</span> <span class="s1">&#39;UPDATE_BOOK&#39;</span><span class="o">:</span>
-            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span> <span class="nx">r</span> <span class="o">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">action</span><span class="p">.</span><span class="nx">book</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span> <span class="nx">r</span> <span class="p">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">id</span> <span class="o">===</span> <span class="nx">action</span><span class="p">.</span><span class="nx">book</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
             <span class="k">if</span><span class="p">(</span><span class="nx">idx</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
                     <span class="nx">book</span><span class="o">:</span> <span class="nx">action</span><span class="p">.</span><span class="nx">book</span>
@@ -1310,7 +1310,7 @@ function. Now, the actual reducer&nbsp;is:</p>
             <span class="p">}</span>
             <span class="k">break</span><span class="p">;</span>
         <span class="k">case</span> <span class="s1">&#39;DELETE_BOOK&#39;</span><span class="o">:</span>
-            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span> <span class="nx">r</span> <span class="o">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">id</span> <span class="o">==</span> <span class="nx">action</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+            <span class="nx">idx</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">findIndex</span><span class="p">(</span> <span class="nx">r</span> <span class="p">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">id</span> <span class="o">==</span> <span class="nx">action</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
             <span class="k">if</span><span class="p">(</span><span class="nx">idx</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="nx">state</span><span class="p">,</span> <span class="p">{</span>
                     <span class="nx">book</span><span class="o">:</span> <span class="kc">undefined</span>
@@ -1370,7 +1370,7 @@ into detail about&nbsp;it.</p>
 <div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">AUTHORS_INITIAL</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 <span class="p">}</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">authors</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="nx">AUTHORS_INITIAL</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">authors</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="nx">AUTHORS_INITIAL</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 <span class="p">}</span>
 
@@ -1378,7 +1378,7 @@ into detail about&nbsp;it.</p>
     <span class="c1">// ...</span>
 <span class="p">}</span>
 
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">categories</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="nx">CATEGORIES_INITIAL</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="kr">const</span> <span class="nx">categories</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="o">=</span><span class="nx">CATEGORIES_INITIAL</span><span class="p">,</span> <span class="nx">action</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="c1">// ...</span>
 <span class="p">}</span>
 </pre></div>
@@ -1450,7 +1450,7 @@ hideNotification() for 'CLEAR_NOTIFICATION'
 <p>The following two are thunk action creators that are called when either the
 user sorting or the search/filtering parameters of the displayed books are&nbsp;changed:</p>
 <div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kd">function</span> <span class="nx">changeSearchAndLoadBooks</span><span class="p">(</span><span class="nx">search</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">changeSearch</span><span class="p">(</span><span class="nx">search</span><span class="p">))</span>
         <span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="p">{</span>
             <span class="nx">search</span><span class="o">:</span> <span class="nx">formatUrl</span><span class="p">(</span><span class="nx">getState</span><span class="p">().</span><span class="nx">books</span><span class="p">)</span>
@@ -1460,7 +1460,7 @@ user sorting or the search/filtering parameters of the displayed books are&nbsp;
 <span class="p">}</span>
 
 <span class="kr">export</span> <span class="kd">function</span> <span class="nx">toggleSortingAndLoadBooks</span><span class="p">(</span><span class="nx">sorting</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">toggleSorting</span><span class="p">(</span><span class="nx">sorting</span><span class="p">))</span>
         <span class="nx">history</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="p">{</span>
             <span class="nx">search</span><span class="o">:</span> <span class="nx">formatUrl</span><span class="p">(</span><span class="nx">getState</span><span class="p">().</span><span class="nx">books</span><span class="p">)</span>
@@ -1483,7 +1483,7 @@ that checks if either the sorting or the search should exist in th <span class="
 returns the full <span class="caps">URL</span>. This function is contained in the <tt class="docutils literal">util/formatters.s</tt> module.</p>
 <p>The following thunk action creators are used for asynchronous, ajax&nbsp;queries:</p>
 <div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kd">function</span> <span class="nx">loadBooks</span><span class="p">(</span><span class="nx">page</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
         <span class="kd">let</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">getState</span><span class="p">();</span>
         <span class="kd">let</span> <span class="p">{</span> <span class="nx">page</span><span class="p">,</span> <span class="nx">sorting</span><span class="p">,</span> <span class="nx">search</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">books</span>
         <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="sb">`//127.0.0.1:8000/api/books/?format=json&amp;page=</span><span class="si">${</span><span class="nx">page</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
@@ -1494,8 +1494,8 @@ returns the full <span class="caps">URL</span>. This function is contained in th
             <span class="nx">url</span><span class="o">+=</span><span class="sb">`&amp;search=</span><span class="si">${</span><span class="nx">search</span><span class="si">}</span><span class="sb">`</span>
         <span class="p">}</span>
         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadingChanged</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
-        <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">{</span>
-            <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
                 <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showBooksResult</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
                 <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadingChanged</span><span class="p">(</span><span class="kc">false</span><span class="p">));</span>
             <span class="p">},</span> <span class="mi">1000</span><span class="p">);</span>
@@ -1505,7 +1505,7 @@ returns the full <span class="caps">URL</span>. This function is contained in th
 
 
 <span class="kr">export</span> <span class="kd">function</span> <span class="nx">loadBookAction</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
         <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="sb">`//127.0.0.1:8000/api/books/</span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">/?format=json`</span><span class="p">;</span>
         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadingChanged</span><span class="p">(</span><span class="kc">true</span><span class="p">));</span>
         <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
@@ -1530,7 +1530,7 @@ returns the full <span class="caps">URL</span>. This function is contained in th
 <span class="p">}</span>
 
 <span class="kr">export</span> <span class="kd">function</span> <span class="nx">loadSubCategories</span><span class="p">(</span><span class="nx">category</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">getState</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
 
         <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">category</span><span class="p">)</span> <span class="p">{</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showSubCategoriesResult</span><span class="p">([]));</span>
@@ -1538,7 +1538,7 @@ returns the full <span class="caps">URL</span>. This function is contained in th
         <span class="p">}</span>
         <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="sb">`//127.0.0.1:8000/api/subcategories/?format=json&amp;category=</span><span class="si">${</span><span class="nx">category</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
 
-        <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">data</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showSubCategoriesResult</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
         <span class="p">});</span>
     <span class="p">}</span>
@@ -1604,13 +1604,13 @@ is connected with the parent&nbsp;route:</p>
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">=&gt;</span> <span class="p">({</span>
+<span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="p">=&gt;</span> <span class="p">({</span>
     <span class="nx">books</span><span class="o">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">books</span><span class="p">,</span>
     <span class="nx">authors</span><span class="o">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">authors</span><span class="p">,</span>
     <span class="nx">ui</span><span class="o">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">ui</span><span class="p">,</span>
 <span class="p">})</span>
 
-<span class="kr">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="o">=&gt;</span> <span class="nx">bindActionCreators</span><span class="p">({</span>
+<span class="kr">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="p">=&gt;</span> <span class="nx">bindActionCreators</span><span class="p">({</span>
     <span class="nx">loadBooks</span><span class="p">,</span> <span class="nx">loadAuthors</span>
 <span class="p">},</span> <span class="nx">dispatch</span><span class="p">)</span>
 
@@ -1629,8 +1629,8 @@ This method gets an object whose values are action creators and the <tt class="d
 whose values are the dispatch-enabled corresponding action creators. So, in our case
 the returned object would be something&nbsp;like:</p>
 <div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nx">loadBooks</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadBooks</span><span class="p">()),</span>
-    <span class="nx">loadAuthors</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadAuthors</span><span class="p">()),</span>
+    <span class="nx">loadBooks</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadBooks</span><span class="p">()),</span>
+    <span class="nx">loadAuthors</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadAuthors</span><span class="p">()),</span>
 <span class="p">}</span>
 </pre></div>
 <p>This object of course could be created by hand, however <tt class="docutils literal">bindActionCreators</tt> would be really useful if we wanted
@@ -1638,7 +1638,7 @@ to dispatch lots of actions in a component (or if we had seperated our action cr
 we could for example do something like&nbsp;this:</p>
 <div class="highlight"><pre><span></span><span class="kr">import</span> <span class="o">*</span> <span class="nx">as</span> <span class="nx">actions</span> <span class="nx">from</span> <span class="s1">&#39;../actions&#39;</span>
 
-<span class="kr">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="o">=&gt;</span> <span class="nx">bindActionCreators</span><span class="p">(</span><span class="nx">actions</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span>
+<span class="kr">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="p">=&gt;</span> <span class="nx">bindActionCreators</span><span class="p">(</span><span class="nx">actions</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span>
 </pre></div>
 <p>The <tt class="docutils literal">import *</tt> statemenet will create an object named item that will have all the exported actions and then
 <tt class="docutils literal">bindActionCreators</tt> will return an object that dispatches these actions &#8212; passing this <tt class="docutils literal">mapDispatchToProps</tt>
@@ -1661,7 +1661,7 @@ It also defines an internal component and exports a connected version of it, pas
 displayed (<tt class="docutils literal">isActive</tt> will be true if there&#8217;s an actual message) and select the color
 of the background. Finally, it passes this information along with some styling
 to the real <tt class="docutils literal">Notification</tt>  component from <tt class="docutils literal"><span class="pre">react-notification</span></tt>.</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">NotificationContainer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">NotificationContainer</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="p">{</span> <span class="nx">message</span><span class="p">,</span> <span class="nx">notification_type</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">notification</span><span class="p">;</span>
     <span class="kd">let</span> <span class="p">{</span> <span class="nx">onHide</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">props</span><span class="p">;</span>
     <span class="kd">let</span> <span class="nx">isActive</span> <span class="o">=</span> <span class="nx">message</span><span class="o">?</span><span class="kc">true</span><span class="o">:</span><span class="kc">false</span><span class="p">;</span>
@@ -1683,9 +1683,9 @@ to the real <tt class="docutils literal">Notification</tt>  component from <tt c
         <span class="nx">isActive</span><span class="o">=</span><span class="p">{</span><span class="nx">isActive</span><span class="p">}</span>
         <span class="nx">message</span><span class="o">=</span><span class="p">{</span><span class="nx">message</span><span class="o">?</span><span class="nx">message</span><span class="o">:</span><span class="s1">&#39;&#39;</span><span class="p">}</span>
         <span class="nx">dismissAfter</span><span class="o">=</span><span class="p">{</span><span class="mi">5000</span><span class="p">}</span>
-        <span class="nx">onDismiss</span><span class="o">=</span><span class="p">{</span> <span class="p">()</span><span class="o">=&gt;</span><span class="nx">onHide</span><span class="p">()</span> <span class="p">}</span>
+        <span class="nx">onDismiss</span><span class="o">=</span><span class="p">{</span> <span class="p">()=&gt;</span><span class="nx">onHide</span><span class="p">()</span> <span class="p">}</span>
         <span class="nx">action</span><span class="o">=</span><span class="s1">&#39;X&#39;</span>
-        <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span> <span class="p">()</span><span class="o">=&gt;</span><span class="nx">onHide</span><span class="p">()</span> <span class="p">}</span>
+        <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span> <span class="p">()=&gt;</span><span class="nx">onHide</span><span class="p">()</span> <span class="p">}</span>
         <span class="nx">style</span><span class="o">=</span><span class="p">{{</span>
             <span class="nx">bar</span><span class="o">:</span> <span class="p">{</span>
                 <span class="nx">background</span><span class="o">:</span> <span class="nx">color</span><span class="p">,</span>
@@ -1704,12 +1704,12 @@ to the real <tt class="docutils literal">Notification</tt>  component from <tt c
     <span class="o">/&gt;</span>
 <span class="p">}</span>
 
-<span class="kd">let</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">=&gt;</span> <span class="p">({</span>
+<span class="kd">let</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="p">=&gt;</span> <span class="p">({</span>
     <span class="nx">notification</span><span class="o">:</span> <span class="nx">state</span><span class="p">.</span><span class="nx">notification</span>
 <span class="p">})</span>
 
-<span class="kd">let</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="o">=&gt;</span> <span class="p">({</span>
-    <span class="nx">onHide</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kd">let</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="p">=&gt;</span> <span class="p">({</span>
+    <span class="nx">onHide</span><span class="o">:</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">hideNotification</span><span class="p">())</span>
     <span class="p">}</span>
 <span class="p">})</span>
@@ -1757,7 +1757,7 @@ is that these two functions are <em>dual</em>&nbsp;(mirror):</p>
 <div class="section" id="components-loading-js">
 <h4><a class="toc-backref" href="#id21">components/loading.js</a></h4>
 <p>This is a really simple component: If the <tt class="docutils literal">isLoading</tt> parameter is true, display a <tt class="docutils literal">div</tt> with the <tt class="docutils literal">loading</tt> class:</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">isLoading</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">isLoading</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
     <span class="p">{</span><span class="nx">isLoading</span><span class="o">?&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;loading&quot;</span><span class="o">&gt;</span><span class="nx">Loading</span><span class="o">&amp;</span><span class="err">#</span><span class="mi">8230</span><span class="p">;</span><span class="o">&lt;</span><span class="err">/div&gt;:null}</span>
 <span class="o">&lt;</span><span class="err">/div&gt;</span>
 </pre></div>
@@ -1803,11 +1803,11 @@ will be called from inside that functional&nbsp;component.</p>
 columns have been defined: <tt class="docutils literal">id</tt> (which, when clicked will update the book
 that&#8217;s where <tt class="docutils literal">format</tt> is used), <tt class="docutils literal">title</tt>, <tt class="docutils literal">category_name</tt>, <tt class="docutils literal">publish_date</tt>
 and <tt class="docutils literal">author_name</tt>:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">getCols</span> <span class="o">=</span> <span class="nx">sort_method</span> <span class="o">=&gt;</span> <span class="p">[</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">getCols</span> <span class="o">=</span> <span class="nx">sort_method</span> <span class="p">=&gt;</span> <span class="p">[</span>
     <span class="p">{</span>
         <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span>
         <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;ID&#39;</span><span class="p">,</span>
-        <span class="nx">format</span><span class="o">:</span> <span class="nx">x</span><span class="o">=&gt;&lt;</span><span class="nx">Link</span> <span class="nx">to</span><span class="o">=</span><span class="p">{</span><span class="sb">`/book_update/</span><span class="si">${</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">/`</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/Link&gt;,</span>
+        <span class="nx">format</span><span class="o">:</span> <span class="nx">x</span><span class="p">=&gt;</span><span class="o">&lt;</span><span class="nx">Link</span> <span class="nx">to</span><span class="o">=</span><span class="p">{</span><span class="sb">`/book_update/</span><span class="si">${</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">/`</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/Link&gt;,</span>
         <span class="nx">sorting</span><span class="o">:</span> <span class="nx">sort_method</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
     <span class="p">},</span>
     <span class="p">{</span><span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="nx">sorting</span><span class="o">:</span> <span class="nx">sort_method</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)},</span>
@@ -1845,12 +1845,12 @@ the page to change to and reload the books by dispatch <tt class="docutils liter
 a <tt class="docutils literal">changePageAndLoadBooks</tt> thunk action creator that would call these two methods when dispatched
 (similarly to how <tt class="docutils literal">changeSearchAndLoadBooks</tt> and <tt class="docutils literal">toggleSortingAndLoadBooks</tt> have been implemented)
 - I&#8217;m leaving it like this to show all&nbsp;possibilities:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">BookPanel</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">BookPanel</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kr">const</span> <span class="p">{</span> <span class="nx">rows</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">page</span><span class="p">,</span> <span class="nx">sorting</span><span class="p">,</span> <span class="nx">search</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">books</span><span class="p">;</span>
     <span class="kr">const</span> <span class="p">{</span> <span class="nx">loadBooks</span><span class="p">,</span> <span class="nx">changePage</span><span class="p">,</span> <span class="nx">toggleSortingAndLoadBooks</span><span class="p">,</span> <span class="nx">changeSearchAndLoadBooks</span>  <span class="p">}</span> <span class="o">=</span> <span class="nx">props</span><span class="p">;</span>
 
-    <span class="kr">const</span> <span class="nx">onSearchChanged</span> <span class="o">=</span> <span class="nx">query</span> <span class="o">=&gt;</span> <span class="nx">changeSearchAndLoadBooks</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
-    <span class="kr">const</span> <span class="nx">sort_method</span> <span class="o">=</span> <span class="nx">key</span> <span class="o">=&gt;</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">toggleSortingAndLoadBooks</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
+    <span class="kr">const</span> <span class="nx">onSearchChanged</span> <span class="o">=</span> <span class="nx">query</span> <span class="p">=&gt;</span> <span class="nx">changeSearchAndLoadBooks</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span>
+    <span class="kr">const</span> <span class="nx">sort_method</span> <span class="o">=</span> <span class="nx">key</span> <span class="p">=&gt;</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="nx">toggleSortingAndLoadBooks</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span>
     <span class="kr">const</span> <span class="nx">cols</span> <span class="o">=</span> <span class="nx">getCols</span><span class="p">(</span><span class="nx">sort_method</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
@@ -1861,21 +1861,21 @@ a <tt class="docutils literal">changePageAndLoadBooks</tt> thunk action creator 
                 <span class="o">&lt;</span><span class="nx">Table</span> <span class="nx">sorting</span><span class="o">=</span><span class="p">{</span><span class="nx">sorting</span><span class="p">}</span> <span class="nx">cols</span><span class="o">=</span><span class="p">{</span><span class="nx">cols</span><span class="p">}</span> <span class="nx">rows</span><span class="o">=</span><span class="p">{</span><span class="nx">rows</span><span class="p">}</span> <span class="o">/&gt;</span>
             <span class="o">&lt;</span><span class="err">/div&gt;</span>
         <span class="o">&lt;</span><span class="err">/div&gt;</span>
-        <span class="o">&lt;</span><span class="nx">PagingPanel</span> <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">count</span><span class="p">}</span> <span class="nx">page</span><span class="o">=</span><span class="p">{</span><span class="nx">page</span><span class="p">}</span> <span class="nx">onNextPage</span><span class="o">=</span><span class="p">{()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="o">&lt;</span><span class="nx">PagingPanel</span> <span class="nx">count</span><span class="o">=</span><span class="p">{</span><span class="nx">count</span><span class="p">}</span> <span class="nx">page</span><span class="o">=</span><span class="p">{</span><span class="nx">page</span><span class="p">}</span> <span class="nx">onNextPage</span><span class="o">=</span><span class="p">{()</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">changePage</span><span class="p">(</span><span class="nx">page</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
             <span class="nx">loadBooks</span><span class="p">()</span>
-        <span class="p">}}</span> <span class="nx">onPreviousPage</span><span class="o">=</span><span class="p">{</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="p">}}</span> <span class="nx">onPreviousPage</span><span class="o">=</span><span class="p">{</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">changePage</span><span class="p">(</span><span class="nx">page</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
             <span class="nx">loadBooks</span><span class="p">()</span>
         <span class="p">}}</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">}</span>
 
-<span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="o">=&gt;</span> <span class="p">({</span>
+<span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="nx">state</span> <span class="p">=&gt;</span> <span class="p">({</span>
     <span class="nx">books</span><span class="o">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">books</span><span class="p">,</span>
 <span class="p">})</span>
 
-<span class="kr">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="o">=&gt;</span> <span class="nx">bindActionCreators</span><span class="p">({</span>
+<span class="kr">const</span> <span class="nx">mapDispatchToProps</span> <span class="o">=</span> <span class="nx">dispatch</span> <span class="p">=&gt;</span> <span class="nx">bindActionCreators</span><span class="p">({</span>
     <span class="nx">loadBooks</span><span class="p">,</span> <span class="nx">changePage</span><span class="p">,</span> <span class="nx">toggleSortingAndLoadBooks</span><span class="p">,</span> <span class="nx">changeSearchAndLoadBooks</span>
 <span class="p">},</span> <span class="nx">dispatch</span><span class="p">)</span>
 
@@ -1932,7 +1932,7 @@ sure that the provided <tt class="docutils literal">onSearchChanged</tt> will no
         <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span>
             <span class="nx">search</span><span class="o">:</span> <span class="nx">query</span>
         <span class="p">});</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">promise</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">onSearchChanged</span><span class="p">(</span><span class="nx">query</span><span class="p">),</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">promise</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">onSearchChanged</span><span class="p">(</span><span class="nx">query</span><span class="p">),</span> <span class="mi">400</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="nx">onClearSearch</span><span class="p">()</span> <span class="p">{</span>
@@ -1973,7 +1973,7 @@ is the column to be formated) and a sorting parameter (which is the current tabl
 sorting) and returns the label with a <tt class="docutils literal">'+'</tt> in front of it if the sorting is ascending
 by this column or a <tt class="docutils literal"><span class="pre">'-'</span></tt> if the sorting is descending by this column or just the
 label if this column is not used for&nbsp;sorting:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">formatHeader</span> <span class="o">=</span> <span class="p">({</span><span class="nx">key</span><span class="p">,</span> <span class="nx">label</span><span class="p">},</span> <span class="nx">sorting</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="nx">sorting</span><span class="o">==</span><span class="nx">key</span><span class="p">)</span><span class="o">?</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="o">+</span><span class="nx">label</span><span class="p">)</span><span class="o">:</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">formatHeader</span> <span class="o">=</span> <span class="p">({</span><span class="nx">key</span><span class="p">,</span> <span class="nx">label</span><span class="p">},</span> <span class="nx">sorting</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">(</span><span class="nx">sorting</span><span class="o">==</span><span class="nx">key</span><span class="p">)</span><span class="o">?</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="o">+</span><span class="nx">label</span><span class="p">)</span><span class="o">:</span><span class="p">(</span>
     <span class="p">(</span><span class="nx">sorting</span><span class="o">==</span><span class="s1">&#39;-&#39;</span><span class="o">+</span><span class="nx">key</span><span class="p">)</span><span class="o">?</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">+</span><span class="nx">label</span><span class="p">)</span><span class="o">:</span><span class="nx">label</span>
 <span class="p">)</span>
 </pre></div>
@@ -1993,9 +1993,9 @@ displays the column&nbsp;header.</p>
 which, for each row maps <tt class="docutils literal">cols</tt> to get the individual values for this row and column.
 So, for the rows a list of <tt class="docutils literal">&lt;tr&gt;</tt> elements each one including the correct
 <tt class="docutils literal">&lt;td&gt;</tt> elements will be&nbsp;created:</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="kr">const</span> <span class="nx">headers</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">cols</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">col</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">th</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">col</span><span class="p">.</span><span class="nx">key</span><span class="p">}</span><span class="o">&gt;</span>
-        <span class="p">{</span><span class="nx">col</span><span class="p">.</span><span class="nx">sorting</span><span class="o">?&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s1">&#39;#&#39;</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">headers</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">cols</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">col</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">th</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">col</span><span class="p">.</span><span class="nx">key</span><span class="p">}</span><span class="o">&gt;</span>
+        <span class="p">{</span><span class="nx">col</span><span class="p">.</span><span class="nx">sorting</span><span class="o">?&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s1">&#39;#&#39;</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
             <span class="nx">col</span><span class="p">.</span><span class="nx">sorting</span><span class="p">()</span>
         <span class="p">}}</span><span class="o">&gt;</span>
@@ -2003,9 +2003,9 @@ So, for the rows a list of <tt class="docutils literal">&lt;tr&gt;</tt> elements
         <span class="o">&lt;</span><span class="err">/a&gt;:col.label</span>
         <span class="p">}</span>
     <span class="o">&lt;</span><span class="err">/th&gt;)</span>
-    <span class="kr">const</span> <span class="nx">rows</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">row</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">tr</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">row</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&gt;</span>
+    <span class="kr">const</span> <span class="nx">rows</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">row</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">tr</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">row</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&gt;</span>
         <span class="p">{</span>
-            <span class="nx">props</span><span class="p">.</span><span class="nx">cols</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">col</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">td</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">col</span><span class="p">.</span><span class="nx">key</span><span class="p">}</span><span class="o">&gt;</span>
+            <span class="nx">props</span><span class="p">.</span><span class="nx">cols</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">col</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">td</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">col</span><span class="p">.</span><span class="nx">key</span><span class="p">}</span><span class="o">&gt;</span>
                 <span class="p">{(</span><span class="nx">col</span><span class="p">.</span><span class="nx">format</span><span class="o">?</span><span class="nx">col</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="nx">row</span><span class="p">)</span><span class="o">:</span><span class="nx">row</span><span class="p">[</span><span class="nx">col</span><span class="p">.</span><span class="nx">key</span><span class="p">])}</span>
             <span class="o">&lt;</span><span class="err">/td&gt;)</span>
         <span class="p">}</span>
@@ -2043,16 +2043,16 @@ loadBooks actions as we&#8217;ve already seen in <tt class="docutils literal">Bo
 here is that the next and previous page buttons will only be rendered if
 we are not in the first or last page (so if there&#8217;s only one page you won&#8217;t
 see any&nbsp;buttons).</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nx">page_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">onNextPage</span><span class="p">,</span> <span class="nx">onPreviousPage</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nx">page_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">onNextPage</span><span class="p">,</span> <span class="nx">onPreviousPage</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kr">const</span> <span class="nx">total_pages</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">count</span> <span class="o">/</span> <span class="nx">page_size</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="o">&gt;</span>
-        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="mi">1</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="mi">1</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
             <span class="nx">onPreviousPage</span><span class="p">();</span>
         <span class="p">}}</span><span class="o">&gt;&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">&lt;</span><span class="err">/button&gt;}</span>
         <span class="o">&amp;</span><span class="nx">nbsp</span><span class="p">;</span> <span class="nx">Page</span> <span class="p">{</span><span class="nx">page</span><span class="p">}</span> <span class="k">of</span> <span class="p">{</span><span class="nx">total_pages</span><span class="p">}</span> <span class="o">&amp;</span><span class="nx">nbsp</span><span class="p">;</span>
-        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="nx">total_pages</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="nx">total_pages</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
             <span class="nx">onNextPage</span><span class="p">();</span>
         <span class="p">}}</span><span class="o">&gt;&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="o">&lt;</span><span class="err">/button&gt;}</span>
@@ -2080,11 +2080,11 @@ instead of the complex value. Something like&nbsp;this</p>
 <p>Having such a concept in <span class="caps">ES6</span> would be ideal for our case! I am not sure if something
 like <tt class="docutils literal">with</tt> actually exists, however we can really easy emulate it with a function
 closure, something like&nbsp;this:</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nx">page_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">onNextPage</span><span class="p">,</span> <span class="nx">onPreviousPage</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">(</span>
-    <span class="nx">total_pages</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="o">&gt;</span>
-        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="mi">1</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}}</span><span class="o">&gt;&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">&lt;</span><span class="err">/button&gt;}</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nx">page_size</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">onNextPage</span><span class="p">,</span> <span class="nx">onPreviousPage</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="p">(</span>
+    <span class="nx">total_pages</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="o">&gt;</span>
+        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="mi">1</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}}</span><span class="o">&gt;&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">&lt;</span><span class="err">/button&gt;}</span>
         <span class="o">&amp;</span><span class="nx">nbsp</span><span class="p">;</span> <span class="nx">Page</span> <span class="p">{</span><span class="nx">page</span><span class="p">}</span> <span class="k">of</span> <span class="p">{</span><span class="nx">total_pages</span><span class="p">}</span> <span class="o">&amp;</span><span class="nx">nbsp</span><span class="p">;</span>
-        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="nx">total_pages</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}}</span><span class="o">&gt;&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="o">&lt;</span><span class="err">/button&gt;}</span>
+        <span class="p">{</span><span class="nx">page</span><span class="o">==</span><span class="nx">total_pages</span><span class="o">?</span><span class="kc">null</span><span class="o">:&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">e</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="cm">/* ... */</span> <span class="p">}}</span><span class="o">&gt;&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="o">&lt;</span><span class="err">/button&gt;}</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="p">)(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">ceil</span><span class="p">(</span><span class="nx">count</span> <span class="o">/</span> <span class="nx">page_size</span><span class="p">))</span>
 </pre></div>
@@ -2113,7 +2113,7 @@ should have a&nbsp;value.</p>
 <p>The <tt class="docutils literal">BookForm</tt> is a connected component (because it needs access to the state slice and dispatch and
 is rendered through a route), however because it is also a redux-form, a special
 method (<tt class="docutils literal">reduxForm</tt>) is used to connect the component and pass the form-related props to the&nbsp;component:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">props</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">initial</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="kr">const</span> <span class="p">{</span> <span class="nx">book</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">books</span>
 
@@ -2159,7 +2159,7 @@ object should&nbsp;have</p>
 <p>The validate function gets an object with the field names with their corresponding values as attributes and
 should return another object with the field names that have an error and the error message. In our case,
 we want the <tt class="docutils literal">title</tt> to be required and the date to be valid (if exists), so the <tt class="docutils literal">validate</tt> is:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">validate</span> <span class="o">=</span> <span class="nx">values</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">validate</span> <span class="o">=</span> <span class="nx">values</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kr">const</span> <span class="nx">errors</span> <span class="o">=</span> <span class="p">{};</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">values</span><span class="p">.</span><span class="nx">title</span><span class="p">)</span> <span class="p">{</span>
         <span class="nx">errors</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="s1">&#39;Required&#39;</span><span class="p">;</span>
@@ -2225,7 +2225,7 @@ when the <tt class="docutils literal">componentDidMount</tt> method is&nbsp;call
             <span class="o">&lt;</span><span class="err">/div&gt;</span>
             <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s1">&#39;row&#39;</span><span class="o">&gt;</span>
                 <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s1">&#39;six columns&#39;</span><span class="o">&gt;</span>
-                    <span class="o">&lt;</span><span class="nx">Select</span> <span class="nx">label</span><span class="o">=</span><span class="s1">&#39;Category&#39;</span> <span class="nx">field</span><span class="o">=</span><span class="p">{</span><span class="nx">category</span><span class="p">}</span> <span class="nx">options</span><span class="o">=</span><span class="p">{</span><span class="nx">categories</span><span class="p">}</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span> <span class="nx">event</span> <span class="o">=&gt;</span> <span class="p">{</span>
+                    <span class="o">&lt;</span><span class="nx">Select</span> <span class="nx">label</span><span class="o">=</span><span class="s1">&#39;Category&#39;</span> <span class="nx">field</span><span class="o">=</span><span class="p">{</span><span class="nx">category</span><span class="p">}</span> <span class="nx">options</span><span class="o">=</span><span class="p">{</span><span class="nx">categories</span><span class="p">}</span> <span class="nx">onChange</span><span class="o">=</span><span class="p">{</span> <span class="nx">event</span> <span class="p">=&gt;</span> <span class="p">{</span>
                         <span class="nx">category</span><span class="p">.</span><span class="nx">onChange</span><span class="p">(</span><span class="nx">event</span><span class="p">);</span>
                         <span class="nx">dispatch</span><span class="p">(</span><span class="nx">loadSubCategories</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">))</span>
                     <span class="p">}}</span><span class="o">/&gt;</span>
@@ -2240,7 +2240,7 @@ when the <tt class="docutils literal">componentDidMount</tt> method is&nbsp;call
                 <span class="o">&lt;</span><span class="err">/div&gt;</span>
                 <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s1">&#39;six columns&#39;</span><span class="o">&gt;</span>
                     <span class="o">&lt;</span><span class="nx">Select</span> <span class="nx">label</span><span class="o">=</span><span class="s1">&#39;Author&#39;</span> <span class="nx">field</span><span class="o">=</span><span class="p">{</span><span class="nx">author</span><span class="p">}</span> <span class="nx">options</span><span class="o">=</span><span class="p">{</span>
-                        <span class="nx">authors</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">a</span> <span class="o">=&gt;</span> <span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">a</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="sb">`</span><span class="si">${</span><span class="nx">a</span><span class="p">.</span><span class="nx">first_name</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">a</span><span class="p">.</span><span class="nx">last_name</span><span class="si">}</span><span class="sb">`</span><span class="p">}))</span>
+                        <span class="nx">authors</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">a</span> <span class="p">=&gt;</span> <span class="p">({</span><span class="s1">&#39;id&#39;</span><span class="o">:</span> <span class="nx">a</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="sb">`</span><span class="si">${</span><span class="nx">a</span><span class="p">.</span><span class="nx">first_name</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">a</span><span class="p">.</span><span class="nx">last_name</span><span class="si">}</span><span class="sb">`</span><span class="p">}))</span>
                     <span class="p">}</span> <span class="o">/&gt;</span>
                 <span class="o">&lt;</span><span class="err">/div&gt;</span>
             <span class="o">&lt;</span><span class="err">/div&gt;</span>
@@ -2304,7 +2304,7 @@ is used to create a book) to the submit function, that&#8217;s why I am assignin
 will return a new function with the <tt class="docutils literal">id</tt> as its first argument. The <tt class="docutils literal">handleSubmit</tt> also
 passes the <tt class="docutils literal">values</tt> of the form as an object along with the <tt class="docutils literal">dispatch</tt> function, so
 <tt class="docutils literal">submit</tt> is a function with three&nbsp;arguments:</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">submit</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">values</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">submit</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">values</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;//127.0.0.1:8000/api/books/&#39;</span>
     <span class="kd">let</span> <span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;POST&#39;</span>
 
@@ -2319,7 +2319,7 @@ passes the <tt class="docutils literal">values</tt> of the form as an object alo
         <span class="nx">type</span><span class="p">,</span>
         <span class="nx">url</span><span class="p">,</span>
         <span class="nx">data</span><span class="o">:</span> <span class="nx">values</span><span class="p">,</span>
-        <span class="nx">success</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">submittingChanged</span><span class="p">(</span><span class="kc">false</span><span class="p">))</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showSuccessNotification</span><span class="p">(</span><span class="s1">&#39;Success!&#39;</span><span class="p">))</span>
             <span class="k">if</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
@@ -2330,7 +2330,7 @@ passes the <tt class="docutils literal">values</tt> of the form as an object alo
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">routeActions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">));</span>
 
         <span class="p">},</span>
-        <span class="nx">error</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">error</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">submittingChanged</span><span class="p">(</span><span class="kc">false</span><span class="p">))</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showErrorNotification</span><span class="p">(</span><span class="sb">`Error (</span><span class="si">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">status</span><span class="si">}</span><span class="sb"> - </span><span class="si">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">statusText</span><span class="si">}</span><span class="sb">) while saving: </span><span class="si">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">responseText</span><span class="si">}</span><span class="sb">`</span> <span class="p">))</span>
@@ -2355,18 +2355,18 @@ with <tt class="docutils literal">dispatch</tt> because we don&#8217;t call it t
 (since when deleting no validation is actually needed)
 but directly as the <tt class="docutils literal">onclick</tt> handler of the delete button
 (so we must pass dispatch&nbsp;manually):</p>
-<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">del</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">del</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">dispatch</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kr">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="sb">`//127.0.0.1:8000/api/books/</span><span class="si">${</span><span class="nx">id</span><span class="si">}</span><span class="sb">/`</span>
     <span class="kr">const</span> <span class="nx">type</span><span class="o">=</span><span class="s1">&#39;DELETE&#39;</span><span class="p">;</span>
     <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span>
         <span class="nx">type</span><span class="p">,</span>
         <span class="nx">url</span><span class="p">,</span>
-        <span class="nx">success</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showSuccessNotification</span><span class="p">(</span><span class="s1">&#39;Success!&#39;</span><span class="p">))</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">deleteBookResult</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">routeActions</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">));</span>
         <span class="p">},</span>
-        <span class="nx">error</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">error</span><span class="o">:</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="nx">dispatch</span><span class="p">(</span><span class="nx">showErrorNotification</span><span class="p">(</span><span class="sb">`Error (</span><span class="si">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">status</span><span class="si">}</span><span class="sb"> - </span><span class="si">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">statusText</span><span class="si">}</span><span class="sb">) while saving: </span><span class="si">${</span><span class="nx">d</span><span class="p">.</span><span class="nx">responseText</span><span class="si">}</span><span class="sb">`</span> <span class="p">))</span>
         <span class="p">}</span>
     <span class="p">});</span>
@@ -2404,7 +2404,7 @@ input with a <tt class="docutils literal">&lt;label&gt;</tt> and an optional err
 The error message will only be rendered if the field
 has been touched (i.e the user has changed the field or
 the form has been submitted) and there&#8217;s an actual&nbsp;error:</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">field</span><span class="p">,</span> <span class="nx">label</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">field</span><span class="p">,</span> <span class="nx">label</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="nx">label</span> <span class="nx">forHtml</span><span class="o">=</span><span class="p">{</span><span class="nx">field</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">label</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/label&gt;</span>
     <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s1">&#39;text&#39;</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;u-full-width&quot;</span> <span class="p">{...</span><span class="nx">field</span><span class="p">}</span> <span class="o">/&gt;</span>
     <span class="p">{</span><span class="nx">field</span><span class="p">.</span><span class="nx">touched</span> <span class="o">&amp;&amp;</span> <span class="nx">field</span><span class="p">.</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=</span><span class="p">{{</span><span class="nx">color</span><span class="o">:</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="nx">backgroundColor</span><span class="o">:</span> <span class="nx">danger</span><span class="p">}}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">field</span><span class="p">.</span><span class="nx">error</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/div&gt;}</span>
@@ -2424,11 +2424,11 @@ It should receive a redux-form field, a label and an array
 of objects with <tt class="docutils literal">id</tt> and <tt class="docutils literal">name</tt> attributes that will be
 rendered as the options. The <tt class="docutils literal">label</tt> and <tt class="docutils literal">error` will be
 rendered similarly to ``Input</tt>:</p>
-<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">field</span><span class="p">,</span> <span class="nx">label</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="k">default</span> <span class="p">({</span><span class="nx">field</span><span class="p">,</span> <span class="nx">label</span><span class="p">,</span> <span class="nx">options</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="nx">label</span> <span class="nx">forHtml</span><span class="o">=</span><span class="p">{</span><span class="nx">field</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">label</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/label&gt;</span>
     <span class="o">&lt;</span><span class="nx">select</span> <span class="nx">type</span><span class="o">=</span><span class="s1">&#39;text&#39;</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;u-full-width&quot;</span> <span class="p">{...</span><span class="nx">field</span><span class="p">}</span> <span class="p">{...</span><span class="nx">props</span><span class="p">}</span> <span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="nx">option</span><span class="o">&gt;&lt;</span><span class="err">/option&gt;</span>
-        <span class="p">{</span><span class="nx">options</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">c</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">option</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span> <span class="o">&gt;</span><span class="p">{</span><span class="nx">c</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/option&gt;)}</span>
+        <span class="p">{</span><span class="nx">options</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">c</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">option</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">c</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span> <span class="o">&gt;</span><span class="p">{</span><span class="nx">c</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/option&gt;)}</span>
     <span class="o">&lt;</span><span class="err">/select&gt;</span>
     <span class="p">{</span><span class="nx">field</span><span class="p">.</span><span class="nx">touched</span> <span class="o">&amp;&amp;</span> <span class="nx">field</span><span class="p">.</span><span class="nx">error</span> <span class="o">&amp;&amp;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">style</span><span class="o">=</span><span class="p">{{</span><span class="nx">color</span><span class="o">:</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="nx">backgroundColor</span><span class="o">:</span> <span class="nx">danger</span><span class="p">}}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">field</span><span class="p">.</span><span class="nx">error</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/div&gt;}</span>
 <span class="o">&lt;</span><span class="err">/div&gt;</span>
@@ -2527,19 +2527,19 @@ your own&nbsp;components.</p>
 <p>The <tt class="docutils literal">AuthorPanel</tt> uses <tt class="docutils literal">Table</tt> to list the authors. Since I haven&#8217;t used
 pagination or sorting here the component is very&nbsp;simple:</p>
 <div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">cols</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">format</span><span class="o">:</span> <span class="nx">x</span><span class="o">=&gt;&lt;</span><span class="nx">Link</span> <span class="nx">to</span><span class="o">=</span><span class="p">{</span><span class="sb">`/author_update/</span><span class="si">${</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">/`</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/Link&gt;},</span>
+    <span class="p">{</span><span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="nx">format</span><span class="o">:</span> <span class="nx">x</span><span class="p">=&gt;</span><span class="o">&lt;</span><span class="nx">Link</span> <span class="nx">to</span><span class="o">=</span><span class="p">{</span><span class="sb">`/author_update/</span><span class="si">${</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">/`</span><span class="p">}</span><span class="o">&gt;</span><span class="p">{</span><span class="nx">x</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/Link&gt;},</span>
     <span class="p">{</span><span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;last_name&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Last name&#39;</span><span class="p">,},</span>
     <span class="p">{</span><span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;First name&#39;</span><span class="p">,},</span>
 <span class="p">]</span>
 
-<span class="kr">const</span> <span class="nx">AuthorPanel</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="o">&gt;</span>
+<span class="kr">const</span> <span class="nx">AuthorPanel</span> <span class="o">=</span> <span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;row&quot;</span><span class="o">&gt;</span>
     <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="s2">&quot;twelve columns&quot;</span><span class="o">&gt;</span>
         <span class="o">&lt;</span><span class="nx">h3</span><span class="o">&gt;</span><span class="nx">Author</span> <span class="nx">list</span> <span class="o">&lt;</span><span class="nx">Link</span> <span class="nx">className</span><span class="o">=</span><span class="s1">&#39;button button-primary&#39;</span> <span class="nx">style</span><span class="o">=</span><span class="p">{{</span><span class="nx">fontSize</span><span class="o">:</span><span class="s1">&#39;1em&#39;</span><span class="p">}}</span> <span class="nx">to</span><span class="o">=</span><span class="s2">&quot;/author_create/&quot;</span><span class="o">&gt;+&lt;</span><span class="err">/Link&gt;&lt;/h3&gt;</span>
         <span class="o">&lt;</span><span class="nx">Table</span> <span class="nx">cols</span><span class="o">=</span><span class="p">{</span><span class="nx">cols</span><span class="p">}</span> <span class="nx">rows</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">authors</span><span class="p">.</span><span class="nx">rows</span><span class="p">}</span> <span class="o">/&gt;</span>
     <span class="o">&lt;</span><span class="err">/div&gt;</span>
 <span class="o">&lt;</span><span class="err">/div&gt;</span>
 
-<span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">({</span>
+<span class="kr">const</span> <span class="nx">mapStateToProps</span> <span class="o">=</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">({</span>
     <span class="nx">authors</span><span class="o">:</span><span class="nx">state</span><span class="p">.</span><span class="nx">authors</span><span class="p">,</span>
 <span class="p">})</span>
 </pre></div>
@@ -2567,12 +2567,12 @@ authors have been updated along with a&nbsp;notification.</p>
 <div class="highlight"><pre><span></span><span class="kr">import</span> <span class="nx">store</span> <span class="nx">from</span> <span class="s1">&#39;./store&#39;</span>
 <span class="kr">import</span> <span class="p">{</span><span class="nx">loadAuthors</span><span class="p">,</span> <span class="nx">showSuccessNotification</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./actions&#39;</span><span class="p">;</span>
 
-<span class="kr">export</span> <span class="k">default</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">export</span> <span class="k">default</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Starting scheduler&quot;</span><span class="p">)</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">setInterval</span><span class="p">(</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nb">window</span><span class="p">.</span><span class="nx">setInterval</span><span class="p">(</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
 
         <span class="kd">let</span> <span class="nx">url</span> <span class="o">=</span> <span class="s1">&#39;http://127.0.0.1:8000/api/authors/get_author_number/&#39;</span><span class="p">;</span>
-        <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">realAuthorNumber</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">realAuthorNumber</span> <span class="p">=&gt;</span> <span class="p">{</span>
             <span class="kd">let</span> <span class="nx">authorNumber</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">authors</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
             <span class="k">if</span><span class="p">(</span><span class="nx">authorNumber</span><span class="o">!=</span><span class="nx">realAuthorNumber</span><span class="p">)</span> <span class="p">{</span>
                 <span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="nx">showSuccessNotification</span><span class="p">(</span><span class="s2">&quot;Authors have changed - reloading ...&quot;</span><span class="p">));</span>
@@ -2726,7 +2726,7 @@ using an <tt class="docutils literal">AjaxCell</tt> function that should return 
 <h2><a class="toc-backref" href="#id4">AjaxCell: Non working version&nbsp;1</a></h2>
 <p>A first sketch of an <tt class="docutils literal">`AjaxCell</tt> component could be something like&nbsp;this:</p>
 <div class="highlight"><pre><span></span><span class="c1">// Careful - not working</span>
-<span class="kr">const</span> <span class="nx">AjaxCell1</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">AjaxCell1</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="kd">let</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">rowIndex</span><span class="p">;</span>
     <span class="k">if</span><span class="p">(</span><span class="nx">rowIndex</span><span class="o">&gt;=</span><span class="nx">pageSize</span><span class="p">)</span> <span class="p">{</span>
@@ -2754,7 +2754,7 @@ fetch that page if it is not inside the <tt class="docutils literal">cache</tt> 
 the correct&nbsp;value:</p>
 <div class="highlight"><pre><span></span><span class="c1">// Careful - not working correctly</span>
 <span class="kr">const</span> <span class="nx">cache</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="kr">const</span> <span class="nx">AjaxCell2</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="nx">forceUpdate</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">AjaxCell2</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="nx">forceUpdate</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="kd">let</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">rowIndex</span><span class="p">;</span>
     <span class="k">if</span><span class="p">(</span><span class="nx">rowIndex</span><span class="o">&gt;=</span><span class="nx">pageSize</span><span class="p">)</span> <span class="p">{</span>
@@ -2787,7 +2787,7 @@ and <tt class="docutils literal">fetch</tt> will be called only when this flag i
 <div class="highlight"><pre><span></span><span class="c1">// Not ready yet</span>
 <span class="kr">const</span> <span class="nx">cache</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="kd">let</span> <span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-<span class="kr">const</span> <span class="nx">AjaxCell2</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">AjaxCell2</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="kd">let</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">rowIndex</span><span class="p">;</span>
     <span class="k">if</span><span class="p">(</span><span class="nx">rowIndex</span><span class="o">&gt;=</span><span class="nx">pageSize</span><span class="p">)</span> <span class="p">{</span>
@@ -2821,7 +2821,7 @@ cell and will contain the stale placeholder (<tt class="docutils literal"><span 
 when each fetch is finished &#8212; this should be done by a callback that will be passed to the <tt class="docutils literal">AjaxCell</tt>, like&nbsp;this:</p>
 <div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">cache</span> <span class="o">=</span> <span class="p">{};</span>
 <span class="kd">let</span> <span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-<span class="kr">const</span> <span class="nx">AjaxCell</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="nx">forceUpdate</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">AjaxCell</span> <span class="o">=</span> <span class="p">({</span><span class="nx">rowIndex</span><span class="p">,</span> <span class="nx">col</span><span class="p">,</span> <span class="nx">forceUpdate</span><span class="p">,</span> <span class="p">...</span><span class="nx">props</span><span class="p">})</span> <span class="p">=&gt;</span> <span class="p">{</span>
     <span class="kd">let</span> <span class="nx">page</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
     <span class="kd">let</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">rowIndex</span><span class="p">;</span>
     <span class="k">if</span><span class="p">(</span><span class="nx">rowIndex</span><span class="o">&gt;=</span><span class="nx">pageSize</span><span class="p">)</span> <span class="p">{</span>
@@ -2897,7 +2897,7 @@ change fetch like&nbsp;this</p>
 <div class="highlight"><pre><span></span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;http://swapi.co/api/people/?format=json&amp;page=&#39;</span><span class="o">+</span><span class="nx">page</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
     <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
 <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">setTimeout</span><span class="p">(</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
         <span class="nx">cache</span><span class="p">[</span><span class="nx">page</span><span class="p">]</span> <span class="o">=</span> <span class="nx">j</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">];</span>
         <span class="nx">loading</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
         <span class="nx">forceUpdate</span><span class="p">();</span>
@@ -2997,7 +2997,7 @@ people familiar with drawing APIs) for your <span class="caps">PDF</span> page. 
 <span class="kn">import</span> <span class="nn">reportlab.rl_config</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">reportlab</span><span class="o">.</span><span class="n">rl_config</span><span class="o">.</span><span class="n">warnOnMissingFontGlyphs</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">Canvas</span><span class="p">(</span><span class="s2">&quot;./hello1.pdf&quot;</span><span class="p">,)</span>
     <span class="n">c</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;Hello World&quot;</span><span class="p">)</span>
@@ -3021,13 +3021,13 @@ your project and crate a file named testreportlab2.py with the following (I am u
 <span class="kn">from</span> <span class="nn">reportlab.pdfbase.ttfonts</span> <span class="kn">import</span> <span class="n">TTFont</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">canvas</span><span class="o">.</span><span class="n">Canvas</span><span class="p">(</span><span class="s2">&quot;./hello2.pdf&quot;</span><span class="p">,)</span>
     <span class="n">reportlab</span><span class="o">.</span><span class="n">rl_config</span><span class="o">.</span><span class="n">warnOnMissingFontGlyphs</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">pdfmetrics</span><span class="o">.</span><span class="n">registerFont</span><span class="p">(</span><span class="n">TTFont</span><span class="p">(</span><span class="s1">&#39;DejaVuSans&#39;</span><span class="p">,</span> <span class="s1">&#39;DejaVuSans.ttf&#39;</span><span class="p">))</span>
 
     <span class="n">c</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="s1">&#39;DejaVuSans&#39;</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
-    <span class="n">c</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">u&quot;Καλημέρα ελλάδα.&quot;</span><span class="p">)</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">drawString</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Καλημέρα ελλάδα.&quot;</span><span class="p">)</span>
 
     <span class="n">c</span><span class="o">.</span><span class="n">showPage</span><span class="p">()</span>
     <span class="n">c</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -3115,13 +3115,13 @@ a file named <tt class="docutils literal">testxhtml2pdf2.html</tt> with the foll
     <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">http-equiv</span><span class="o">=</span><span class="s">&quot;Content-Type&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;text/html; charset=utf-8&quot;</span> <span class="p">/&gt;</span>
 
     <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
-        <span class="k">@font-face</span> <span class="p">{</span>
+        <span class="p">@</span><span class="k">font-face</span> <span class="p">{</span>
             <span class="nt">font-family</span><span class="o">:</span> <span class="nt">DejaVuSans</span><span class="o">;</span>
             <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="s2">&quot;c:/progr/py/django-pdf-guide/django_pdf_guide/DejaVuSans.ttf&quot;</span><span class="o">);</span>
         <span class="p">}</span>
 
         <span class="nt">body</span> <span class="p">{</span>
-            <span class="nb">font-family</span><span class="o">:</span> <span class="n">DejaVuSans</span><span class="p">;</span>
+            <span class="k">font-family</span><span class="p">:</span> <span class="n">DejaVuSans</span><span class="p">;</span>
         <span class="p">}</span>
     <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
@@ -3159,7 +3159,7 @@ content and back page) to the resulting <span class="caps">PDF</span>.</p>
 <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">PyPDF2</span> <span class="kn">import</span> <span class="n">PdfFileMerger</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">pdfs</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">pdfs</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">pdfs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -3331,24 +3331,24 @@ configure your <tt class="docutils literal">STATIC_ROOT</tt> and <tt class="docu
 and <tt class="docutils literal">STATIC_URL = '/static/'</tt>.</p>
 <p>Then, add a template-css file for your fonts in one of your templates directories. I am naming the
 file <tt class="docutils literal">pdfstylefonts.css</tt> and I&#8217;ve put it to <tt class="docutils literal">books/templates</tt>:</p>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="o">%</span> <span class="n">load</span> <span class="nb">static</span> <span class="o">%</span><span class="p">}</span>
-<span class="k">@font-face</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="err">%</span> <span class="err">load</span> <span class="err">static</span> <span class="err">%</span><span class="p">}</span>
+<span class="p">@</span><span class="k">font-face</span> <span class="p">{</span>
     <span class="nt">font-family</span><span class="o">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="o">;</span>
-    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="o">%</span> <span class="nb">static</span> <span class="s2">&quot;fonts/calibri.ttf&quot;</span> <span class="o">%</span><span class="p">}</span><span class="o">);</span>
+    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="err">%</span> <span class="err">static</span> <span class="err">&quot;fonts/calibri.ttf&quot;</span> <span class="err">%</span><span class="p">}</span><span class="o">);</span>
 <span class="p">}</span>
-<span class="k">@font-face</span> <span class="p">{</span>
+<span class="p">@</span><span class="k">font-face</span> <span class="p">{</span>
     <span class="nt">font-family</span><span class="o">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="o">;</span>
-    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="o">%</span> <span class="nb">static</span> <span class="s2">&quot;fonts/calibrib.ttf&quot;</span> <span class="o">%</span><span class="p">}</span><span class="o">);</span>
+    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="err">%</span> <span class="err">static</span> <span class="err">&quot;fonts/calibrib.ttf&quot;</span> <span class="err">%</span><span class="p">}</span><span class="o">);</span>
     <span class="nt">font-weight</span><span class="o">:</span> <span class="nt">bold</span><span class="o">;</span>
 <span class="p">}</span>
-<span class="k">@font-face</span> <span class="p">{</span>
+<span class="p">@</span><span class="k">font-face</span> <span class="p">{</span>
     <span class="nt">font-family</span><span class="o">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="o">;</span>
-    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="o">%</span> <span class="nb">static</span> <span class="s2">&quot;fonts/calibrii.ttf&quot;</span> <span class="o">%</span><span class="p">}</span><span class="o">);</span>
+    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="err">%</span> <span class="err">static</span> <span class="err">&quot;fonts/calibrii.ttf&quot;</span> <span class="err">%</span><span class="p">}</span><span class="o">);</span>
     <span class="nt">font-style</span><span class="o">:</span> <span class="nt">italic</span><span class="o">,</span> <span class="nt">oblique</span><span class="o">;</span>
 <span class="p">}</span>
-<span class="k">@font-face</span> <span class="p">{</span>
+<span class="p">@</span><span class="k">font-face</span> <span class="p">{</span>
     <span class="nt">font-family</span><span class="o">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="o">;</span>
-    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="o">%</span> <span class="nb">static</span> <span class="s2">&quot;fonts/calibriz.ttf&quot;</span> <span class="o">%</span><span class="p">}</span><span class="o">);</span>
+    <span class="nt">src</span><span class="o">:</span> <span class="nt">url</span><span class="o">(</span><span class="p">{</span><span class="err">%</span> <span class="err">static</span> <span class="err">&quot;fonts/calibriz.ttf&quot;</span> <span class="err">%</span><span class="p">}</span><span class="o">);</span>
     <span class="nt">font-weight</span><span class="o">:</span> <span class="nt">bold</span><span class="o">;</span>
     <span class="nt">font-style</span><span class="o">:</span> <span class="nt">italic</span><span class="o">,</span> <span class="nt">oblique</span><span class="o">;</span>
 <span class="p">}</span>
@@ -3359,13 +3359,13 @@ ttf files have been copied to the directory <tt class="docutils literal">static/
 <p>Now, add another css file that will be your global <span class="caps">PDF</span> styles. This should be put to the <tt class="docutils literal">static</tt> directory
 and could be named <tt class="docutils literal">pdfstyle.css</tt>:</p>
 <div class="highlight"><pre><span></span><span class="nt">h1</span> <span class="p">{</span>
-    <span class="nb">color</span><span class="o">:</span> <span class="nb">blue</span><span class="p">;</span>
+    <span class="k">color</span><span class="p">:</span> <span class="kc">blue</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="o">*,</span> <span class="nt">html</span> <span class="p">{</span>
-    <span class="nb">font-family</span><span class="o">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="p">;</span>
-    <span class="nb">font-size</span><span class="o">:</span><span class="m">11pt</span><span class="p">;</span>
-    <span class="nb">color</span><span class="o">:</span> <span class="nb">red</span><span class="p">;</span>
+    <span class="k">font-family</span><span class="p">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="p">;</span>
+    <span class="k">font-size</span><span class="p">:</span><span class="mi">11</span><span class="kt">pt</span><span class="p">;</span>
+    <span class="k">color</span><span class="p">:</span> <span class="kc">red</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 <p>Next, here&#8217;s a template that lists all books (and contain some greek characters &#8212; the title of the books also contain
@@ -3525,12 +3525,12 @@ accordingly. I will give an example&nbsp;shortly.</p>
 <p>Now, for frames, I recommend using the <tt class="docutils literal"><span class="pre">-pdf-frame-border:</span> 1;</tt> command for debugging where
 they are actually printed. Also, I recommend using a normal ruler and measuring completely
 where you want them to be. For example, for the following&nbsp;frame:</p>
-<div class="highlight"><pre><span></span><span class="k">@frame</span> <span class="nt">photo_frame</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="p">@</span><span class="k">frame</span> <span class="nt">photo_frame</span> <span class="p">{</span>
         <span class="nt">-pdf-frame-border</span><span class="o">:</span> <span class="nt">1</span><span class="o">;</span>
-        <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="nc">.4cm</span><span class="o">;</span>
-        <span class="nt">left</span><span class="o">:</span> <span class="nt">6</span><span class="nc">.2cm</span><span class="o">;</span>
-        <span class="nt">width</span><span class="o">:</span> <span class="nt">1</span><span class="nc">.9cm</span><span class="o">;</span>
-        <span class="nt">height</span><span class="o">:</span> <span class="nt">2</span><span class="nc">.2cm</span><span class="o">;</span>
+        <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="p">.</span><span class="nc">4cm</span><span class="o">;</span>
+        <span class="nt">left</span><span class="o">:</span> <span class="nt">6</span><span class="p">.</span><span class="nc">2cm</span><span class="o">;</span>
+        <span class="nt">width</span><span class="o">:</span> <span class="nt">1</span><span class="p">.</span><span class="nc">9cm</span><span class="o">;</span>
+        <span class="nt">height</span><span class="o">:</span> <span class="nt">2</span><span class="p">.</span><span class="nc">2cm</span><span class="o">;</span>
 <span class="p">}</span>
 </pre></div>
 <p>I&#8217;d used a ruler to find out that I want it to start 2.4 cm from the top of my page (actually a credit card)
@@ -3538,12 +3538,12 @@ and 6.2 cm from the left and have a width and height of 1.9 and 2.2&nbsp;cm.</p>
 <p>I recommend naming all frames to be able to distinguish them however I don&#8217;t think that their name plays
 any other role. However, for static frames you must define the id of the content they will contain using <tt class="docutils literal"><span class="pre">-pdf-frame-content</span></tt>
 in the css and a div with the corresponding id in the <span class="caps">PDF</span> template. For example, you could define a frame header like&nbsp;this</p>
-<div class="highlight"><pre><span></span><span class="k">@frame</span> <span class="nt">header</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><span class="p">@</span><span class="k">frame</span> <span class="nt">header</span> <span class="p">{</span>
   <span class="nt">-pdf-frame-content</span><span class="o">:</span> <span class="nt">headerContent</span><span class="o">;</span>
   <span class="nt">width</span><span class="o">:</span> <span class="nt">8in</span><span class="o">;</span>
-  <span class="nt">top</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.5cm</span><span class="o">;</span>
-  <span class="nt">margin-left</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.5cm</span><span class="o">;</span>
-  <span class="nt">margin-right</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.5cm</span><span class="o">;</span>
+  <span class="nt">top</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">5cm</span><span class="o">;</span>
+  <span class="nt">margin-left</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">5cm</span><span class="o">;</span>
+  <span class="nt">margin-right</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">5cm</span><span class="o">;</span>
   <span class="nt">height</span><span class="o">:</span> <span class="nt">2cm</span><span class="o">;</span>
 <span class="p">}</span>
 </pre></div>
@@ -3570,73 +3570,73 @@ a barcode. This is a Django template that is used to print not only but a <span 
     <span class="cp">{%</span> <span class="k">include</span> <span class="s2">&quot;pdfstylefonts.css&quot;</span> <span class="cp">%}</span>
 <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
 <span class="p">&lt;</span><span class="nt">style</span> <span class="na">type</span><span class="o">=</span><span class="s">&#39;text/css&#39;</span><span class="p">&gt;</span>
-    <span class="k">@page</span> <span class="p">{</span>
-        <span class="nt">size</span><span class="o">:</span> <span class="nt">8</span><span class="nc">.56cm</span> <span class="nt">5</span><span class="nc">.398cm</span><span class="o">;</span>
-        <span class="nt">margin</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span><span class="o">;</span>
+    <span class="p">@</span><span class="k">page</span> <span class="p">{</span>
+        <span class="nt">size</span><span class="o">:</span> <span class="nt">8</span><span class="p">.</span><span class="nc">56cm</span> <span class="nt">5</span><span class="p">.</span><span class="nc">398cm</span><span class="o">;</span>
+        <span class="nt">margin</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span><span class="o">;</span>
         <span class="nt">padding</span><span class="o">:</span> <span class="nt">0</span><span class="o">;</span>
 
-        <span class="k">@frame</span> <span class="nt">table_frame</span> <span class="p">{</span>
+        <span class="p">@</span><span class="k">frame</span> <span class="nt">table_frame</span> <span class="p">{</span>
             <span class="c">/* -pdf-frame-border: 1; */</span>
-            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="nc">.4cm</span><span class="o">;</span>
-            <span class="nt">left</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.4cm</span><span class="o">;</span>
-            <span class="nt">width</span><span class="o">:</span> <span class="nt">5</span><span class="nc">.5cm</span><span class="o">;</span>
+            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="p">.</span><span class="nc">4cm</span><span class="o">;</span>
+            <span class="nt">left</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">4cm</span><span class="o">;</span>
+            <span class="nt">width</span><span class="o">:</span> <span class="nt">5</span><span class="p">.</span><span class="nc">5cm</span><span class="o">;</span>
             <span class="nt">height</span><span class="o">:</span> <span class="nt">3cm</span><span class="o">;</span>
         <span class="p">}</span>
 
-        <span class="k">@frame</span> <span class="nt">photo_frame</span> <span class="p">{</span>
+        <span class="p">@</span><span class="k">frame</span> <span class="nt">photo_frame</span> <span class="p">{</span>
             <span class="c">/* -pdf-frame-border: 1; */</span>
-            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="nc">.4cm</span><span class="o">;</span>
-            <span class="nt">left</span><span class="o">:</span> <span class="nt">6</span><span class="nc">.2cm</span><span class="o">;</span>
-            <span class="nt">width</span><span class="o">:</span> <span class="nt">1</span><span class="nc">.9cm</span><span class="o">;</span>
-            <span class="nt">height</span><span class="o">:</span> <span class="nt">2</span><span class="nc">.2cm</span><span class="o">;</span>
+            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="p">.</span><span class="nc">4cm</span><span class="o">;</span>
+            <span class="nt">left</span><span class="o">:</span> <span class="nt">6</span><span class="p">.</span><span class="nc">2cm</span><span class="o">;</span>
+            <span class="nt">width</span><span class="o">:</span> <span class="nt">1</span><span class="p">.</span><span class="nc">9cm</span><span class="o">;</span>
+            <span class="nt">height</span><span class="o">:</span> <span class="nt">2</span><span class="p">.</span><span class="nc">2cm</span><span class="o">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">@page</span> <span class="nt">front_page</span> <span class="p">{</span>
-        <span class="nt">size</span><span class="o">:</span> <span class="nt">8</span><span class="nc">.56cm</span> <span class="nt">5</span><span class="nc">.398cm</span><span class="o">;</span>
-        <span class="nt">margin</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span><span class="o">;</span>
+    <span class="p">@</span><span class="k">page</span> <span class="nt">front_page</span> <span class="p">{</span>
+        <span class="nt">size</span><span class="o">:</span> <span class="nt">8</span><span class="p">.</span><span class="nc">56cm</span> <span class="nt">5</span><span class="p">.</span><span class="nc">398cm</span><span class="o">;</span>
+        <span class="nt">margin</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span><span class="o">;</span>
         <span class="nt">padding</span><span class="o">:</span> <span class="nt">0</span><span class="o">;</span>
 
-        <span class="k">@frame</span> <span class="nt">table_frame</span> <span class="p">{</span>
+        <span class="p">@</span><span class="k">frame</span> <span class="nt">table_frame</span> <span class="p">{</span>
             <span class="c">/* -pdf-frame-border: 1; */</span>
-            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="nc">.4cm</span><span class="o">;</span>
-            <span class="nt">left</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.4cm</span><span class="o">;</span>
-            <span class="nt">width</span><span class="o">:</span> <span class="nt">5</span><span class="nc">.5cm</span><span class="o">;</span>
+            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="p">.</span><span class="nc">4cm</span><span class="o">;</span>
+            <span class="nt">left</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">4cm</span><span class="o">;</span>
+            <span class="nt">width</span><span class="o">:</span> <span class="nt">5</span><span class="p">.</span><span class="nc">5cm</span><span class="o">;</span>
             <span class="nt">height</span><span class="o">:</span> <span class="nt">3cm</span><span class="o">;</span>
         <span class="p">}</span>
 
-        <span class="k">@frame</span> <span class="nt">photo_frame</span> <span class="p">{</span>
+        <span class="p">@</span><span class="k">frame</span> <span class="nt">photo_frame</span> <span class="p">{</span>
             <span class="c">/* -pdf-frame-border: 1; */</span>
-            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="nc">.4cm</span><span class="o">;</span>
-            <span class="nt">left</span><span class="o">:</span> <span class="nt">6</span><span class="nc">.2cm</span><span class="o">;</span>
-            <span class="nt">width</span><span class="o">:</span> <span class="nt">1</span><span class="nc">.9cm</span><span class="o">;</span>
-            <span class="nt">height</span><span class="o">:</span> <span class="nt">2</span><span class="nc">.2cm</span><span class="o">;</span>
+            <span class="nt">top</span><span class="o">:</span>  <span class="nt">2</span><span class="p">.</span><span class="nc">4cm</span><span class="o">;</span>
+            <span class="nt">left</span><span class="o">:</span> <span class="nt">6</span><span class="p">.</span><span class="nc">2cm</span><span class="o">;</span>
+            <span class="nt">width</span><span class="o">:</span> <span class="nt">1</span><span class="p">.</span><span class="nc">9cm</span><span class="o">;</span>
+            <span class="nt">height</span><span class="o">:</span> <span class="nt">2</span><span class="p">.</span><span class="nc">2cm</span><span class="o">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
-    <span class="k">@page</span> <span class="nt">back_page</span> <span class="p">{</span>
-        <span class="nt">size</span><span class="o">:</span> <span class="nt">8</span><span class="nc">.56cm</span> <span class="nt">5</span><span class="nc">.398cm</span><span class="o">;</span>
-        <span class="nt">margin</span><span class="o">:</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span> <span class="nt">0</span><span class="nc">.0cm</span><span class="o">;</span>
+    <span class="p">@</span><span class="k">page</span> <span class="nt">back_page</span> <span class="p">{</span>
+        <span class="nt">size</span><span class="o">:</span> <span class="nt">8</span><span class="p">.</span><span class="nc">56cm</span> <span class="nt">5</span><span class="p">.</span><span class="nc">398cm</span><span class="o">;</span>
+        <span class="nt">margin</span><span class="o">:</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span> <span class="nt">0</span><span class="p">.</span><span class="nc">0cm</span><span class="o">;</span>
         <span class="nt">padding</span><span class="o">:</span> <span class="nt">0</span><span class="o">;</span>
 
-        <span class="k">@frame</span> <span class="nt">barcode_frame</span> <span class="p">{</span>
+        <span class="p">@</span><span class="k">frame</span> <span class="nt">barcode_frame</span> <span class="p">{</span>
             <span class="c">/* -pdf-frame-border: 1; */</span>
-            <span class="nt">top</span><span class="o">:</span>  <span class="nt">3</span><span class="nc">.9cm</span><span class="o">;</span>
-            <span class="nt">left</span><span class="o">:</span> <span class="nt">1</span><span class="nc">.8cm</span><span class="o">;</span>
-            <span class="nt">width</span><span class="o">:</span> <span class="nt">4</span><span class="nc">.9cm</span><span class="o">;</span>
-            <span class="nt">height</span><span class="o">:</span> <span class="nt">1</span><span class="nc">.1cm</span><span class="o">;</span>
+            <span class="nt">top</span><span class="o">:</span>  <span class="nt">3</span><span class="p">.</span><span class="nc">9cm</span><span class="o">;</span>
+            <span class="nt">left</span><span class="o">:</span> <span class="nt">1</span><span class="p">.</span><span class="nc">8cm</span><span class="o">;</span>
+            <span class="nt">width</span><span class="o">:</span> <span class="nt">4</span><span class="p">.</span><span class="nc">9cm</span><span class="o">;</span>
+            <span class="nt">height</span><span class="o">:</span> <span class="nt">1</span><span class="p">.</span><span class="nc">1cm</span><span class="o">;</span>
         <span class="p">}</span>
     <span class="p">}</span>
 
     <span class="o">*,</span> <span class="nt">html</span> <span class="p">{</span>
-        <span class="nb">font-family</span><span class="o">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="p">;</span>
-        <span class="nb">font-size</span><span class="o">:</span> <span class="m">8pt</span><span class="p">;</span>
-        <span class="nb">line-height</span><span class="o">:</span> <span class="m">80%</span><span class="p">;</span>
+        <span class="k">font-family</span><span class="p">:</span> <span class="s2">&quot;Calibri&quot;</span><span class="p">;</span>
+        <span class="k">font-size</span><span class="p">:</span> <span class="mi">8</span><span class="kt">pt</span><span class="p">;</span>
+        <span class="k">line-height</span><span class="p">:</span> <span class="mi">80</span><span class="kt">%</span><span class="p">;</span>
     <span class="p">}</span>
 
-    <span class="nc">.bigger</span> <span class="p">{</span>
-        <span class="nb">font-size</span><span class="o">:</span><span class="m">9pt</span><span class="p">;</span>
-        <span class="nb">font-weight</span><span class="o">:</span> <span class="nb">bold</span><span class="p">;</span>
+    <span class="p">.</span><span class="nc">bigger</span> <span class="p">{</span>
+        <span class="k">font-size</span><span class="p">:</span><span class="mi">9</span><span class="kt">pt</span><span class="p">;</span>
+        <span class="k">font-weight</span><span class="p">:</span> <span class="kc">bold</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
 <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
@@ -4007,6 +4007,10 @@ the task&nbsp;runners).</p>
   <section>
   <h1>Tags</h1>
     <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/python-2.html">python-2</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/immutable.html">immutable</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/youtube-dl.html">youtube-dl</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/grid.html">grid</a>,    <a href="https://spapas.github.io/tag/ag-grid.html">ag-grid</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/hyperapp.html">hyperapp</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/python-3.html">python-3</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/component.html">component</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/django-rest-auth.html">django-rest-auth</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/ffmpeg.html">ffmpeg</a>,    <a href="https://spapas.github.io/tag/middleware.html">middleware</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/plpgsql.html">plpgsql</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/youtube.html">youtube</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+  
+  <section>
+  <h1>Yearly archives</h1>
+    <a href="https://spapas.github.io/posts/2013/">2013</a>,    <a href="https://spapas.github.io/posts/2014/">2014</a>,    <a href="https://spapas.github.io/posts/2015/">2015</a>,    <a href="https://spapas.github.io/posts/2016/">2016</a>,    <a href="https://spapas.github.io/posts/2017/">2017</a>,    <a href="https://spapas.github.io/posts/2018/">2018</a>  </section>
 
 
 
