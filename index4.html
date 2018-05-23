@@ -2954,6 +2954,12 @@ dispatched when the <tt class="docutils literal">fetch</tt> is finished instead 
 <li><a class="reference internal" href="#conclusion" id="id20">Conclusion</a></li>
 </ul>
 </div>
+<p><strong>Upgrade 23/05/2018</strong> I&#8217;ve upgraded the sample project (<a class="reference external" href="https://github.com/spapas/django-pdf-guide">https://github.com/spapas/django-pdf-guide</a>) for usage with Django 2.0 and Python 3.x.
+There were very few changes between the old, Django 1.8 compatible project and the new one. To see the differences, you can just clone it
+and do a <tt class="docutils literal">git diff <span class="pre">django-1.8</span> <span class="pre">django-2.0</span></tt>: Most are related to changes between django 1.8 and django 2.0 (in the <span class="caps">URL</span> configuration use <tt class="docutils literal">path</tt> instead of <tt class="docutils literal">url</tt>,
+use new style middleware etc) and between python 2.7 and 3.x (small changes in import syntax, <tt class="docutils literal">StringIO</tt> has been moved to the <tt class="docutils literal">io</tt> package). There&#8217;s also
+a couple of requirement upgrades, the most important are the upgrade to <tt class="docutils literal">xhtml2pdf 0.2.2</tt> and using my own fork of <tt class="docutils literal">django_xhtml2pdf</tt> since django_xhtml2pdf
+does not seem to be maintained&nbsp;anymore.</p>
 <div class="section" id="introduction">
 <h2><a class="toc-backref" href="#id4">Introduction</a></h2>
 <p>I&#8217;ve noticed that although it is easy to create PDFs with

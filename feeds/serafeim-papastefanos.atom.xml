@@ -20007,6 +20007,12 @@ dispatched when the &lt;tt class="docutils literal"&gt;fetch&lt;/tt&gt; is finis
 &lt;li&gt;&lt;a class="reference internal" href="#conclusion" id="id20"&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Upgrade 23/05/2018&lt;/strong&gt; I&amp;#8217;ve upgraded the sample project (&lt;a class="reference external" href="https://github.com/spapas/django-pdf-guide"&gt;https://github.com/spapas/django-pdf-guide&lt;/a&gt;) for usage with Django 2.0 and Python 3.x.
+There were very few changes between the old, Django 1.8 compatible project and the new one. To see the differences, you can just clone it
+and do a &lt;tt class="docutils literal"&gt;git diff &lt;span class="pre"&gt;django-1.8&lt;/span&gt; &lt;span class="pre"&gt;django-2.0&lt;/span&gt;&lt;/tt&gt;: Most are related to changes between django 1.8 and django 2.0 (in the &lt;span class="caps"&gt;URL&lt;/span&gt; configuration use &lt;tt class="docutils literal"&gt;path&lt;/tt&gt; instead of &lt;tt class="docutils literal"&gt;url&lt;/tt&gt;,
+use new style middleware etc) and between python 2.7 and 3.x (small changes in import syntax, &lt;tt class="docutils literal"&gt;StringIO&lt;/tt&gt; has been moved to the &lt;tt class="docutils literal"&gt;io&lt;/tt&gt; package). There&amp;#8217;s also
+a couple of requirement upgrades, the most important are the upgrade to &lt;tt class="docutils literal"&gt;xhtml2pdf 0.2.2&lt;/tt&gt; and using my own fork of &lt;tt class="docutils literal"&gt;django_xhtml2pdf&lt;/tt&gt; since django_xhtml2pdf
+does not seem to be maintained&amp;nbsp;anymore.&lt;/p&gt;
 &lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;&lt;a class="toc-backref" href="#id4"&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;I&amp;#8217;ve noticed that although it is easy to create PDFs with
