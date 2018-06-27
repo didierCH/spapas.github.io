@@ -1,7 +1,7 @@
-var allMatchesURL = 'https://world-cup-json.herokuapp.com/matches'
-var todayMatchesURL = 'https://world-cup-json.herokuapp.com/matches/today'
-var groupResultsURL = 'https://world-cup-json.herokuapp.com/teams/group_results'
-var countryMatchesURL = 'https://world-cup-json.herokuapp.com/matches/country?fifa_code='
+var allMatchesURL = 'https://worldcup.sfg.io/matches'
+var todayMatchesURL = 'https://worldcup.sfg.io/matches/today'
+var groupResultsURL = 'https://worldcup.sfg.io/teams/group_results'
+var countryMatchesURL = 'https://worldcup.sfg.io/matches/country?fifa_code='
 
 var matchCard = Vue.component('match-card', {
   props: ['match'],
@@ -97,7 +97,6 @@ var groupCard = Vue.component('group-card', {
   template: `<div class='col-md-6'>
     <div class="card group-card ">
       <div class="card-body">
-       
         <h3 class="card-title text-center">Group {{ group.letter }}</h3>
         <p class="card-text">
           <table class='table table-sm table-hover'>
@@ -117,21 +116,21 @@ var groupCard = Vue.component('group-card', {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="team in group.teams">
+              <tr v-for="team in group.ordered_teams ">
                 <td>
                   
-                  <img class='pb-2' v-bind:src="getFlag(team.team.fifa_code)" v-bind:alt="team.team.fifa_code" v-bind:title="team.team.fifa_code">
-                  {{ team.team.country }}
+                  <img class='pb-2' v-bind:src="getFlag(team.fifa_code)" v-bind:alt="team.fifa_code" v-bind:title="team.fifa_code">
+                  {{ team.country }}
                 </td>
-                <td>{{ team.team.points }}</td>
-                <td>{{ team.team.wins }}</td>
-                <td>{{ team.team.draws }}</td>
-                <td>{{ team.team.losses }}</td>
-                <td>{{ team.team.goals_for }}</td>
-                <td>{{ team.team.goals_against }}</td>
-                <!--
-                <td>{{ team.team.games_played }}</td>
-                <td>{{ team.team.goal_differential }}</td>
+                <td>{{ team.points }}</td>
+                <td>{{ team.wins }}</td>
+                <td>{{ team.draws }}</td>
+                <td>{{ team.losses }}</td>
+                <td>{{ team.goals_for }}</td>
+                <td>{{ team.goals_against }}</td>
+                <!--       .
+                <td>{{ team.games_played }}</td>
+                <td>{{ team.goal_differential }}</td>
                 -->
               </tr>
             </tbody>
@@ -175,7 +174,6 @@ var app = new Vue({
       return this.allMatches.filter(function(m) {
         
         if (moment(m.datetime) > moment(that.date).hours(0).minutes(0) && moment(m.datetime) < moment(that.date).add(1, 'days').hours(0).minutes(0)) {
-          console.log(m.datetime)
           return true;
         }
       }).sort(function(a, b) {
@@ -190,8 +188,6 @@ var app = new Vue({
   },
   methods: {
     openMatchModal: function (modalInfo) {
-      console.log("HI")
-      console.log(modalInfo)
       this.showModalMatch = modalInfo
       this.loadStats()
     },  
@@ -201,7 +197,6 @@ var app = new Vue({
       fetch(todayMatchesURL).then(function(response) {
         return response.json();
       }).then(function(tm) {
-        console.log(tm)
         that.todayMatches = tm;
       });
     },
@@ -211,12 +206,10 @@ var app = new Vue({
       fetch(allMatchesURL).then(function(response) {
         return response.json();
       }).then(function(tm) {
-        console.log(tm)
         that.allMatches = tm;
       });
     },
     loadStats: function() {
-      console.log(this.modalInfo)
       var that = this;
 
       fetch(countryMatchesURL+that.showModalMatch.code).then(function(response) {
@@ -225,7 +218,6 @@ var app = new Vue({
         var match = tm.filter(function(x) {
           return x.fifa_id == that.showModalMatch.fifa_id;
         })[0]
-        console.log("match is ", match)
         if(match.home_team.code == that.showModalMatch.code) {
           that.showModalMatch = Object.assign(
             {}, that.showModalMatch, 
@@ -248,7 +240,6 @@ var app = new Vue({
       fetch(groupResultsURL).then(function(response) {
         return response.json();
       }).then(function(tm) {
-        console.log(tm)
         that.groupResults = tm;
       });
     },
