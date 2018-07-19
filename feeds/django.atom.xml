@@ -1249,20 +1249,19 @@ the &lt;tt class="docutils literal"&gt;form_valid&lt;/tt&gt; method of &lt;tt cl
 can be overridden to do various things before (or after) the form is saved. For example,
 you may want have a field whose value is calculated from other fields in the form or you want to
 create an extra object. Let&amp;#8217;s see a generic example of overriding a &lt;tt class="docutils literal"&gt;CreateView&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;UpdateView&lt;/tt&gt; with&amp;nbsp;comments:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;dl class="docutils"&gt;
-&lt;dt&gt;def form_valid(self, form,&amp;nbsp;):&lt;/dt&gt;
-&lt;dd&gt;&lt;p class="first"&gt;# let&amp;#8217;s calculate a field value
-form.instance.calculated_field = form.cleaned_data[&amp;#8216;data1&amp;#8217;] +&amp;nbsp;form.cleaned_data[&amp;#8216;data2&amp;#8217;]&lt;/p&gt;
-&lt;p&gt;# save the form by calling super().form_valid(); keep the return value - it is the value of get_success_url
-redirect_to =&amp;nbsp;super().form_valid(form)&lt;/p&gt;
-&lt;p&gt;# For Create or UpdateView, the just-saved object will be assigned to self.object
-logger.log(&amp;#8220;Created an object with id&amp;nbsp;{0}&amp;#8221;.format(self.object.id)&lt;/p&gt;
-&lt;p class="last"&gt;# return the redirect
-return&amp;nbsp;redirect_to&lt;/p&gt;
-&lt;/dd&gt;
-&lt;/dl&gt;
-&lt;/blockquote&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;form_valid&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;form&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c1"&gt;# let&amp;#39;s calculate a field value&lt;/span&gt;
+    &lt;span class="n"&gt;form&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;instance&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;calculated_field&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;form&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cleaned_data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data1&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;form&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cleaned_data&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;data2&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# save the form by calling super().form_valid(); keep the return value - it is the value of get_success_url&lt;/span&gt;
+    &lt;span class="n"&gt;redirect_to&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;super&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;form_valid&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;form&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# For Create or UpdateView, the just-saved object will be assigned to self.object&lt;/span&gt;
+    &lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Created an object with id {0}&amp;quot;&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;object&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# return the redirect&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;redirect_to&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;This is rather complex so I&amp;#8217;ll also explain it: The form_valid gets the actual form which, since is validated
 has a &lt;tt class="docutils literal"&gt;cleaned_data&lt;/tt&gt; dictionary of values. This form also has an &lt;tt class="docutils literal"&gt;instance&lt;/tt&gt; attribute which is the object
 that this form is bound to - notice that a normal &lt;tt class="docutils literal"&gt;Form&lt;/tt&gt; won&amp;#8217;t have an instance only a &lt;tt class="docutils literal"&gt;ModelForm&lt;/tt&gt;.

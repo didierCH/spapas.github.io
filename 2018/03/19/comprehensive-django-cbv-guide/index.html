@@ -1154,20 +1154,19 @@ the <tt class="docutils literal">form_valid</tt> method of <tt class="docutils l
 can be overridden to do various things before (or after) the form is saved. For example,
 you may want have a field whose value is calculated from other fields in the form or you want to
 create an extra object. Let&#8217;s see a generic example of overriding a <tt class="docutils literal">CreateView</tt> or <tt class="docutils literal">UpdateView</tt> with&nbsp;comments:</p>
-<blockquote>
-<dl class="docutils">
-<dt>def form_valid(self, form,&nbsp;):</dt>
-<dd><p class="first"># let&#8217;s calculate a field value
-form.instance.calculated_field = form.cleaned_data[&#8216;data1&#8217;] +&nbsp;form.cleaned_data[&#8216;data2&#8217;]</p>
-<p># save the form by calling super().form_valid(); keep the return value - it is the value of get_success_url
-redirect_to =&nbsp;super().form_valid(form)</p>
-<p># For Create or UpdateView, the just-saved object will be assigned to self.object
-logger.log(&#8220;Created an object with id&nbsp;{0}&#8221;.format(self.object.id)</p>
-<p class="last"># return the redirect
-return&nbsp;redirect_to</p>
-</dd>
-</dl>
-</blockquote>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="p">):</span>
+    <span class="c1"># let&#39;s calculate a field value</span>
+    <span class="n">form</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">calculated_field</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;data1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;data2&#39;</span><span class="p">]</span>
+
+    <span class="c1"># save the form by calling super().form_valid(); keep the return value - it is the value of get_success_url</span>
+    <span class="n">redirect_to</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+
+    <span class="c1"># For Create or UpdateView, the just-saved object will be assigned to self.object</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;Created an object with id {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="c1"># return the redirect</span>
+    <span class="k">return</span> <span class="n">redirect_to</span>
+</pre></div>
 <p>This is rather complex so I&#8217;ll also explain it: The form_valid gets the actual form which, since is validated
 has a <tt class="docutils literal">cleaned_data</tt> dictionary of values. This form also has an <tt class="docutils literal">instance</tt> attribute which is the object
 that this form is bound to - notice that a normal <tt class="docutils literal">Form</tt> won&#8217;t have an instance only a <tt class="docutils literal">ModelForm</tt>.
