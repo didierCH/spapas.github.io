@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/ - postgresql</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/postgresql.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-07-04T09:05:00+03:00</updated><entry><title>Automatically create a category table in Postgresql by extracting unique table values</title><link href="https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/" rel="alternate"></link><published>2017-07-04T09:05:00+03:00</published><updated>2017-07-04T09:05:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-07-04:/2017/07/04/postgresql-auto-create-category-column/</id><summary type="html">&lt;p class="first last"&gt;A postgresql script to help you automatically create a new category table by extracting its values from a table and generate the&amp;nbsp;relations&lt;/p&gt;
-</summary><content type="html">&lt;p&gt;Recently I was given an &lt;span class="caps"&gt;SQL&lt;/span&gt; table containing some useful data. The problem with that table was that it was was non-properly normalized but was completely flat,
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/postgresql.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2017-07-04T09:05:00+03:00</updated><entry><title>Automatically create a category table in Postgresql by extracting unique table values</title><link href="https://spapas.github.io/2017/07/04/postgresql-auto-create-category-column/" rel="alternate"></link><published>2017-07-04T09:05:00+03:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2017-07-04:2017/07/04/postgresql-auto-create-category-column/</id><summary type="html">&lt;p&gt;Recently I was given an &lt;span class="caps"&gt;SQL&lt;/span&gt; table containing some useful data. The problem with that table was that it was was non-properly normalized but was completely flat,
 i.e all its columns contained varchar values while, some of them should have instead contained foreign keys to other tables. Here&amp;#8217;s an example of how this
 table looked&amp;nbsp;like:&lt;/p&gt;
 &lt;table border="1" class="docutils"&gt;
@@ -158,12 +157,14 @@ flat table like the previous. Specifically, using the previous example,
 if you have a table named &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; that has a non-normalized
 column named &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; then when you call &lt;tt class="docutils literal"&gt;select &lt;span class="pre"&gt;export_relation('part',&lt;/span&gt; 'category')&lt;/tt&gt; the following
 will&amp;nbsp;happen:&lt;/p&gt;
-&lt;ul class="simple"&gt;
-&lt;li&gt;A new table named &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; will be created. This table will contain two columns &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt;, with &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; being the primary key and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; having a unique constraint. If the table exists it will be dropped and&amp;nbsp;re-ccreated&lt;/li&gt;
-&lt;li&gt;A new column named &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; will be added to &lt;tt class="docutils literal"&gt;part&lt;/tt&gt;. This column will be a foreign key to the new table &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt;.&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p class="first"&gt;A new table named &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; will be created. This table will contain two columns &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt;, with &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; being the primary key and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; having a unique constraint. If the table exists it will be dropped and&amp;nbsp;re-ccreated&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p class="first"&gt;A new column named &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; will be added to &lt;tt class="docutils literal"&gt;part&lt;/tt&gt;. This column will be a foreign key to the new table &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt;.&lt;/p&gt;
+&lt;/li&gt;
 &lt;li&gt;&lt;dl class="first docutils"&gt;
 &lt;dt&gt;For each unique value &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; of &lt;tt class="docutils literal"&gt;category&lt;/tt&gt;:&lt;/dt&gt;
-&lt;dd&gt;&lt;ul class="first last"&gt;
+&lt;dd&gt;&lt;ul class="first last simple"&gt;
 &lt;li&gt;Insert a new record in &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; with &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; in the &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; field of the table and save the inserted id to &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt;&lt;/li&gt;
 &lt;li&gt;Set &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt; to &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt;  to all rows of &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; where &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; has the value of &lt;tt class="docutils literal"&gt;v&lt;/tt&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -254,8 +255,7 @@ of course keep the column to make sure that the script works as you want since i
 removeing the new table and&amp;nbsp;column.&lt;/p&gt;
 &lt;p&gt;To call it just run &lt;tt class="docutils literal"&gt;select &lt;span class="pre"&gt;export_relation('part',&lt;/span&gt; 'category')&lt;/tt&gt; and you should see some debug info in the messages tab. When the script is finished you&amp;#8217;ll have the
 &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; table and &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; column in the &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; table.&lt;/p&gt;
-</content><category term="postgresql"></category><category term="plpgsql"></category></entry><entry><title>Getting a logical backup of all databases of your Postgresql server</title><link href="https://spapas.github.io/2016/11/02/postgresql-backup/" rel="alternate"></link><published>2016-11-02T15:10:00+02:00</published><updated>2016-11-02T15:10:00+02:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-11-02:/2016/11/02/postgresql-backup/</id><summary type="html">&lt;p class="first last"&gt;A script to help you backup your postgresql&amp;nbsp;databases&lt;/p&gt;
-</summary><content type="html">&lt;p&gt;In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
+</summary><category term="postgresql"></category><category term="plpgsql"></category></entry><entry><title>Getting a logical backup of all databases of your Postgresql server</title><link href="https://spapas.github.io/2016/11/02/postgresql-backup/" rel="alternate"></link><published>2016-11-02T15:10:00+02:00</published><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2016-11-02:2016/11/02/postgresql-backup/</id><summary type="html">&lt;p&gt;In this small post I will present a small bash script that could be used to create logical backups of all the databases in a Postgresql server along
 with some other goodies. More specifically, the script&amp;nbsp;will:&lt;/p&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;Create two files at /tmp to output information (one for debugging and one with info for sending it through email at the&amp;nbsp;end)&lt;/li&gt;
@@ -284,7 +284,7 @@ mkdir &lt;span class="nv"&gt;$backup_dir&lt;/span&gt;
   &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Starting backup for &lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
   &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
   sudo -u postgres vacuumdb --analyze -Upostgres &lt;span class="nv"&gt;$db&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup.log
-  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
   &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;stat &lt;span class="nv"&gt;$filename&lt;/span&gt; --printf&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%s&amp;quot;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
   &lt;span class="nv"&gt;kb_size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;scale=2; &lt;/span&gt;&lt;span class="nv"&gt;$size&lt;/span&gt;&lt;span class="s2"&gt; / 1024.0&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; bc&lt;span class="sb"&gt;`&lt;/span&gt;
   &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Finished backup for &lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt; - size is &lt;/span&gt;&lt;span class="nv"&gt;$kb_size&lt;/span&gt;&lt;span class="s2"&gt; KB&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
@@ -292,7 +292,7 @@ mkdir &lt;span class="nv"&gt;$backup_dir&lt;/span&gt;
 
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Backing up global objects&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
 &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;global.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
-sudo -u postgres pg_dumpall -Upostgres -v -g &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+sudo -u postgres pg_dumpall -Upostgres -v -g 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
 &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;stat &lt;span class="nv"&gt;$filename&lt;/span&gt; --printf&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%s&amp;quot;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
 &lt;span class="nv"&gt;kb_size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;scale=2; &lt;/span&gt;&lt;span class="nv"&gt;$size&lt;/span&gt;&lt;span class="s2"&gt; / 1024.0&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; bc&lt;span class="sb"&gt;`&lt;/span&gt;
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Finished backup for global - size is &lt;/span&gt;&lt;span class="nv"&gt;$kb_size&lt;/span&gt;&lt;span class="s2"&gt; KB&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
@@ -349,17 +349,17 @@ mkdir &lt;span class="nv"&gt;$backup_dir&lt;/span&gt;
   &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
   &lt;span class="nv"&gt;filename_binary&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.bak.gz
   sudo -u postgres vacuumdb --analyze -Upostgres &lt;span class="nv"&gt;$db&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup.log
-  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
-  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F c &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename_binary&lt;/span&gt;
+  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F c 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename_binary&lt;/span&gt;
   output_file_size &lt;span class="nv"&gt;$filename&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt; sql&amp;quot;&lt;/span&gt;
   output_file_size &lt;span class="nv"&gt;$filename_binary&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt; bin&amp;quot;&lt;/span&gt;
 &lt;span class="k"&gt;done&lt;/span&gt;
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Backing up global objects&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
 &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;global.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
-sudo -u postgres pg_dumpall -Upostgres -v -g &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+sudo -u postgres pg_dumpall -Upostgres -v -g 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
 output_file_size &lt;span class="nv"&gt;$filename&lt;/span&gt; global
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Ok!&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
 mail -s &lt;span class="s2"&gt;&amp;quot;Backup results&amp;quot;&lt;/span&gt; spapas@hcg.gr  &amp;lt; /tmp/db_backup_info.log
 &lt;span class="nb"&gt;popd&lt;/span&gt; &amp;gt; /dev/null
 &lt;/pre&gt;&lt;/div&gt;
-</content><category term="bash"></category><category term="cron"></category><category term="postgresql"></category></entry></feed>
+</summary><category term="bash"></category><category term="cron"></category><category term="postgresql"></category></entry></feed>
