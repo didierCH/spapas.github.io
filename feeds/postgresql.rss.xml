@@ -157,14 +157,12 @@ flat table like the previous. Specifically, using the previous example,
 if you have a table named &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; that has a non-normalized
 column named &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; then when you call &lt;tt class="docutils literal"&gt;select &lt;span class="pre"&gt;export_relation('part',&lt;/span&gt; 'category')&lt;/tt&gt; the following
 will&amp;nbsp;happen:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p class="first"&gt;A new table named &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; will be created. This table will contain two columns &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt;, with &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; being the primary key and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; having a unique constraint. If the table exists it will be dropped and&amp;nbsp;re-ccreated&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p class="first"&gt;A new column named &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; will be added to &lt;tt class="docutils literal"&gt;part&lt;/tt&gt;. This column will be a foreign key to the new table &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt;.&lt;/p&gt;
-&lt;/li&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;A new table named &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; will be created. This table will contain two columns &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt;, with &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; being the primary key and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; having a unique constraint. If the table exists it will be dropped and&amp;nbsp;re-ccreated&lt;/li&gt;
+&lt;li&gt;A new column named &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; will be added to &lt;tt class="docutils literal"&gt;part&lt;/tt&gt;. This column will be a foreign key to the new table &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt;.&lt;/li&gt;
 &lt;li&gt;&lt;dl class="first docutils"&gt;
 &lt;dt&gt;For each unique value &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; of &lt;tt class="docutils literal"&gt;category&lt;/tt&gt;:&lt;/dt&gt;
-&lt;dd&gt;&lt;ul class="first last simple"&gt;
+&lt;dd&gt;&lt;ul class="first last"&gt;
 &lt;li&gt;Insert a new record in &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; with &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; in the &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; field of the table and save the inserted id to &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt;&lt;/li&gt;
 &lt;li&gt;Set &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt; to &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt;  to all rows of &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; where &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; has the value of &lt;tt class="docutils literal"&gt;v&lt;/tt&gt;&lt;/li&gt;
 &lt;/ul&gt;

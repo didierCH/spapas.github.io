@@ -145,7 +145,10 @@ output) instead of the <tt class="docutils literal">*</tt> to only get the sizes
 directories, i.e run <tt class="docutils literal">du <span class="pre">-h</span> <span class="pre">-s</span> $(echo */)</tt> or <tt class="docutils literal">du <span class="pre">-h</span> <span class="pre">-s</span> `echo */`</tt>.</p>
 <p>One thing that you must be aware of is that this command may take <em>a long time</em>
 especially if you have lots of small files somewhere. Just let it run and it
-should finish after some time. Also, if you awant a nice interactive output
+should finish after some time. If it takes too long time try to exclude any
+mounted network
+directories (either with <span class="caps">SMB</span> or <span class="caps">NFS</span>) since these will take extra long&nbsp;time.</p>
+<p>Also, if you awant a nice interactive output
 using ncurses you can download and compile the <a class="reference external" href="https://dev.yorhel.nl/ncdu">ncdu tool</a> (NCurses Disk&nbsp;Usage).</p>
 </div>
     <footer>

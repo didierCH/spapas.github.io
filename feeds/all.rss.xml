@@ -59,7 +59,10 @@ output) instead of the &lt;tt class="docutils literal"&gt;*&lt;/tt&gt; to only g
 directories, i.e run &lt;tt class="docutils literal"&gt;du &lt;span class="pre"&gt;-h&lt;/span&gt; &lt;span class="pre"&gt;-s&lt;/span&gt; $(echo */)&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;du &lt;span class="pre"&gt;-h&lt;/span&gt; &lt;span class="pre"&gt;-s&lt;/span&gt; `echo */`&lt;/tt&gt;.&lt;/p&gt;
 &lt;p&gt;One thing that you must be aware of is that this command may take &lt;em&gt;a long time&lt;/em&gt;
 especially if you have lots of small files somewhere. Just let it run and it
-should finish after some time. Also, if you awant a nice interactive output
+should finish after some time. If it takes too long time try to exclude any
+mounted network
+directories (either with &lt;span class="caps"&gt;SMB&lt;/span&gt; or &lt;span class="caps"&gt;NFS&lt;/span&gt;) since these will take extra long&amp;nbsp;time.&lt;/p&gt;
+&lt;p&gt;Also, if you awant a nice interactive output
 using ncurses you can download and compile the &lt;a class="reference external" href="https://dev.yorhel.nl/ncdu"&gt;ncdu tool&lt;/a&gt; (NCurses Disk&amp;nbsp;Usage).&lt;/p&gt;
 </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 12 Nov 2018 14:20:00 +0200</pubDate><guid isPermaLink="false">tag:spapas.github.io,2018-11-12:2018/11/12/du-disk-usage/</guid><category>du</category><category>unix</category><category>linux</category><category>disk-usage</category></item><item><title>Adding a delay to Django HTTP responses</title><link>https://spapas.github.io/2018/05/08/django-reponse-add-delay/</link><description>&lt;p&gt;Sometimes you&amp;#8217;d like to make your Django views more slow by adding a fake delay. This may
 sound controversial (why would somebody want to make some of his views slower) however it is a real requirement,
@@ -4080,14 +4083,12 @@ flat table like the previous. Specifically, using the previous example,
 if you have a table named &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; that has a non-normalized
 column named &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; then when you call &lt;tt class="docutils literal"&gt;select &lt;span class="pre"&gt;export_relation('part',&lt;/span&gt; 'category')&lt;/tt&gt; the following
 will&amp;nbsp;happen:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p class="first"&gt;A new table named &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; will be created. This table will contain two columns &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt;, with &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; being the primary key and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; having a unique constraint. If the table exists it will be dropped and&amp;nbsp;re-ccreated&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p class="first"&gt;A new column named &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; will be added to &lt;tt class="docutils literal"&gt;part&lt;/tt&gt;. This column will be a foreign key to the new table &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt;.&lt;/p&gt;
-&lt;/li&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;A new table named &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; will be created. This table will contain two columns &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt;, with &lt;tt class="docutils literal"&gt;id&lt;/tt&gt; being the primary key and &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; having a unique constraint. If the table exists it will be dropped and&amp;nbsp;re-ccreated&lt;/li&gt;
+&lt;li&gt;A new column named &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt; will be added to &lt;tt class="docutils literal"&gt;part&lt;/tt&gt;. This column will be a foreign key to the new table &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt;.&lt;/li&gt;
 &lt;li&gt;&lt;dl class="first docutils"&gt;
 &lt;dt&gt;For each unique value &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; of &lt;tt class="docutils literal"&gt;category&lt;/tt&gt;:&lt;/dt&gt;
-&lt;dd&gt;&lt;ul class="first last simple"&gt;
+&lt;dd&gt;&lt;ul class="first last"&gt;
 &lt;li&gt;Insert a new record in &lt;tt class="docutils literal"&gt;part_category&lt;/tt&gt; with &lt;tt class="docutils literal"&gt;v&lt;/tt&gt; in the &lt;tt class="docutils literal"&gt;name&lt;/tt&gt; field of the table and save the inserted id to &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt;&lt;/li&gt;
 &lt;li&gt;Set &lt;tt class="docutils literal"&gt;current_id&lt;/tt&gt; to &lt;tt class="docutils literal"&gt;category_id&lt;/tt&gt;  to all rows of &lt;tt class="docutils literal"&gt;part&lt;/tt&gt; where &lt;tt class="docutils literal"&gt;category&lt;/tt&gt; has the value of &lt;tt class="docutils literal"&gt;v&lt;/tt&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -26095,7 +26096,7 @@ class GenericObjectFormView2(FormView, SingleObjectMixin):
         return HttpResponseRedirect( obj.get_absolute_url() )
 
     def get_context_data(self, **kwargs):
-        context = super(GenericYesNoFormView, self).get_context_data(**kwargs)
+        context = super(GenericYesNoFormView2, self).get_context_data(**kwargs)
         context['title'] = self.title
         context['question'] = self.question
         return context

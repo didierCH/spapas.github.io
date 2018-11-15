@@ -1306,14 +1306,12 @@ flat table like the previous. Specifically, using the previous example,
 if you have a table named <tt class="docutils literal">part</tt> that has a non-normalized
 column named <tt class="docutils literal">category</tt> then when you call <tt class="docutils literal">select <span class="pre">export_relation('part',</span> 'category')</tt> the following
 will&nbsp;happen:</p>
-<ul>
-<li><p class="first">A new table named <tt class="docutils literal">part_category</tt> will be created. This table will contain two columns <tt class="docutils literal">id</tt> and <tt class="docutils literal">name</tt>, with <tt class="docutils literal">id</tt> being the primary key and <tt class="docutils literal">name</tt> having a unique constraint. If the table exists it will be dropped and&nbsp;re-ccreated</p>
-</li>
-<li><p class="first">A new column named <tt class="docutils literal">category_id</tt> will be added to <tt class="docutils literal">part</tt>. This column will be a foreign key to the new table <tt class="docutils literal">part_category</tt>.</p>
-</li>
+<ul class="simple">
+<li>A new table named <tt class="docutils literal">part_category</tt> will be created. This table will contain two columns <tt class="docutils literal">id</tt> and <tt class="docutils literal">name</tt>, with <tt class="docutils literal">id</tt> being the primary key and <tt class="docutils literal">name</tt> having a unique constraint. If the table exists it will be dropped and&nbsp;re-ccreated</li>
+<li>A new column named <tt class="docutils literal">category_id</tt> will be added to <tt class="docutils literal">part</tt>. This column will be a foreign key to the new table <tt class="docutils literal">part_category</tt>.</li>
 <li><dl class="first docutils">
 <dt>For each unique value <tt class="docutils literal">v</tt> of <tt class="docutils literal">category</tt>:</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>Insert a new record in <tt class="docutils literal">part_category</tt> with <tt class="docutils literal">v</tt> in the <tt class="docutils literal">name</tt> field of the table and save the inserted id to <tt class="docutils literal">current_id</tt></li>
 <li>Set <tt class="docutils literal">current_id</tt> to <tt class="docutils literal">category_id</tt>  to all rows of <tt class="docutils literal">part</tt> where <tt class="docutils literal">category</tt> has the value of <tt class="docutils literal">v</tt></li>
 </ul>

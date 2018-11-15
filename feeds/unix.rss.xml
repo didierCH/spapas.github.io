@@ -59,6 +59,9 @@ output) instead of the &lt;tt class="docutils literal"&gt;*&lt;/tt&gt; to only g
 directories, i.e run &lt;tt class="docutils literal"&gt;du &lt;span class="pre"&gt;-h&lt;/span&gt; &lt;span class="pre"&gt;-s&lt;/span&gt; $(echo */)&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;du &lt;span class="pre"&gt;-h&lt;/span&gt; &lt;span class="pre"&gt;-s&lt;/span&gt; `echo */`&lt;/tt&gt;.&lt;/p&gt;
 &lt;p&gt;One thing that you must be aware of is that this command may take &lt;em&gt;a long time&lt;/em&gt;
 especially if you have lots of small files somewhere. Just let it run and it
-should finish after some time. Also, if you awant a nice interactive output
+should finish after some time. If it takes too long time try to exclude any
+mounted network
+directories (either with &lt;span class="caps"&gt;SMB&lt;/span&gt; or &lt;span class="caps"&gt;NFS&lt;/span&gt;) since these will take extra long&amp;nbsp;time.&lt;/p&gt;
+&lt;p&gt;Also, if you awant a nice interactive output
 using ncurses you can download and compile the &lt;a class="reference external" href="https://dev.yorhel.nl/ncdu"&gt;ncdu tool&lt;/a&gt; (NCurses Disk&amp;nbsp;Usage).&lt;/p&gt;
 </description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Mon, 12 Nov 2018 14:20:00 +0200</pubDate><guid isPermaLink="false">tag:spapas.github.io,2018-11-12:2018/11/12/du-disk-usage/</guid><category>du</category><category>unix</category><category>linux</category><category>disk-usage</category></item></channel></rss>
