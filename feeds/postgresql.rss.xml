@@ -282,7 +282,7 @@ mkdir &lt;span class="nv"&gt;$backup_dir&lt;/span&gt;
   &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Starting backup for &lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
   &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
   sudo -u postgres vacuumdb --analyze -Upostgres &lt;span class="nv"&gt;$db&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup.log
-  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
   &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;stat &lt;span class="nv"&gt;$filename&lt;/span&gt; --printf&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%s&amp;quot;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
   &lt;span class="nv"&gt;kb_size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;scale=2; &lt;/span&gt;&lt;span class="nv"&gt;$size&lt;/span&gt;&lt;span class="s2"&gt; / 1024.0&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; bc&lt;span class="sb"&gt;`&lt;/span&gt;
   &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Finished backup for &lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt; - size is &lt;/span&gt;&lt;span class="nv"&gt;$kb_size&lt;/span&gt;&lt;span class="s2"&gt; KB&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
@@ -290,7 +290,7 @@ mkdir &lt;span class="nv"&gt;$backup_dir&lt;/span&gt;
 
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Backing up global objects&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
 &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;global.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
-sudo -u postgres pg_dumpall -Upostgres -v -g 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+sudo -u postgres pg_dumpall -Upostgres -v -g &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
 &lt;span class="nv"&gt;size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;stat &lt;span class="nv"&gt;$filename&lt;/span&gt; --printf&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%s&amp;quot;&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
 &lt;span class="nv"&gt;kb_size&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;scale=2; &lt;/span&gt;&lt;span class="nv"&gt;$size&lt;/span&gt;&lt;span class="s2"&gt; / 1024.0&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; bc&lt;span class="sb"&gt;`&lt;/span&gt;
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Finished backup for global - size is &lt;/span&gt;&lt;span class="nv"&gt;$kb_size&lt;/span&gt;&lt;span class="s2"&gt; KB&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
@@ -347,14 +347,14 @@ mkdir &lt;span class="nv"&gt;$backup_dir&lt;/span&gt;
   &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
   &lt;span class="nv"&gt;filename_binary&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.bak.gz
   sudo -u postgres vacuumdb --analyze -Upostgres &lt;span class="nv"&gt;$db&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup.log
-  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
-  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F c 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename_binary&lt;/span&gt;
+  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F p &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+  sudo -u postgres pg_dump -Upostgres -v &lt;span class="nv"&gt;$db&lt;/span&gt; -F c &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename_binary&lt;/span&gt;
   output_file_size &lt;span class="nv"&gt;$filename&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt; sql&amp;quot;&lt;/span&gt;
   output_file_size &lt;span class="nv"&gt;$filename_binary&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$db&lt;/span&gt;&lt;span class="s2"&gt; bin&amp;quot;&lt;/span&gt;
 &lt;span class="k"&gt;done&lt;/span&gt;
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Backing up global objects&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
 &lt;span class="nv"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;global.&lt;span class="nv"&gt;$date_str&lt;/span&gt;.sql.gz
-sudo -u postgres pg_dumpall -Upostgres -v -g 2&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
+sudo -u postgres pg_dumpall -Upostgres -v -g &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&amp;gt; /tmp/db_backup.log &lt;span class="p"&gt;|&lt;/span&gt; gzip &amp;gt; &lt;span class="nv"&gt;$filename&lt;/span&gt;
 output_file_size &lt;span class="nv"&gt;$filename&lt;/span&gt; global
 &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Ok!&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; /tmp/db_backup_info.log
 mail -s &lt;span class="s2"&gt;&amp;quot;Backup results&amp;quot;&lt;/span&gt; spapas@hcg.gr  &amp;lt; /tmp/db_backup_info.log
