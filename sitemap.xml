@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/</loc>
-<lastmod>2019-02-05T15:21:33-00:00</lastmod>
+<lastmod>2019-02-26T09:49:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2019-02-05T15:21:33-00:00</lastmod>
+<lastmod>2019-02-26T09:49:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2019-02-05T15:21:33-00:00</lastmod>
+<lastmod>2019-02-26T09:49:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2019-02-05T15:21:33-00:00</lastmod>
+<lastmod>2019-02-26T09:49:31-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2019/02/25/django-fix-async-db/</loc>
+<lastmod>2019-02-25T15:20:00+02:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -334,7 +341,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/category/django.html</loc>
-<lastmod>2018-05-08T23:20:00+01:35</lastmod>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -453,7 +460,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/django-rq.html</loc>
-<lastmod>2015-09-01T14:20:00+01:35</lastmod>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -613,7 +620,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/node.html</loc>
+<loc>https://spapas.github.io/tag/npm.html</loc>
 <lastmod>2015-11-16T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
@@ -684,7 +691,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/rq.html</loc>
-<lastmod>2015-09-01T14:20:00+01:35</lastmod>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -755,6 +762,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/ajax.html</loc>
 <lastmod>2016-03-02T11:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/async.html</loc>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -859,7 +873,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/tasks.html</loc>
-<lastmod>2015-09-01T14:20:00+01:35</lastmod>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1124,7 +1138,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/npm.html</loc>
+<loc>https://spapas.github.io/tag/node.html</loc>
 <lastmod>2015-11-16T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
@@ -1202,7 +1216,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/django.html</loc>
-<lastmod>2018-05-08T23:20:00+01:35</lastmod>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1237,7 +1251,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2018-11-12T14:20:00+01:35</lastmod>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>

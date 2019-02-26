@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="5_8DTmIiEq4gFvNAfxAD6TsGOgrMAjp8lQFQvfA6zZc" />
+  <title>Fixing your Django async job - database integration &mdash; /var/</title>
+  <meta name="author" content="Serafeim Papastefanos">
+
+
+
+
+
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link href="https://spapas.github.io/favicon.png" rel="icon">
+
+  <link href="https://spapas.github.io/theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+        
+  <link href="https://spapas.github.io/theme/css/extra_style.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+
+  <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Fira+Sans:400,700&amp;subset=greek" rel="stylesheet">
+  
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="https://spapas.github.io/">/var/</a></h1>
+    <h2>Various programming stuff</h2>
+</hgroup></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+</ul>
+
+
+<ul class="main-navigation">
+      <li >
+        <a href="https://spapas.github.io/category/css.html">Css</a>
+      </li>
+      <li class="active">
+        <a href="https://spapas.github.io/category/django.html">Django</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/flask.html">Flask</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/git.html">Git</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/javascript.html">Javascript</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/pelican.html">Pelican</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/postgresql.html">Postgresql</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/python.html">Python</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/spring.html">Spring</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/unix.html">Unix</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/wagtail.html">Wagtail</a>
+      </li>
+</ul></nav>
+  <div id="main">
+    <div id="content">
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">Fixing your Django async job - database integration</h1>
+    <p class="meta">
+<time datetime="2019-02-25T15:20:00+02:00" pubdate>Δευ 25 Φεβρουάριος 2019</time>    </p>
+</header>
+
+<div class="entry-content"><p>I&#8217;ve already written
+<a class="reference external" href="https://spapas.github.io/2015/01/27/async-tasks-with-django-rq/">two</a>
+<a class="reference external" href="https://spapas.github.io/2015/09/01/django-rq-redux/">articles</a>
+about django-rq and implementing asynchronous tasks in Django. However I&#8217;ve found out
+that there&#8217;s a very important thing missing from them: How to properly integrate
+your asynchronous tasks with your Django database. This is very important because
+if it is not done right you will start experiencing strange errors about missing
+database objects or duplicate keys. The most troublesome thing about these errors is
+that they are not consistent. Your app may work fine but for some reason you&#8217;ll see some
+of your asynchronous tasks fail with these errors. When you re-queue the async jobs everything will
+be&nbsp;ok.</p>
+<p>Of course this behavior (code that runs <em>sometimes</em>) smells of a race condition but its not easy to debug
+it if you don&#8217;t know the full&nbsp;story.</p>
+<p>In the following I will describe the cause of this error and how you can fix it. As a companion
+to this article I&#8217;ve implemented a small project that can be used to test the error and the
+fix: <a class="reference external" href="https://github.com/spapas/async-job-db-fix">https://github.com/spapas/async-job-db-fix</a>.</p>
+<p>Notice that although this article is written for django-rq it should also help people that have
+the same problems with other async job systems (like celery or&nbsp;django-q).</p>
+<div class="section" id="description-of-the-project">
+<h2>Description of the&nbsp;project</h2>
+<p>The project is very simple, you can just add a url and it will retrieve its content asynchronously and
+report its length. For the models, it just has a <tt class="docutils literal">Task</tt> model which is used to provide information about
+what we want to the asynchronous task to do and retrieve the&nbsp;result:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">created_on</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now_add</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+    <span class="n">url_length</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+<p>It also has a home view that can be used to start new asynchronous tasks by creating a <tt class="docutils literal">Task</tt> object
+with the url we got and passing it to the asynchronous&nbsp;task:</p>
+<div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic.edit</span> <span class="kn">import</span> <span class="n">FormView</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">TaskForm</span>
+<span class="kn">from</span> <span class="nn">.tasks</span> <span class="kn">import</span> <span class="n">get_url_length</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Task</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">transaction</span>
+
+<span class="k">class</span> <span class="nc">TasksHomeFormView</span><span class="p">(</span><span class="n">FormView</span><span class="p">):</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">TaskForm</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;tasks_home.html&#39;</span>
+    <span class="n">success_url</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+
+    <span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+        <span class="n">get_url_length</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TasksHomeFormView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">TasksHomeFormView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">ctx</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_on&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ctx</span>
+</pre></div>
+<p>And finally the asynchronous job itself that retrieves the task from the database,
+requests its url and saves its&nbsp;length:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">rq</span> <span class="kn">import</span> <span class="n">get_current_job</span>
+<span class="kn">from</span> <span class="nn">django_rq</span> <span class="kn">import</span> <span class="n">job</span>
+
+<span class="nd">@job</span>
+<span class="k">def</span> <span class="nf">get_url_length</span><span class="p">(</span><span class="n">task_id</span><span class="p">):</span>
+    <span class="n">jb</span> <span class="o">=</span> <span class="n">get_current_job</span><span class="p">()</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="n">task_id</span>
+    <span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">url_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">jb</span><span class="o">.</span><span class="n">get_id</span><span class="p">()</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;OK&#39;</span>
+    <span class="n">task</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+<p>The above should be fairly obvious: The user visits the homepage and enters a url at the input. When he presses submit
+the view will create a new <tt class="docutils literal">Task</tt> object with the url that the user entered and fire-off the <tt class="docutils literal">get_url_length</tt> asynchronous job passing the
+task id of the task that was just created. It will then return immediately without waiting for the asynchronous job to complete. The user will
+need to refresh to see the result of his job; this is the usual behavior with async&nbsp;jobs.</p>
+<p>The asynchronous job on the other hand will retrieve the task whose id got as a parameter from the database, do the work it needs to do
+and update the result when it is&nbsp;finished.</p>
+<p>Unfortunately, the above simple setup will <em>probably</em> behave erratically by randomly throwing database related&nbsp;errors!</p>
+</div>
+<div class="section" id="cause-of-the-problem">
+<h2>Cause of the&nbsp;problem</h2>
+<p>In the previous section I said <em>probably</em> because the erratic behavior is caused by a specific setting of your Django project; the <tt class="docutils literal">ATOMIC_REQUESTS</tt>.
+This setting can be set on your database connection and if it is <tt class="docutils literal"><span class="caps">TRUE</span></tt> then each request will be <em>atomic</em>. This means that each request will be tied with
+a database transaction i.e a transaction will be started when your request starts and commited only when your requests finishes; if for some reason your
+request throws an error then the transaction will be rolled back. An example of this setting&nbsp;is:</p>
+<div class="highlight"><pre><span></span><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;ENGINE&#39;</span><span class="p">:</span> <span class="s1">&#39;django.db.backends.sqlite3&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;NAME&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s1">&#39;db.sqlite3&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;ATOMIC_REQUESTS&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Now, in my opinion, <tt class="docutils literal">ATOMIC_REQUESTS</tt> is a great thing to have because it makes everything much easier. I always set it to <tt class="docutils literal">True</tt> to my projects because
+I don&#8217;t need to actually think about transactions and requests; I know that if there&#8217;s a problem in a request the whole transaction will be rolle back and no
+garbage will be left in the database. If on the other hand for some reason a request does not need to be tied to a transaction I just set it off
+for this specific transaction (using <cite>transaction.non_atomic_requests_</cite>). Please notice that by default the <tt class="docutils literal">ATOMIC_REQUESTS</tt> has a <tt class="docutils literal">False</tt> value which means that
+the database will be in autocommit mode meaning that every command will be executed&nbsp;immediately.</p>
+<p>So although the <tt class="docutils literal">ATOMIC_REQUESTS</tt> is great, it is actually the reason that there are problems with asynchronous tasks. Why? Let&#8217;s take a closer look at what the <tt class="docutils literal">form_valid</tt> of the view&nbsp;does:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span> <span class="c1">#1</span>
+    <span class="n">get_url_length</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="c1">#2</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TasksHomeFormView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span> <span class="c1">#3</span>
+</pre></div>
+<p>It creates the task in #1, fires off the asynchronous task in #2 and continues the execution of the view processing in #3. The important thing to understand
+here is that the transaction will be commited <em>only after #3</em> is finished. This means that there&#8217;s a possibility that the asynchronous task will be started
+before #3 is finished thus it won&#8217;t find the task because the task will <em>not</em> be created yet(!) This is a little counter-intuitive but you must remember
+that the async task is run by a worker which is a different process than your application server; the worker may be able to start before the transaction is&nbsp;commited.</p>
+<p>If you want to actually see the problem <em>every time</em> you can add a small delay between the start of the async task and the <tt class="docutils literal">form_valid</tt> something like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+    <span class="n">get_url_length</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TasksHomeFormView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+<p>This will make the view more slow so the asynchronous worker will always have time to start executing the task (and get the not found error). Also notice
+that if you had <tt class="docutils literal">ATOMIC_REQUESTS: False</tt> the above code would work fine because the task would be created immediately (auto-commited) and the async job would be able to find&nbsp;it.</p>
+</div>
+<div class="section" id="the-solution">
+<h2>The&nbsp;solution</h2>
+<p>So how is this problem solved? Well it&#8217;s not that difficult now that you know what&#8217;s causing&nbsp;it!</p>
+<p>One solution would be to set <tt class="docutils literal">ATOMIC_REQUESTS</tt> to <tt class="docutils literal">False</tt> but that would make all database commands auto-commit so you&#8217;ll lose
+request-transaction-tieing. Another solution would be to set <tt class="docutils literal">ATOMIC_REQUESTS</tt> to <tt class="docutils literal">True</tt> and disable atomic requests for the specific view that starts the
+asynchronous job using <cite>transaction.non_atomic_requests_</cite>. This is a viable solution however I don&#8217;t like it because I&#8217;d lose the comfort of transaction per request
+for this specific request and I would need to add my own transaction&nbsp;handling.</p>
+<p>A third solution is to avoid messing with the database in your view and create the task object in the async job. Any parameters you want to pass to the async job would be
+passed directly to the async function. This may work fine in some cases but I find it more safe to create the task in the database before starting the async job so that
+I have better control and error handling. This way even if there&#8217;s an error in my worker and for some reason the async job never starts or it breaks before being able to
+handle the database, I will have the task object in the database because it will have been created in the&nbsp;view.</p>
+<p>Is there anything better? Isn&#8217;t there a way to start the executing the async job <em>after</em> the transaction of the
+view is commited? Actually yes, there is! For this, <a class="reference external" href="https://docs.djangoproject.com/en/2.1/topics/db/transactions/#django.db.transaction.on_commit">transaction.on_commit</a> comes to the rescue! This function
+receives a callback that will be called after the transaction is commited! Thus, to properly fix you project, you should
+change the <tt class="docutils literal">form_valid</tt> method like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">form_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">form</span><span class="p">):</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">form</span><span class="o">.</span><span class="n">cleaned_data</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">])</span>
+    <span class="n">transaction</span><span class="o">.</span><span class="n">on_commit</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">get_url_length</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TasksHomeFormView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">form_valid</span><span class="p">(</span><span class="n">form</span><span class="p">)</span>
+</pre></div>
+<p>Notice that I need to use <tt class="docutils literal">lambda</tt> to create a callback function that will call <tt class="docutils literal">get_url_length.delay(task.id)</tt> when the transaction is commited. Now
+even though I have the delay there the async job will start after the transaction is commited, ie after the view handler is finished (after the 1 second&nbsp;delay).</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>From the above you should be able to understand why sometimes you have problems when your async jobs use the database. To fix it you have various
+options but at least for me, the best solution is to start your async jobs <em>after</em> the transaction is commited using <tt class="docutils literal">transaction.on_commit</tt>. Just
+change each <tt class="docutils literal">async.job.delay(parameters)</tt> call to <tt class="docutils literal">transaction.on_commit(lambda: async.job.delay(parameters))</tt> and you will be&nbsp;fine!</p>
+</div>
+</div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        Serafeim Papastefanos
+    </span>
+  </span>
+<time datetime="2019-02-25T15:20:00+02:00" pubdate>Δευ 25 Φεβρουάριος 2019</time>  <span class="categories">
+    <a class='category' href='https://spapas.github.io/category/django.html'>django</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="https://spapas.github.io/tag/django.html">django</a>,    <a class="category" href="https://spapas.github.io/tag/async.html">async</a>,    <a class="category" href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a class="category" href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a class="category" href="https://spapas.github.io/tag/rq.html">rq</a>  </span>
+</p><div class="sharing">
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://spapas.github.io/2019/02/25/django-fix-async-db/" data-via="" data-counturl="https://spapas.github.io/2019/02/25/django-fix-async-db/" >Tweet</a>
+</div>    </footer>
+  </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div>
+  </section>
+</div>
+<aside class="sidebar">
+  <section>
+  <br />
+  <a href='/feeds/all.atom.xml'>Atom</a> 
+  |
+  <a href='/feeds/all.rss.xml'>RSS</a> 
+  </section>
+  
+  <section>
+    <h1>Subscribe</h1>
+    Do you want to get notified via email when I post new content?
+    <style>.subscribe-button {
+    /* margin: 10px !important; */
+    padding: 10px !important;
+    background-color: black;
+    display: inline-block;
+    color: white !important;
+    text-decoration: none;    
+    
+    line-height: 36px !important;
+    height: 37px !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    color: #ffffff !important;
+    background-color: #000000 !important;
+    border-radius: 3px !important;
+    border: 1px solid transparent !important;
+    padding: 1px 9px !important;
+    font-size: 23px !important;
+    letter-spacing: 0.6px !important;
+    box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;
+    -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
+    margin: 0 auto !important;
+    font-family: 'Cookie', cursive !important;
+    -webkit-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+    -o-transition: 0.3s all linear !important;
+    -webkit-transition: 0.3s all linear !important;
+    -moz-transition: 0.3s all linear !important;
+    -ms-transition: 0.3s all linear !important;
+    transition: 0.3s all linear !important;
+    
+    }</style>
+<a class='subscribe-button' target="_blank" href="http://eepurl.com/dxI3PP">Click here to subscribe!</a>
+  </section>
+  <section>
+    <h1>Support</h1>
+    You can show your appreciation for anything useful you've found here by buying me a coffee :)
+    <style>.bmc-button img{width: 27px !important;margin-bottom: 3px !important;box-shadow: none !important;border: none !important;vertical-align: middle !important;}.bmc-button{line-height: 36px !important;height:37px !important;text-decoration: none !important;display:inline-block !important;color:#ffffff !important;background-color:#000000 !important;border-radius: 3px !important;border: 1px solid transparent !important;padding: 1px 9px !important;font-size: 23px !important;letter-spacing:0.6px !important;;box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;margin: 0 auto !important;font-family:'Cookie', cursive !important;-webkit-box-sizing: border-box !important;box-sizing: border-box !important;-o-transition: 0.3s all linear !important;-webkit-transition: 0.3s all linear !important;-moz-transition: 0.3s all linear !important;-ms-transition: 0.3s all linear !important;transition: 0.3s all linear !important;}.bmc-button:hover, .bmc-button:active, .bmc-button:focus {-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;text-decoration: none !important;box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;opacity: 0.85 !important;color:#ffffff !important;}</style><link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/9CqHPEQ6F"><img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:5px">Buy me a coffee</span></a>
+  </section>
+  
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+      <li class="post">
+          <a href="https://spapas.github.io/2019/02/25/django-fix-async-db/">Fixing your Django async job - database integration</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/11/12/du-disk-usage/">Use du to find out the disk usage of each directory in unix</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/05/08/django-reponse-add-delay/">Adding a delay to Django HTTP responses</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/04/05/easy-immutable-objects/">Easy immutable objects in Javascript</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/03/19/comprehensive-django-cbv-guide/">A comprehensive Django CBV guide</a>
+      </li>
+    </ul>
+  </section>
+  <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+        <li><a href="https://spapas.github.io/category/css.html">css</a></li>
+        <li><a href="https://spapas.github.io/category/django.html">django</a></li>
+        <li><a href="https://spapas.github.io/category/flask.html">flask</a></li>
+        <li><a href="https://spapas.github.io/category/git.html">git</a></li>
+        <li><a href="https://spapas.github.io/category/javascript.html">javascript</a></li>
+        <li><a href="https://spapas.github.io/category/pelican.html">pelican</a></li>
+        <li><a href="https://spapas.github.io/category/postgresql.html">postgresql</a></li>
+        <li><a href="https://spapas.github.io/category/python.html">python</a></li>
+        <li><a href="https://spapas.github.io/category/spring.html">spring</a></li>
+        <li><a href="https://spapas.github.io/category/unix.html">unix</a></li>
+        <li><a href="https://spapas.github.io/category/wagtail.html">wagtail</a></li>
+    </ul>
+  </section>
+ 
+
+  <section>
+  <h1>Tags</h1>
+    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/python-2.html">python-2</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/immutable.html">immutable</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/youtube-dl.html">youtube-dl</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/grid.html">grid</a>,    <a href="https://spapas.github.io/tag/ag-grid.html">ag-grid</a>,    <a href="https://spapas.github.io/tag/du.html">du</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/hyperapp.html">hyperapp</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/python-3.html">python-3</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/disk-usage.html">disk-usage</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/component.html">component</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/async.html">async</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/unix.html">unix</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/linux.html">linux</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/django-rest-auth.html">django-rest-auth</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/ffmpeg.html">ffmpeg</a>,    <a href="https://spapas.github.io/tag/middleware.html">middleware</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/plpgsql.html">plpgsql</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/youtube.html">youtube</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+  
+  <section>
+  <h1>Yearly archives</h1>
+    <a href="https://spapas.github.io/posts/2013/">2013</a>,    <a href="https://spapas.github.io/posts/2014/">2014</a>,    <a href="https://spapas.github.io/posts/2015/">2015</a>,    <a href="https://spapas.github.io/posts/2016/">2016</a>,    <a href="https://spapas.github.io/posts/2017/">2017</a>,    <a href="https://spapas.github.io/posts/2018/">2018</a>,    <a href="https://spapas.github.io/posts/2019/">2019</a>  </section>
+
+
+
+  <section>
+    <h1>GitHub Repos</h1>
+    <ul id="gh_repos">
+      <li class="loading">Status updating...</li>
+    </ul>
+      <a href="https://github.com/spapas">@spapas</a> on GitHub
+    <script  src="//code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      $(function(){
+          if (!window.jXHR){
+              var jxhr = document.createElement('script');
+              jxhr.type = 'text/javascript';
+              jxhr.src = 'https://spapas.github.io/theme/js/jXHR.js';
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(jxhr, s);
+          }
+
+          github.showRepos({
+              user: 'spapas',
+              count: 5,
+              skip_forks: true,
+              target: '#gh_repos'
+          });
+      });
+    </script>
+    <script src="https://spapas.github.io/theme/js/github.js" type="text/javascript"> </script>
+  </section>
+
+
+  <section>
+    <a href="https://twitter.com/_serafeim_?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @_serafeim_</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </section>
+
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy;  2013&ndash;2019  Serafeim Papastefanos &mdash;
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  <script src="https://spapas.github.io/theme/js/modernizr-2.0.js"></script>
+  <script src="https://spapas.github.io/theme/js/ender.js"></script>
+  <script src="https://spapas.github.io/theme/js/octopress.js" type="text/javascript"></script>
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44750952-1', 'auto');
+
+    ga('send', 'pageview');
+    </script>
+  <script type="text/javascript">
+    var disqus_shortname = 'spapas-github-io';
+    var disqus_identifier = '/2019/02/25/django-fix-async-db/';
+    var disqus_url = 'https://spapas.github.io/2019/02/25/django-fix-async-db/';
+    var disqus_title = 'Fixing your Django async job - database&nbsp;integration';
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = "//" + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+  </script>
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+</body>
+</html>
