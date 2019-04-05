@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="5_8DTmIiEq4gFvNAfxAD6TsGOgrMAjp8lQFQvfA6zZc" />
+  <title>How to create a custom filtered adapter in Android &mdash; /var/</title>
+  <meta name="author" content="Serafeim Papastefanos">
+
+
+
+
+
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link href="https://spapas.github.io/favicon.png" rel="icon">
+
+  <link href="https://spapas.github.io/theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+        
+  <link href="https://spapas.github.io/theme/css/extra_style.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+
+  <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Fira+Sans:400,700&amp;subset=greek" rel="stylesheet">
+  
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="https://spapas.github.io/">/var/</a></h1>
+    <h2>Various programming stuff</h2>
+</hgroup></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+</ul>
+
+
+<ul class="main-navigation">
+      <li class="active">
+        <a href="https://spapas.github.io/category/android.html">Android</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/css.html">Css</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/django.html">Django</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/flask.html">Flask</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/git.html">Git</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/javascript.html">Javascript</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/pelican.html">Pelican</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/postgresql.html">Postgresql</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/python.html">Python</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/spring.html">Spring</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/unix.html">Unix</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/wagtail.html">Wagtail</a>
+      </li>
+</ul></nav>
+  <div id="main">
+    <div id="content">
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">How to create a custom filtered adapter in Android</h1>
+    <p class="meta">
+<time datetime="2019-04-05T12:20:00+03:00" pubdate>Παρ 05 Απρίλιος 2019</time>    </p>
+</header>
+
+<div class="entry-content"><div class="section" id="introduction">
+<h2>Introduction</h2>
+<p>Android offers a nice component named <a class="reference external" href="https://developer.android.com/reference/android/widget/AutoCompleteTextView">AutoCompleteTextView</a> that can be used to auto-fill a text box from a list of values.
+In its simplest form, you just create an array adapter passing it a list of objects (that have a proper <tt class="docutils literal">toString()</tt> method).
+Then you type some characters to the textbox and by default it will filter the results searching
+in the <em>beginning of the backing object&#8217;s toString() result</em>.</p>
+<p>However there are times that you don&#8217;t want to look at the beginning of the string (because you want to look at the middle of the string) or
+you don&#8217;t want to just to search in toString() method of the object or you want to do some more fancy things in object output. For this
+you must override the <tt class="docutils literal">ArrayAdapter</tt> and add a custom <tt class="docutils literal">Filter</tt>.</p>
+<p>Unfurtunately this isn&#8217;t as straightforward as I&#8217;d like and I couldn&#8217;t find a quick and easy tutorial on how it can be&nbsp;done.</p>
+<p>So here goes nothing: In the following I&#8217;ll show you a very simple android application that will have <em>the minimum viable</em> custom filtered
+adapter implementation. You can find the whole project in github: <a class="reference external" href="https://github.com/spapas/CustomFilteredAdapeter">https://github.com/spapas/CustomFilteredAdapeter</a> but I am going to discuss
+everything here&nbsp;also.</p>
+</div>
+<div class="section" id="the-application">
+<h2>The&nbsp;application</h2>
+<p>Just create a new project with an empty activity from Android Studio. Use kotlin as the&nbsp;language.</p>
+</div>
+<div class="section" id="the-layout">
+<h2>The&nbsp;layout</h2>
+<p>I&#8217;ll keep it as simple as&nbsp;possible:</p>
+<div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="nt">&lt;LinearLayout</span>
+        <span class="na">xmlns:android=</span><span class="s">&quot;http://schemas.android.com/apk/res/android&quot;</span>
+        <span class="na">xmlns:tools=</span><span class="s">&quot;http://schemas.android.com/tools&quot;</span>
+        <span class="na">android:orientation=</span><span class="s">&quot;vertical&quot;</span>
+        <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span> <span class="na">android:layout_height=</span><span class="s">&quot;match_parent&quot;</span>
+        <span class="na">tools:context=</span><span class="s">&quot;.MainActivity&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextView</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span> <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+            <span class="na">android:text=</span><span class="s">&quot;Hello World!&quot;</span>
+            <span class="na">android:textSize=</span><span class="s">&quot;32sp&quot;</span>
+            <span class="na">android:textAlignment=</span><span class="s">&quot;center&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;AutoCompleteTextView</span>
+            <span class="na">android:layout_marginTop=</span><span class="s">&quot;32dip&quot;</span>
+            <span class="na">android:layout_width=</span><span class="s">&quot;match_parent&quot;</span> <span class="na">android:layout_height=</span><span class="s">&quot;wrap_content&quot;</span>
+            <span class="na">android:id=</span><span class="s">&quot;@+id/autoCompleteTextView&quot;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/LinearLayout&gt;</span>
+</pre></div>
+<p>You should just care about the <tt class="docutils literal">AutoCompleteTextView</tt> with an id of <tt class="docutils literal">autoCompleteTextView</tt>.</p>
+</div>
+<div class="section" id="the-backing-data-object">
+<h2>The backing data&nbsp;object</h2>
+<p>I&#8217;ll use a simple PoiDao Kotlin data class for&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="k">data</span> <span class="k">class</span> <span class="nc">PoiDao</span><span class="p">(</span>
+    <span class="k">val</span> <span class="py">id</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span>
+    <span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+    <span class="k">val</span> <span class="py">city</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+    <span class="k">val</span> <span class="py">category_name</span><span class="p">:</span> <span class="n">String</span>
+<span class="p">)</span>
+</pre></div>
+<p>I&#8217;d like to be able to search to both name, city and category_name of each object. To create a list of the pois to be used to the adapter I can do something&nbsp;like:</p>
+<div class="highlight"><pre><span></span><span class="k">val</span> <span class="py">poisArray</span> <span class="p">=</span> <span class="n">listOf</span><span class="p">(</span>
+    <span class="n">PoiDao</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="s">&quot;Taco Bell&quot;</span><span class="p">,</span> <span class="s">&quot;Athens&quot;</span><span class="p">,</span> <span class="s">&quot;Restaurant&quot;</span><span class="p">),</span>
+    <span class="n">PoiDao</span><span class="p">(</span><span class="m">2</span><span class="p">,</span> <span class="s">&quot;McDonalds&quot;</span><span class="p">,</span> <span class="s">&quot;Athens&quot;</span><span class="p">,</span><span class="s">&quot;Restaurant&quot;</span><span class="p">),</span>
+    <span class="n">PoiDao</span><span class="p">(</span><span class="m">3</span><span class="p">,</span> <span class="s">&quot;KFC&quot;</span><span class="p">,</span> <span class="s">&quot;Piraeus&quot;</span><span class="p">,</span> <span class="s">&quot;Restaurant&quot;</span><span class="p">),</span>
+    <span class="n">PoiDao</span><span class="p">(</span><span class="m">4</span><span class="p">,</span> <span class="s">&quot;Shell&quot;</span><span class="p">,</span> <span class="s">&quot;Lamia&quot;</span><span class="p">,</span><span class="s">&quot;Gas Station&quot;</span><span class="p">),</span>
+    <span class="n">PoiDao</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="s">&quot;BP&quot;</span><span class="p">,</span> <span class="s">&quot;Thessaloniki&quot;</span><span class="p">,</span> <span class="s">&quot;Gas Station&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="the-custom-adapter">
+<h2>The custom&nbsp;adapter</h2>
+<p>This will be an <tt class="docutils literal">ArrayAdapter&lt;PoiDao&gt;</tt> implementing also the <tt class="docutils literal">Filterable</tt> interface:</p>
+<div class="highlight"><pre><span></span><span class="k">inner</span> <span class="k">class</span> <span class="nc">PoiAdapter</span><span class="p">(</span><span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="n">@LayoutRes</span> <span class="k">private</span> <span class="k">val</span> <span class="py">layoutResource</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="k">private</span> <span class="k">val</span> <span class="py">allPois</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">PoiDao</span><span class="p">&gt;):</span>
+    <span class="n">ArrayAdapter</span><span class="p">&lt;</span><span class="n">PoiDao</span><span class="p">&gt;(</span><span class="n">context</span><span class="p">,</span> <span class="n">layoutResource</span><span class="p">,</span> <span class="n">allPois</span><span class="p">),</span>
+    <span class="n">Filterable</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="k">var</span> <span class="py">mPois</span><span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">PoiDao</span><span class="p">&gt;</span> <span class="p">=</span> <span class="n">allPois</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getCount</span><span class="p">():</span> <span class="n">Int</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">mPois</span><span class="p">.</span><span class="n">size</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getItem</span><span class="p">(</span><span class="n">p0</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">PoiDao</span><span class="p">?</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">mPois</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">p0</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getItemId</span><span class="p">(</span><span class="n">p0</span><span class="p">:</span> <span class="n">Int</span><span class="p">):</span> <span class="n">Long</span> <span class="p">{</span>
+        <span class="c1">// Or just return p0</span>
+        <span class="k">return</span> <span class="n">mPois</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">p0</span><span class="p">).</span><span class="n">id</span><span class="p">.</span><span class="n">toLong</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getView</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">Int</span><span class="p">,</span> <span class="n">convertView</span><span class="p">:</span> <span class="n">View</span><span class="p">?,</span> <span class="n">parent</span><span class="p">:</span> <span class="n">ViewGroup</span><span class="p">?):</span> <span class="n">View</span> <span class="p">{</span>
+        <span class="k">val</span> <span class="py">view</span><span class="p">:</span> <span class="n">TextView</span> <span class="p">=</span> <span class="n">convertView</span> <span class="k">as</span> <span class="n">TextView</span><span class="p">?</span> <span class="o">?:</span> <span class="n">LayoutInflater</span><span class="p">.</span><span class="n">from</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">inflate</span><span class="p">(</span><span class="n">layoutResource</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="k">false</span><span class="p">)</span> <span class="k">as</span> <span class="n">TextView</span>
+        <span class="n">view</span><span class="p">.</span><span class="n">text</span> <span class="p">=</span> <span class="s">&quot;${mPois[position].name} ${mPois[position].city} (${mPois[position].category_name})&quot;</span>
+        <span class="k">return</span> <span class="n">view</span>
+    <span class="p">}</span>
+
+    <span class="k">override</span> <span class="k">fun</span> <span class="nf">getFilter</span><span class="p">():</span> <span class="n">Filter</span> <span class="p">{</span>
+        <span class="c1">// See next section</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>You&#8217;ll see that we add an instance variable named <tt class="docutils literal">mPois</tt> that gets initialized in the start with <tt class="docutils literal">allPois</tt> (which is the initial list of all pois that is passed to the adapter). The mPois
+will contain the <em>filtered</em> results. Then,
+for <tt class="docutils literal">getCount</tt> and <tt class="docutils literal">getItem</tt> we return the corresponding valeus from <tt class="docutils literal">mPois</tt>; the <tt class="docutils literal">getItemId</tt> is used when you have an sqlite backed adapter but I&#8217;m including it here for&nbsp;completeness.</p>
+<p>The <tt class="docutils literal">getView</tt> will create the specific line for each item in the dropdown. As you&#8217;ll see the layout that is passed must have a <tt class="docutils literal">text</tt> child which is set based on some of the attributes of
+the corresponding poi for each position. Notice that we can use whatever view layout we want for our dropdown result line (this is the <tt class="docutils literal">layoutResource</tt> parameter) but we need to configure
+it (i.e bind it with the values of the backing object) here&nbsp;properly.</p>
+<p>Finally we create a custom instance of the <tt class="docutils literal">Filter</tt>, explained in the next&nbsp;section.</p>
+</div>
+<div class="section" id="the-custom-filter">
+<h2>The custom&nbsp;filter</h2>
+<p>The <tt class="docutils literal">getFilter</tt> creates an object instance of a Filter and returns&nbsp;it:</p>
+<div class="highlight"><pre><span></span><span class="k">override</span> <span class="k">fun</span> <span class="nf">getFilter</span><span class="p">():</span> <span class="n">Filter</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">object</span> <span class="err">: </span><span class="nc">Filter</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">publishResults</span><span class="p">(</span><span class="n">charSequence</span><span class="p">:</span> <span class="n">CharSequence</span><span class="p">?,</span> <span class="n">filterResults</span><span class="p">:</span> <span class="n">Filter</span><span class="p">.</span><span class="n">FilterResults</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">mPois</span> <span class="p">=</span> <span class="n">filterResults</span><span class="p">.</span><span class="n">values</span> <span class="k">as</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">PoiDao</span><span class="p">&gt;</span>
+            <span class="n">notifyDataSetChanged</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">override</span> <span class="k">fun</span> <span class="nf">performFiltering</span><span class="p">(</span><span class="n">charSequence</span><span class="p">:</span> <span class="n">CharSequence</span><span class="p">?):</span> <span class="n">Filter</span><span class="p">.</span><span class="n">FilterResults</span> <span class="p">{</span>
+            <span class="k">val</span> <span class="py">queryString</span> <span class="p">=</span> <span class="n">charSequence</span><span class="o">?.</span><span class="n">toString</span><span class="p">()</span><span class="o">?.</span><span class="n">toLowerCase</span><span class="p">()</span>
+
+            <span class="k">val</span> <span class="py">filterResults</span> <span class="p">=</span> <span class="n">Filter</span><span class="p">.</span><span class="n">FilterResults</span><span class="p">()</span>
+            <span class="n">filterResults</span><span class="p">.</span><span class="n">values</span> <span class="p">=</span> <span class="k">if</span> <span class="p">(</span><span class="n">queryString</span><span class="p">==</span><span class="k">null</span> <span class="p">||</span> <span class="n">queryString</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span>
+                <span class="n">allPois</span>
+            <span class="k">else</span>
+                <span class="n">allPois</span><span class="p">.</span><span class="n">filter</span> <span class="p">{</span>
+                    <span class="n">it</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">toLowerCase</span><span class="p">().</span><span class="n">contains</span><span class="p">(</span><span class="n">queryString</span><span class="p">)</span> <span class="p">||</span>
+                    <span class="n">it</span><span class="p">.</span><span class="n">city</span><span class="p">.</span><span class="n">toLowerCase</span><span class="p">().</span><span class="n">contains</span><span class="p">(</span><span class="n">queryString</span><span class="p">)</span> <span class="p">||</span>
+                    <span class="n">it</span><span class="p">.</span><span class="n">category_name</span><span class="p">.</span><span class="n">toLowerCase</span><span class="p">().</span><span class="n">contains</span><span class="p">(</span><span class="n">queryString</span><span class="p">)</span>
+                <span class="p">}</span>
+            <span class="k">return</span> <span class="n">filterResults</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>This object instance overrides two methods of <tt class="docutils literal">Filter</tt>: <tt class="docutils literal">performFiltering</tt> and <tt class="docutils literal">publishResults</tt>. The <tt class="docutils literal">performFiltering</tt> is where the actual filtering is done;
+it should return a <tt class="docutils literal">FilterResults</tt> object containing a <tt class="docutils literal">values</tt> attribute with the filtered values. In this method
+we retrieve the <tt class="docutils literal">charSequence</tt> parameter and converit it to lowercase. Then, if this parameter is not empty we filter the corresponding elements of <tt class="docutils literal">allPois</tt>
+(i.e name, city and category_name in our case) using contains. If the query parameter is empty then we just return all pois. Warning java developers; here the if
+is used as an expression (i.e its result will be assigned to <tt class="docutils literal">filterResults.values</tt>).</p>
+<p>After the performFiltering has finished, the <tt class="docutils literal">publishResults</tt> method is called. This method retrieves the filtered results in its <tt class="docutils literal">filterResults</tt> parameter. Thus it sets
+<tt class="docutils literal">mPois</tt> of the custom adapter is set to the result of the filter operation and calls <tt class="docutils literal">notifyDataSetChanged</tt> to display the&nbsp;results.</p>
+</div>
+<div class="section" id="using-the-custom-adapter">
+<h2>Using the custom&nbsp;adapter</h2>
+<p>To use the custom adapter you can do something like this in your activity&#8217;s&nbsp;onCreate:</p>
+<div class="highlight"><pre><span></span><span class="k">override</span> <span class="k">fun</span> <span class="nf">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">:</span> <span class="n">Bundle</span><span class="p">?)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="p">.</span><span class="n">onCreate</span><span class="p">(</span><span class="n">savedInstanceState</span><span class="p">)</span>
+    <span class="n">setContentView</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">activity_main</span><span class="p">)</span>
+
+    <span class="k">val</span> <span class="py">poisArray</span> <span class="p">=</span> <span class="n">listOf</span><span class="p">(</span>
+        <span class="c1">// See previous sections</span>
+    <span class="p">)</span>
+    <span class="k">val</span> <span class="py">adapter</span> <span class="p">=</span> <span class="n">PoiAdapter</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">android</span><span class="p">.</span><span class="n">R</span><span class="p">.</span><span class="n">layout</span><span class="p">.</span><span class="n">simple_list_item_1</span><span class="p">,</span> <span class="n">poisArray</span><span class="p">)</span>
+    <span class="n">autoCompleteTextView</span><span class="p">.</span><span class="n">setAdapter</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+    <span class="n">autoCompleteTextView</span><span class="p">.</span><span class="n">threshold</span> <span class="p">=</span> <span class="m">3</span>
+
+    <span class="n">autoCompleteTextView</span><span class="p">.</span><span class="n">setOnItemClickListener</span><span class="p">()</span> <span class="p">{</span> <span class="n">parent</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">id</span> <span class="p">-&gt;</span>
+        <span class="k">val</span> <span class="py">selectedPoi</span> <span class="p">=</span> <span class="n">parent</span><span class="p">.</span><span class="n">adapter</span><span class="p">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="k">as</span> <span class="n">PoiDao</span><span class="p">?</span>
+        <span class="n">autoCompleteTextView</span><span class="p">.</span><span class="n">setText</span><span class="p">(</span><span class="n">selectedPoi</span><span class="o">?.</span><span class="n">name</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>We create the PoiAdapter passing it the poisArray and <tt class="docutils literal">android.R.layout.simple_list_item_1</tt> as the layout. That layout just contains a textview named text. As we&#8217;ve already
+discussed you can pass something more complex here. The <tt class="docutils literal">thresold</tt> defined the number of characters that the user that needs to enter to do the filtering (default is&nbsp;2).</p>
+<p>Please notice that when the user clicks (selects) on an item of the dropdown we set the contents of the textview (or else it will just use the object&#8217;s toString() method to set&nbsp;it).</p>
+</div>
+</div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        Serafeim Papastefanos
+    </span>
+  </span>
+<time datetime="2019-04-05T12:20:00+03:00" pubdate>Παρ 05 Απρίλιος 2019</time>  <span class="categories">
+    <a class='category' href='https://spapas.github.io/category/android.html'>android</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="https://spapas.github.io/tag/android.html">android</a>,    <a class="category" href="https://spapas.github.io/tag/kotlin.html">kotlin</a>,    <a class="category" href="https://spapas.github.io/tag/adapter.html">adapter</a>,    <a class="category" href="https://spapas.github.io/tag/filter.html">filter</a>  </span>
+</p><div class="sharing">
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://spapas.github.io/2019/04/05/android-custom-filter-adapter/" data-via="" data-counturl="https://spapas.github.io/2019/04/05/android-custom-filter-adapter/" >Tweet</a>
+</div>    </footer>
+  </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div>
+  </section>
+</div>
+<aside class="sidebar">
+  <section>
+  <br />
+  <a href='/feeds/all.atom.xml'>Atom</a> 
+  |
+  <a href='/feeds/all.rss.xml'>RSS</a> 
+  </section>
+  
+  <section>
+    <h1>Subscribe</h1>
+    Do you want to get notified via email when I post new content?
+    <style>.subscribe-button {
+    /* margin: 10px !important; */
+    padding: 10px !important;
+    background-color: black;
+    display: inline-block;
+    color: white !important;
+    text-decoration: none;    
+    
+    line-height: 36px !important;
+    height: 37px !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    color: #ffffff !important;
+    background-color: #000000 !important;
+    border-radius: 3px !important;
+    border: 1px solid transparent !important;
+    padding: 1px 9px !important;
+    font-size: 23px !important;
+    letter-spacing: 0.6px !important;
+    box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;
+    -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
+    margin: 0 auto !important;
+    font-family: 'Cookie', cursive !important;
+    -webkit-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+    -o-transition: 0.3s all linear !important;
+    -webkit-transition: 0.3s all linear !important;
+    -moz-transition: 0.3s all linear !important;
+    -ms-transition: 0.3s all linear !important;
+    transition: 0.3s all linear !important;
+    
+    }</style>
+<a class='subscribe-button' target="_blank" href="http://eepurl.com/dxI3PP">Click here to subscribe!</a>
+  </section>
+  <section>
+    <h1>Support</h1>
+    You can show your appreciation for anything useful you've found here by buying me a coffee :)
+    <style>.bmc-button img{width: 27px !important;margin-bottom: 3px !important;box-shadow: none !important;border: none !important;vertical-align: middle !important;}.bmc-button{line-height: 36px !important;height:37px !important;text-decoration: none !important;display:inline-block !important;color:#ffffff !important;background-color:#000000 !important;border-radius: 3px !important;border: 1px solid transparent !important;padding: 1px 9px !important;font-size: 23px !important;letter-spacing:0.6px !important;;box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;margin: 0 auto !important;font-family:'Cookie', cursive !important;-webkit-box-sizing: border-box !important;box-sizing: border-box !important;-o-transition: 0.3s all linear !important;-webkit-transition: 0.3s all linear !important;-moz-transition: 0.3s all linear !important;-ms-transition: 0.3s all linear !important;transition: 0.3s all linear !important;}.bmc-button:hover, .bmc-button:active, .bmc-button:focus {-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;text-decoration: none !important;box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;opacity: 0.85 !important;color:#ffffff !important;}</style><link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/9CqHPEQ6F"><img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:5px">Buy me a coffee</span></a>
+  </section>
+  
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+      <li class="post">
+          <a href="https://spapas.github.io/2019/04/05/android-custom-filter-adapter/">How to create a custom filtered adapter in Android</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2019/02/25/django-fix-async-db/">Fixing your Django async job - database integration</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/11/12/du-disk-usage/">Use du to find out the disk usage of each directory in unix</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/05/08/django-reponse-add-delay/">Adding a delay to Django HTTP responses</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/04/05/easy-immutable-objects/">Easy immutable objects in Javascript</a>
+      </li>
+    </ul>
+  </section>
+  <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+        <li><a href="https://spapas.github.io/category/android.html">android</a></li>
+        <li><a href="https://spapas.github.io/category/css.html">css</a></li>
+        <li><a href="https://spapas.github.io/category/django.html">django</a></li>
+        <li><a href="https://spapas.github.io/category/flask.html">flask</a></li>
+        <li><a href="https://spapas.github.io/category/git.html">git</a></li>
+        <li><a href="https://spapas.github.io/category/javascript.html">javascript</a></li>
+        <li><a href="https://spapas.github.io/category/pelican.html">pelican</a></li>
+        <li><a href="https://spapas.github.io/category/postgresql.html">postgresql</a></li>
+        <li><a href="https://spapas.github.io/category/python.html">python</a></li>
+        <li><a href="https://spapas.github.io/category/spring.html">spring</a></li>
+        <li><a href="https://spapas.github.io/category/unix.html">unix</a></li>
+        <li><a href="https://spapas.github.io/category/wagtail.html">wagtail</a></li>
+    </ul>
+  </section>
+ 
+
+  <section>
+  <h1>Tags</h1>
+    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/python-2.html">python-2</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/immutable.html">immutable</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/youtube-dl.html">youtube-dl</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/grid.html">grid</a>,    <a href="https://spapas.github.io/tag/ag-grid.html">ag-grid</a>,    <a href="https://spapas.github.io/tag/du.html">du</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/hyperapp.html">hyperapp</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/python-3.html">python-3</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/disk-usage.html">disk-usage</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/component.html">component</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/async.html">async</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/kotlin.html">kotlin</a>,    <a href="https://spapas.github.io/tag/adapter.html">adapter</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/unix.html">unix</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/linux.html">linux</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/django-rest-auth.html">django-rest-auth</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/ffmpeg.html">ffmpeg</a>,    <a href="https://spapas.github.io/tag/middleware.html">middleware</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/plpgsql.html">plpgsql</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/android.html">android</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/youtube.html">youtube</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+  
+  <section>
+  <h1>Yearly archives</h1>
+    <a href="https://spapas.github.io/posts/2013/">2013</a>,    <a href="https://spapas.github.io/posts/2014/">2014</a>,    <a href="https://spapas.github.io/posts/2015/">2015</a>,    <a href="https://spapas.github.io/posts/2016/">2016</a>,    <a href="https://spapas.github.io/posts/2017/">2017</a>,    <a href="https://spapas.github.io/posts/2018/">2018</a>,    <a href="https://spapas.github.io/posts/2019/">2019</a>  </section>
+
+
+
+  <section>
+    <h1>GitHub Repos</h1>
+    <ul id="gh_repos">
+      <li class="loading">Status updating...</li>
+    </ul>
+      <a href="https://github.com/spapas">@spapas</a> on GitHub
+    <script  src="//code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      $(function(){
+          if (!window.jXHR){
+              var jxhr = document.createElement('script');
+              jxhr.type = 'text/javascript';
+              jxhr.src = 'https://spapas.github.io/theme/js/jXHR.js';
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(jxhr, s);
+          }
+
+          github.showRepos({
+              user: 'spapas',
+              count: 5,
+              skip_forks: true,
+              target: '#gh_repos'
+          });
+      });
+    </script>
+    <script src="https://spapas.github.io/theme/js/github.js" type="text/javascript"> </script>
+  </section>
+
+
+  <section>
+    <a href="https://twitter.com/_serafeim_?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @_serafeim_</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </section>
+
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy;  2013&ndash;2019  Serafeim Papastefanos &mdash;
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  <script src="https://spapas.github.io/theme/js/modernizr-2.0.js"></script>
+  <script src="https://spapas.github.io/theme/js/ender.js"></script>
+  <script src="https://spapas.github.io/theme/js/octopress.js" type="text/javascript"></script>
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44750952-1', 'auto');
+
+    ga('send', 'pageview');
+    </script>
+  <script type="text/javascript">
+    var disqus_shortname = 'spapas-github-io';
+    var disqus_identifier = '/2019/04/05/android-custom-filter-adapter/';
+    var disqus_url = 'https://spapas.github.io/2019/04/05/android-custom-filter-adapter/';
+    var disqus_title = 'How to create a custom filtered adapter in&nbsp;Android';
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = "//" + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+  </script>
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+</body>
+</html>

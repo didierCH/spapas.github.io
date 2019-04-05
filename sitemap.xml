@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/</loc>
-<lastmod>2019-02-26T09:49:31-00:00</lastmod>
+<lastmod>2019-04-05T12:03:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2019-02-26T09:49:31-00:00</lastmod>
+<lastmod>2019-04-05T12:03:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2019-02-26T09:49:31-00:00</lastmod>
+<lastmod>2019-04-05T12:03:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2019-02-26T09:49:31-00:00</lastmod>
+<lastmod>2019-04-05T12:03:04-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2019/04/05/android-custom-filter-adapter/</loc>
+<lastmod>2019-04-05T12:20:00+03:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -329,6 +336,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <loc>https://spapas.github.io/2013/10/07/pelican-static-windows/</loc>
 <lastmod>2013-10-07T10:20:00+03:00</lastmod>
 <changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/category/android.html</loc>
+<lastmod>2019-04-05T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -830,8 +844,22 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/kotlin.html</loc>
+<lastmod>2019-04-05T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/adapter.html</loc>
+<lastmod>2019-04-05T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/filter.html</loc>
-<lastmod>2016-09-12T16:20:00+01:35</lastmod>
+<lastmod>2019-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1124,6 +1152,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/android.html</loc>
+<lastmod>2019-04-05T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/pandas.html</loc>
 <lastmod>2016-09-21T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -1251,7 +1286,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2019-02-25T15:20:00+01:35</lastmod>
+<lastmod>2019-04-05T12:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
