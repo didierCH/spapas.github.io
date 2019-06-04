@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/</loc>
-<lastmod>2019-04-05T12:03:04-00:00</lastmod>
+<lastmod>2019-06-04T12:17:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2019-04-05T12:03:04-00:00</lastmod>
+<lastmod>2019-06-04T12:17:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2019-04-05T12:03:04-00:00</lastmod>
+<lastmod>2019-06-04T12:17:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2019-04-05T12:03:04-00:00</lastmod>
+<lastmod>2019-06-04T12:17:06-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/</loc>
+<lastmod>2019-06-04T14:20:00+03:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -361,6 +368,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/category/elixir.html</loc>
+<lastmod>2019-06-04T14:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/category/flask.html</loc>
 <lastmod>2014-06-30T15:23:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -468,6 +482,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/console.html</loc>
 <lastmod>2016-06-27T14:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/async.html</loc>
+<lastmod>2019-02-25T15:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -775,14 +796,14 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/ajax.html</loc>
-<lastmod>2016-03-02T11:20:00+01:35</lastmod>
+<lastmod>2019-06-04T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/async.html</loc>
-<lastmod>2019-02-25T15:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/elixir.html</loc>
+<lastmod>2019-06-04T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1089,6 +1110,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/select2.html</loc>
+<lastmod>2019-06-04T14:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/history.html</loc>
 <lastmod>2016-03-02T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -1180,6 +1208,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
+<loc>https://spapas.github.io/tag/phoenix.html</loc>
+<lastmod>2019-06-04T14:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
 <loc>https://spapas.github.io/tag/deploy.html</loc>
 <lastmod>2016-03-31T19:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
@@ -1196,6 +1231,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/react.html</loc>
 <lastmod>2018-04-05T12:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/autocompelte.html</loc>
+<lastmod>2019-06-04T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1286,7 +1328,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2019-04-05T12:20:00+01:35</lastmod>
+<lastmod>2019-06-04T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>

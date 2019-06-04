@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="5_8DTmIiEq4gFvNAfxAD6TsGOgrMAjp8lQFQvfA6zZc" />
+  <title>Phoenix forms integration with select2 and ajax &mdash; /var/</title>
+  <meta name="author" content="Serafeim Papastefanos">
+
+
+
+
+
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link href="https://spapas.github.io/favicon.png" rel="icon">
+
+  <link href="https://spapas.github.io/theme/css/main.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+        
+  <link href="https://spapas.github.io/theme/css/extra_style.css" media="screen, projection"
+        rel="stylesheet" type="text/css">
+
+  <link href="https://fonts.googleapis.com/css?family=Fira+Mono|Fira+Sans:400,700&amp;subset=greek" rel="stylesheet">
+  
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="https://spapas.github.io/">/var/</a></h1>
+    <h2>Various programming stuff</h2>
+</hgroup></header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+</ul>
+
+
+<ul class="main-navigation">
+      <li >
+        <a href="https://spapas.github.io/category/android.html">Android</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/css.html">Css</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/django.html">Django</a>
+      </li>
+      <li class="active">
+        <a href="https://spapas.github.io/category/elixir.html">Elixir</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/flask.html">Flask</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/git.html">Git</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/javascript.html">Javascript</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/pelican.html">Pelican</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/postgresql.html">Postgresql</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/python.html">Python</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/spring.html">Spring</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/unix.html">Unix</a>
+      </li>
+      <li >
+        <a href="https://spapas.github.io/category/wagtail.html">Wagtail</a>
+      </li>
+</ul></nav>
+  <div id="main">
+    <div id="content">
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">Phoenix forms integration with select2 and ajax</h1>
+    <p class="meta">
+<time datetime="2019-06-04T14:20:00+03:00" pubdate>Τρι 04 Ιούνιος 2019</time>    </p>
+</header>
+
+<div class="entry-content"><p>During the past months I&#8217;ve tried to implement a project using <a class="reference external" href="https://elixir-lang.org/">Elixir</a> and the <a class="reference external" href="https://phoenixframework.org/">Phoenix framework</a>. Old
+visitors of my blog will probably remember that I mainly use Django for back-end development but I decided to
+also give Phoenix a&nbsp;try.</p>
+<p>My first impressions are positive but I don&#8217;t want to go into detail in this post; I&#8217;ll try to add a more
+extensive post comparing Elixir / Phoenix with Python / Django&nbsp;someday.</p>
+<p>The problem that this particular post will try to explain is how to properly integrate a jQuery <a class="reference external" href="https://select2.org/">select2</a>
+dropdown ajax with autocomplete search to your <a class="reference external" href="https://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html">Phonix Forms</a>. This seems like a very common problem however I
+couldn&#8217;t find a proper solution anywhere in the internet. It seems that most people using Phoenix prefer to
+implement their autocompletes using <span class="caps">SPA</span> like functionality (react etc). Also I found <a class="reference external" href="https://github.com/nico-amsterdam/phoenix_form_awesomplete">this project</a> that
+seems to be working, however it does not use select2 and I really didn&#8217;t like to mess with a different
+<span class="caps">JS</span> library for reasons that should be too obvious to most&nbsp;people.</p>
+<p>So here we&#8217;ll implement a simple solution for allowing your foreign key value to be autocompleted through ajax
+using select2. The specific example is that you have a User that belongs to an Authority i.e user has a field
+named <cite>authority_id</cite> which is a foreign key to authority. We&#8217;ll add a functionality to the user edit form to
+select the authority using&nbsp;ajax-autocomplete.</p>
+<p>Please notice that you can find a working version of this tutorial in my Phoenix Crud template project:
+<a class="reference external" href="https://github.com/spapas/phxcrd">https://github.com/spapas/phxcrd</a>. This project contains various other functionality that I need but you should be
+able to test the user - authority integration by following the instructions&nbsp;there.</p>
+<div class="section" id="the-schemas">
+<h2>The&nbsp;schemas</h2>
+<p>For this tutorial, we&#8217;ll use two schemas: A <tt class="docutils literal">User</tt> and an <tt class="docutils literal">Authority</tt>. Each <tt class="docutils literal">User</tt> belongs to an <tt class="docutils literal">Authority</tt>
+(thus will have a foreign key to <tt class="docutils literal">Authority</tt>; that&#8217;s what we want to set using the ajax select2). Here are
+the ecto schemas for these&nbsp;entities:</p>
+<div class="highlight"><pre><span></span><span class="kd">defmodule</span> <span class="nc">Phxcrd.Auth.Authority</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Ecto.Schema</span>
+
+  <span class="kn">import</span> <span class="nc">Ecto.Changeset</span>
+  <span class="kn">alias</span> <span class="nc">Phxcrd.Auth.User</span>
+
+  <span class="n">schema</span> <span class="s2">&quot;authorities&quot;</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">has_many</span> <span class="ss">:users</span><span class="p">,</span> <span class="nc">User</span><span class="p">,</span> <span class="ss">on_replace</span><span class="p">:</span> <span class="ss">:nilify</span>
+    <span class="n">timestamps</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="na">@doc</span> <span class="no">false</span>
+  <span class="kd">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">authority</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">authority</span>
+    <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="p">[</span><span class="ss">:name</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="n">validate_required</span><span class="p">([</span><span class="ss">:name</span><span class="p">],</span> <span class="ss">message</span><span class="p">:</span> <span class="s2">&quot;The field is required&quot;</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">unique_constraint</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">message</span><span class="p">:</span> <span class="s2">&quot;The name already exists!&quot;</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kn">use</span> <span class="nc">Accessible</span>
+<span class="k">end</span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="kd">defmodule</span> <span class="nc">Phxcrd.Auth.User</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Ecto.Schema</span>
+
+  <span class="kn">import</span> <span class="nc">Ecto.Changeset</span>
+  <span class="kn">alias</span> <span class="nc">Phxcrd.Auth.Authority</span>
+
+  <span class="n">schema</span> <span class="s2">&quot;users&quot;</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">field</span> <span class="ss">:username</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">field</span> <span class="ss">:password_hash</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">field</span> <span class="ss">:password</span><span class="p">,</span> <span class="ss">:string</span><span class="p">,</span> <span class="ss">virtual</span><span class="p">:</span> <span class="no">true</span>
+
+    <span class="n">belongs_to</span> <span class="ss">:authority</span><span class="p">,</span> <span class="nc">Authority</span>
+
+    <span class="n">timestamps</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="na">@doc</span> <span class="no">false</span>
+  <span class="kd">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">user</span>
+    <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="p">[</span><span class="ss">:username</span><span class="p">,</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:authority_id</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="n">validate_required</span><span class="p">([</span><span class="ss">:username</span><span class="p">,</span> <span class="ss">:email</span> <span class="p">])</span>
+  <span class="k">end</span>
+
+  <span class="kn">use</span> <span class="nc">Accessible</span>
+<span class="k">end</span>
+</pre></div>
+<p>Notice that both these entities are contained in the <tt class="docutils literal">Auth</tt> context and were created using
+<tt class="docutils literal">mix phx.gen.html</tt>; I won&#8217;t include the migrations&nbsp;here.</p>
+</div>
+<div class="section" id="the-search-api">
+<h2>The search <span class="caps">API</span></h2>
+<p>Let&#8217;s now take a look at the search api for <tt class="docutils literal">Authority</tt>. I&#8217;ve added an <tt class="docutils literal">ApiController</tt>  which contains
+the following&nbsp;function:</p>
+<div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">search_authorities</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">]</span>
+
+    <span class="n">authorities</span> <span class="o">=</span>
+      <span class="n">from</span><span class="p">(</span><span class="n">a</span> <span class="ow">in</span> <span class="nc">Authority</span><span class="p">,</span>
+        <span class="ss">where</span><span class="p">:</span> <span class="n">ilike</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="o">^</span><span class="s2">&quot;%</span><span class="si">#{</span><span class="n">q</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+      <span class="p">)</span>
+      <span class="o">|&gt;</span> <span class="n">limit</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+      <span class="o">|&gt;</span> <span class="nc">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+    <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s2">&quot;authorities.json&quot;</span><span class="p">,</span> <span class="ss">authorities</span><span class="p">:</span> <span class="n">authorities</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+<p>Notice that this retrieves a <cite>q</cite> parameter and makes an <cite>ilike</cite> query to <cite>Authority.name</cite>. It then
+passes the results to the view for rendering. Here&#8217;s the corresponding function for <cite>ApiView</cite>:</p>
+<div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">render</span><span class="p">(</span><span class="s2">&quot;authorities.json&quot;</span><span class="p">,</span> <span class="p">%{</span><span class="ss">authorities</span><span class="p">:</span> <span class="n">authorities</span><span class="p">})</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="ss">results</span><span class="p">:</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">authorities</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">authority_json</span><span class="o">/</span><span class="mi">1</span><span class="p">)}</span>
+  <span class="k">end</span>
+
+  <span class="kd">def</span> <span class="n">authority_json</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span>
+      <span class="ss">id</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+      <span class="ss">text</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span>
+    <span class="p">}</span>
+<span class="k">end</span>
+</pre></div>
+<p>Notice that select2 wants its results in a <span class="caps">JSON</span> struct with the following form <tt class="docutils literal">{results: [{id: 1, name: &quot;Authority <span class="pre">1&quot;}]}</span></tt>.</p>
+<p>To add this controller action to my routes I&#8217;ve added this to <tt class="docutils literal">router.ex</tt>:</p>
+<div class="highlight"><pre><span></span><span class="n">scope</span> <span class="s2">&quot;/api&quot;</span><span class="p">,</span> <span class="nc">PhxcrdWeb</span> <span class="k">do</span>
+    <span class="n">pipe_through</span> <span class="ss">:api</span>
+
+    <span class="n">get</span> <span class="s2">&quot;/search_authorities&quot;</span><span class="p">,</span> <span class="nc">ApiController</span><span class="p">,</span> <span class="ss">:search_authorities</span>
+<span class="k">end</span>
+</pre></div>
+<p>Thus if you visit <tt class="docutils literal"><span class="pre">http://127.0.0.1/search_authorities?q=A</span></tt> you should retrieve authorities containing <tt class="docutils literal">A</tt> in their&nbsp;name.</p>
+</div>
+<div class="section" id="the-controller">
+<h2>The&nbsp;controller</h2>
+<p>Concenring the <tt class="docutils literal">UserController</tt> I&#8217;ve added the following methods to it for creating and updating&nbsp;users:</p>
+<div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">new</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">changeset</span> <span class="o">=</span> <span class="nc">Auth</span><span class="o">.</span><span class="n">change_user</span><span class="p">(%</span><span class="nc">User</span><span class="p">{})</span>
+  <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s2">&quot;new.html&quot;</span><span class="p">,</span> <span class="ss">changeset</span><span class="p">:</span> <span class="n">changeset</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="kd">def</span> <span class="n">create</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="s2">&quot;user&quot;</span> <span class="o">=&gt;</span> <span class="n">user_params</span><span class="p">})</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="nc">Auth</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span><span class="n">user_params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">user</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="n">conn</span>
+      <span class="o">|&gt;</span> <span class="n">put_flash</span><span class="p">(</span><span class="ss">:info</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> created!&quot;</span><span class="p">)</span>
+      <span class="o">|&gt;</span> <span class="n">redirect</span><span class="p">(</span><span class="ss">to</span><span class="p">:</span> <span class="nc">Routes</span><span class="o">.</span><span class="n">user_path</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="ss">:show</span><span class="p">,</span> <span class="n">user</span><span class="p">))</span>
+
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">changeset</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s2">&quot;new.html&quot;</span><span class="p">,</span> <span class="ss">changeset</span><span class="p">:</span> <span class="n">changeset</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="kd">def</span> <span class="n">edit</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="s2">&quot;id&quot;</span> <span class="o">=&gt;</span> <span class="n">id</span><span class="p">})</span> <span class="k">do</span>
+  <span class="n">user</span> <span class="o">=</span> <span class="nc">Auth</span><span class="o">.</span><span class="n">get_user!</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+  <span class="n">changeset</span> <span class="o">=</span> <span class="nc">Auth</span><span class="o">.</span><span class="n">change_user</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+  <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s2">&quot;edit.html&quot;</span><span class="p">,</span> <span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span> <span class="ss">changeset</span><span class="p">:</span> <span class="n">changeset</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="kd">def</span> <span class="n">update</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="s2">&quot;id&quot;</span> <span class="o">=&gt;</span> <span class="n">id</span><span class="p">,</span> <span class="s2">&quot;user&quot;</span> <span class="o">=&gt;</span> <span class="n">user_params</span><span class="p">})</span> <span class="k">do</span>
+  <span class="n">user</span> <span class="o">=</span> <span class="nc">Auth</span><span class="o">.</span><span class="n">get_user!</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+
+  <span class="n">user_params</span> <span class="o">=</span> <span class="nc">Map</span><span class="o">.</span><span class="n">merge</span><span class="p">(%{</span><span class="s2">&quot;authority_id&quot;</span> <span class="o">=&gt;</span> <span class="no">nil</span><span class="p">},</span> <span class="n">user_params</span><span class="p">)</span>
+
+  <span class="k">case</span> <span class="nc">Auth</span><span class="o">.</span><span class="n">update_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">user_params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">user</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="n">conn</span>
+      <span class="o">|&gt;</span> <span class="n">put_flash</span><span class="p">(</span><span class="ss">:info</span><span class="p">,</span> <span class="s2">&quot;User updated successfully.&quot;</span><span class="p">)</span>
+      <span class="o">|&gt;</span> <span class="n">redirect</span><span class="p">(</span><span class="ss">to</span><span class="p">:</span> <span class="nc">Routes</span><span class="o">.</span><span class="n">user_path</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="ss">:show</span><span class="p">,</span> <span class="n">user</span><span class="p">))</span>
+
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="p">%</span><span class="nc">Ecto.Changeset</span><span class="p">{}</span> <span class="o">=</span> <span class="n">changeset</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s2">&quot;edit.html&quot;</span><span class="p">,</span> <span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span> <span class="ss">changeset</span><span class="p">:</span> <span class="n">changeset</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+<p>Most of these are more or less the default things that <tt class="docutils literal">mix phx.gen.html</tt> creates.
+One thing that may seem a strange here is the <tt class="docutils literal">user_params = <span class="pre">Map.merge(%{&quot;authority_id&quot;</span> =&gt; nil}, user_params)</tt>
+line of <tt class="docutils literal">update</tt>. What happens here is that I want to be able to clear the authority of a user (I&#8217;ll
+explain how in the next sections). If I do
+that then the <tt class="docutils literal">user_params</tt> that is passed to <tt class="docutils literal">update</tt> will <em>not</em> contain an <tt class="docutils literal">authority_id</tt> key thus
+the <tt class="docutils literal">authority_id</tt> won&#8217;t be changed at all (so even though I cleared it, it will keep its previous value after
+I save it). To fix that I set a default value of <tt class="docutils literal">nil</tt> to <tt class="docutils literal">authority_id</tt>; if the user has actually selected
+an authority from the form this will be overriden when merging the two maps. So the resulting <tt class="docutils literal">user_params</tt> will
+<em>always</em> contain an <tt class="docutils literal">authority_id</tt> key, either set to nil or to the selected&nbsp;authority.</p>
+<p>Beyond that I wont&#8217; go into detail explaining the above functions,  but if something seems strange feel free to ask. I
+also won&#8217;t explain the <tt class="docutils literal">Auth.*</tt> functions; all these are created by phoenix in the context&nbsp;module.</p>
+</div>
+<div class="section" id="the-view">
+<h2>The&nbsp;view</h2>
+<p>The <cite>UserView</cite> module contains a simple but very important&nbsp;function:</p>
+<div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">get_select_value</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="n">changeset</span><span class="o">.</span><span class="n">changes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="k">do</span>
+    <span class="no">nil</span> <span class="o">-&gt;</span> <span class="nc">Map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">changeset</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">z</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+<p>This functions gets two parameters: The changeset and the name of the attribute (<tt class="docutils literal">:authority_id</tt> in our case). What
+it does is to first check if this attribute is contained in the changeset.changes; if yes it will return that value. If
+it isn&#8217;t contained in the changeset.changes then it will return the value of changeset.data for that&nbsp;attribute.</p>
+<p>This is a little complex but let&#8217;s try to understand its logic: When you start editing a <tt class="docutils literal">User</tt> you want to display
+the current authority of that instance. However, when you submit an edited user and retrieve an errored form (for example
+because you forgot to fill the username) you want to display the authority that <em>was submitted</em> in the form. So the
+<tt class="docutils literal">changeset.changes</tt> contains the changes that were submitted just before while the <tt class="docutils literal">changeset.data</tt> contain the
+initial value of the&nbsp;struct.</p>
+</div>
+<div class="section" id="the-form-template">
+<h2>The form&nbsp;template</h2>
+<p>Both the <tt class="docutils literal">:new</tt> and <tt class="docutils literal">:edit</tt> actions include a common form.html.eex&nbsp;template:</p>
+<div class="highlight"><pre><span></span><span class="err">&lt;</span>%= form_for @changeset, @action, fn f -&gt; %&gt;
+  <span class="err">&lt;</span>%= if @changeset.action do %&gt;
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;alert alert-danger&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="err">&lt;</span>%= gettext(&quot;Problems while saving&quot;) %&gt;<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="err">&lt;</span>% end %&gt;
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;column&#39;</span><span class="p">&gt;</span>
+      <span class="err">&lt;</span>%= label f, :username %&gt;
+      <span class="err">&lt;</span>%= text_input f, :username %&gt;
+      <span class="err">&lt;</span>%= error_tag f, :username %&gt;
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;column&#39;</span><span class="p">&gt;</span>
+      <span class="err">&lt;</span>%= label f, :email %&gt;
+      <span class="err">&lt;</span>%= text_input f, :email %&gt;
+      <span class="err">&lt;</span>%= error_tag f, :email %&gt;
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;column&#39;</span><span class="p">&gt;</span>
+      <span class="err">&lt;</span>%= label f, :authority %&gt;
+      <span class="err">&lt;</span>%= select(f,
+        :authority_id, [
+          (with sv when not is_nil(sv) <span class="p">&lt;</span><span class="nt">-</span> <span class="na">get_select_value</span><span class="err">(@</span><span class="na">changeset</span><span class="err">,</span> <span class="na">:authority_id</span><span class="err">),</span>
+                                     <span class="na">a</span> <span class="err">&lt;</span><span class="na">-</span> <span class="na">Phxcrd</span><span class="err">.</span><span class="na">Auth</span><span class="err">.</span><span class="na">get_authority</span><span class="err">!(</span><span class="na">sv</span><span class="err">),</span> <span class="na">do:</span> <span class="err">{</span><span class="na">a</span><span class="err">.</span><span class="na">name</span><span class="err">,</span> <span class="na">a</span><span class="err">.</span><span class="na">id</span><span class="err">})</span>
+        <span class="err">],</span>
+        <span class="na">style:</span> <span class="err">&quot;</span><span class="na">width:</span> <span class="na">100</span><span class="err">%&quot;)</span>
+        <span class="err">%</span><span class="p">&gt;</span>
+      <span class="err">&lt;</span>%= error_tag f, :authority_id %&gt;
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+  <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="err">&lt;</span>%= submit gettext(&quot;Save&quot;) %&gt;
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="err">&lt;</span>% end %&gt;
+</pre></div>
+<p>This is a custom Phoenix form but it has the following addition which is more or less the meat of this article
+(along with the <tt class="docutils literal">get_select_value</tt> function I explained&nbsp;before):</p>
+<div class="highlight"><pre><span></span><span class="n">select</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="ss">:authority_id</span><span class="p">,</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">with</span> <span class="n">sv</span> <span class="ow">when</span> <span class="ow">not</span> <span class="n">is_nil</span><span class="p">(</span><span class="n">sv</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">get_select_value</span><span class="p">(</span><span class="na">@changeset</span><span class="p">,</span> <span class="ss">:authority_id</span><span class="p">),</span>
+                                   <span class="n">a</span> <span class="o">&lt;-</span> <span class="nc">Phxcrd.Auth</span><span class="o">.</span><span class="n">get_authority!</span><span class="p">(</span><span class="n">sv</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+      <span class="p">],</span>
+      <span class="ss">style</span><span class="p">:</span> <span class="s2">&quot;width: 100%&quot;</span><span class="p">)</span>
+</pre></div>
+<p>So this will create an html select element which will contain a single value (the array in the third
+parameter of <tt class="docutils literal">select</tt>): The authority of that object or the authority that the user had submitted
+in the form. For this it uses <tt class="docutils literal">get_select_value</tt> to retrieve the :authority_id and if it&#8217;s not nil
+it passes it to <tt class="docutils literal">get_authority!</tt> to retrieve the actual authority and return a tuple with its name and&nbsp;id.</p>
+<p>By default when you create a <tt class="docutils literal">select</tt> element you&#8217;ll pass an array of all options in the third
+parameter, for&nbsp;example:</p>
+<div class="highlight"><pre><span></span><span class="n">select</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="ss">:authority_id</span><span class="p">,</span> <span class="nc">Phxcrd.Auth</span><span class="o">.</span><span class="n">list_authorities</span> <span class="o">|&gt;</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="p">{</span><span class="ni">&amp;1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="ni">&amp;1</span><span class="o">.</span><span class="n">id</span><span class="p">}))</span>
+</pre></div>
+<p>Of course this beats the purpose of using ajax since all options will be&nbsp;rendered.</p>
+<p>The final step is to add the required custom javascript to convert that select to&nbsp;select2-with-ajax:</p>
+<div class="highlight"><pre><span></span><span class="nx">$</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#user_authority_id&#39;</span><span class="p">).</span><span class="nx">select2</span><span class="p">({</span>
+      <span class="nx">allowClear</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">placeholder</span><span class="o">:</span> <span class="s1">&#39;Select authority&#39;</span><span class="p">,</span>
+      <span class="nx">ajax</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">url</span><span class="o">:</span> <span class="s1">&#39;&lt;%= Routes.api_path(@conn, :search_authorities) %&gt;&#39;</span><span class="p">,</span>
+        <span class="nx">dataType</span><span class="o">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+        <span class="nx">delay</span><span class="o">:</span> <span class="mi">150</span><span class="p">,</span>
+        <span class="nx">minimumInputLength</span><span class="o">:</span> <span class="mi">2</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">})</span>
+</pre></div>
+<p>The <span class="caps">JS</span> very rather simple; the <tt class="docutils literal">allowClear</tt> option will display an <tt class="docutils literal">x</tt> so that you can clear the
+selected authority while the ajax url will be that of the <tt class="docutils literal">:search_authorities</tt>.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>Although this article may seem a little long, as I&#8217;ve already mentioned the most important thing
+to keep is how to properly set the value that should be displayed in your <tt class="docutils literal">select2</tt> widget. Beyond
+that everything is a walk in the park by following the&nbsp;docs.</p>
+</div>
+</div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">
+        Serafeim Papastefanos
+    </span>
+  </span>
+<time datetime="2019-06-04T14:20:00+03:00" pubdate>Τρι 04 Ιούνιος 2019</time>  <span class="categories">
+    <a class='category' href='https://spapas.github.io/category/elixir.html'>elixir</a>
+  </span>
+  <span class="categories">
+    <a class="category" href="https://spapas.github.io/tag/elixir.html">elixir</a>,    <a class="category" href="https://spapas.github.io/tag/phoenix.html">phoenix</a>,    <a class="category" href="https://spapas.github.io/tag/select2.html">select2</a>,    <a class="category" href="https://spapas.github.io/tag/autocompelte.html">autocompelte</a>,    <a class="category" href="https://spapas.github.io/tag/ajax.html">ajax</a>  </span>
+</p><div class="sharing">
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/" data-via="" data-counturl="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/" >Tweet</a>
+</div>    </footer>
+  </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div>
+  </section>
+</div>
+<aside class="sidebar">
+  <section>
+  <br />
+  <a href='/feeds/all.atom.xml'>Atom</a> 
+  |
+  <a href='/feeds/all.rss.xml'>RSS</a> 
+  </section>
+  
+  <section>
+    <h1>Subscribe</h1>
+    Do you want to get notified via email when I post new content?
+    <style>.subscribe-button {
+    /* margin: 10px !important; */
+    padding: 10px !important;
+    background-color: black;
+    display: inline-block;
+    color: white !important;
+    text-decoration: none;    
+    
+    line-height: 36px !important;
+    height: 37px !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    color: #ffffff !important;
+    background-color: #000000 !important;
+    border-radius: 3px !important;
+    border: 1px solid transparent !important;
+    padding: 1px 9px !important;
+    font-size: 23px !important;
+    letter-spacing: 0.6px !important;
+    box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;
+    -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;
+    margin: 0 auto !important;
+    font-family: 'Cookie', cursive !important;
+    -webkit-box-sizing: border-box !important;
+    box-sizing: border-box !important;
+    -o-transition: 0.3s all linear !important;
+    -webkit-transition: 0.3s all linear !important;
+    -moz-transition: 0.3s all linear !important;
+    -ms-transition: 0.3s all linear !important;
+    transition: 0.3s all linear !important;
+    
+    }</style>
+<a class='subscribe-button' target="_blank" href="http://eepurl.com/dxI3PP">Click here to subscribe!</a>
+  </section>
+  <section>
+    <h1>Support</h1>
+    You can show your appreciation for anything useful you've found here by buying me a coffee :)
+    <style>.bmc-button img{width: 27px !important;margin-bottom: 3px !important;box-shadow: none !important;border: none !important;vertical-align: middle !important;}.bmc-button{line-height: 36px !important;height:37px !important;text-decoration: none !important;display:inline-block !important;color:#ffffff !important;background-color:#000000 !important;border-radius: 3px !important;border: 1px solid transparent !important;padding: 1px 9px !important;font-size: 23px !important;letter-spacing:0.6px !important;;box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;margin: 0 auto !important;font-family:'Cookie', cursive !important;-webkit-box-sizing: border-box !important;box-sizing: border-box !important;-o-transition: 0.3s all linear !important;-webkit-transition: 0.3s all linear !important;-moz-transition: 0.3s all linear !important;-ms-transition: 0.3s all linear !important;transition: 0.3s all linear !important;}.bmc-button:hover, .bmc-button:active, .bmc-button:focus {-webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;text-decoration: none !important;box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important;opacity: 0.85 !important;color:#ffffff !important;}</style><link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet"><a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/9CqHPEQ6F"><img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:5px">Buy me a coffee</span></a>
+  </section>
+  
+  <section>
+    <h1>Recent Posts</h1>
+    <ul id="recent_posts">
+      <li class="post">
+          <a href="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/">Phoenix forms integration with select2 and ajax</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2019/04/05/android-custom-filter-adapter/">How to create a custom filtered adapter in Android</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2019/02/25/django-fix-async-db/">Fixing your Django async job - database integration</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/11/12/du-disk-usage/">Use du to find out the disk usage of each directory in unix</a>
+      </li>
+      <li class="post">
+          <a href="https://spapas.github.io/2018/05/08/django-reponse-add-delay/">Adding a delay to Django HTTP responses</a>
+      </li>
+    </ul>
+  </section>
+  <section>
+      
+    <h1>Categories</h1>
+    <ul id="recent_posts">
+        <li><a href="https://spapas.github.io/category/android.html">android</a></li>
+        <li><a href="https://spapas.github.io/category/css.html">css</a></li>
+        <li><a href="https://spapas.github.io/category/django.html">django</a></li>
+        <li><a href="https://spapas.github.io/category/elixir.html">elixir</a></li>
+        <li><a href="https://spapas.github.io/category/flask.html">flask</a></li>
+        <li><a href="https://spapas.github.io/category/git.html">git</a></li>
+        <li><a href="https://spapas.github.io/category/javascript.html">javascript</a></li>
+        <li><a href="https://spapas.github.io/category/pelican.html">pelican</a></li>
+        <li><a href="https://spapas.github.io/category/postgresql.html">postgresql</a></li>
+        <li><a href="https://spapas.github.io/category/python.html">python</a></li>
+        <li><a href="https://spapas.github.io/category/spring.html">spring</a></li>
+        <li><a href="https://spapas.github.io/category/unix.html">unix</a></li>
+        <li><a href="https://spapas.github.io/category/wagtail.html">wagtail</a></li>
+    </ul>
+  </section>
+ 
+
+  <section>
+  <h1>Tags</h1>
+    <a href="https://spapas.github.io/tag/less.html">less</a>,    <a href="https://spapas.github.io/tag/rest.html">rest</a>,    <a href="https://spapas.github.io/tag/query.html">query</a>,    <a href="https://spapas.github.io/tag/python-2.html">python-2</a>,    <a href="https://spapas.github.io/tag/tables.html">tables</a>,    <a href="https://spapas.github.io/tag/pivot_table.html">pivot_table</a>,    <a href="https://spapas.github.io/tag/console.html">console</a>,    <a href="https://spapas.github.io/tag/async.html">async</a>,    <a href="https://spapas.github.io/tag/django-rq.html">django-rq</a>,    <a href="https://spapas.github.io/tag/github-pages.html">github-pages</a>,    <a href="https://spapas.github.io/tag/forms.html">forms</a>,    <a href="https://spapas.github.io/tag/yaml.html">yaml</a>,    <a href="https://spapas.github.io/tag/404.html">404</a>,    <a href="https://spapas.github.io/tag/ldap.html">ldap</a>,    <a href="https://spapas.github.io/tag/immutable.html">immutable</a>,    <a href="https://spapas.github.io/tag/initd.html">init.d</a>,    <a href="https://spapas.github.io/tag/youtube-dl.html">youtube-dl</a>,    <a href="https://spapas.github.io/tag/python.html">python</a>,    <a href="https://spapas.github.io/tag/django-extensions.html">django-extensions</a>,    <a href="https://spapas.github.io/tag/class-based-views.html">class-based-views</a>,    <a href="https://spapas.github.io/tag/scipy.html">scipy</a>,    <a href="https://spapas.github.io/tag/grid.html">grid</a>,    <a href="https://spapas.github.io/tag/ag-grid.html">ag-grid</a>,    <a href="https://spapas.github.io/tag/du.html">du</a>,    <a href="https://spapas.github.io/tag/watchify.html">watchify</a>,    <a href="https://spapas.github.io/tag/settings.html">settings</a>,    <a href="https://spapas.github.io/tag/flux.html">flux</a>,    <a href="https://spapas.github.io/tag/fixeddatatable.html">FixedDataTable</a>,    <a href="https://spapas.github.io/tag/debug.html">debug</a>,    <a href="https://spapas.github.io/tag/imgur.html">imgur</a>,    <a href="https://spapas.github.io/tag/security.html">security</a>,    <a href="https://spapas.github.io/tag/npm.html">npm</a>,    <a href="https://spapas.github.io/tag/hyperapp.html">hyperapp</a>,    <a href="https://spapas.github.io/tag/spring.html">spring</a>,    <a href="https://spapas.github.io/tag/react-redux.html">react-redux</a>,    <a href="https://spapas.github.io/tag/cron.html">cron</a>,    <a href="https://spapas.github.io/tag/babelify.html">babelify</a>,    <a href="https://spapas.github.io/tag/design.html">design</a>,    <a href="https://spapas.github.io/tag/tutorial.html">tutorial</a>,    <a href="https://spapas.github.io/tag/gmail.html">gmail</a>,    <a href="https://spapas.github.io/tag/reportlab.html">reportlab</a>,    <a href="https://spapas.github.io/tag/rq.html">rq</a>,    <a href="https://spapas.github.io/tag/redis.html">redis</a>,    <a href="https://spapas.github.io/tag/python-3.html">python-3</a>,    <a href="https://spapas.github.io/tag/research.html">research</a>,    <a href="https://spapas.github.io/tag/werkzeug.html">werkzeug</a>,    <a href="https://spapas.github.io/tag/jobs.html">jobs</a>,    <a href="https://spapas.github.io/tag/redux-thunk.html">redux-thunk</a>,    <a href="https://spapas.github.io/tag/disk-usage.html">disk-usage</a>,    <a href="https://spapas.github.io/tag/javascript.html">javascript</a>,    <a href="https://spapas.github.io/tag/component.html">component</a>,    <a href="https://spapas.github.io/tag/ajax.html">ajax</a>,    <a href="https://spapas.github.io/tag/elixir.html">elixir</a>,    <a href="https://spapas.github.io/tag/ipython.html">ipython</a>,    <a href="https://spapas.github.io/tag/java.html">java</a>,    <a href="https://spapas.github.io/tag/configuration.html">configuration</a>,    <a href="https://spapas.github.io/tag/properties.html">properties</a>,    <a href="https://spapas.github.io/tag/bash.html">bash</a>,    <a href="https://spapas.github.io/tag/es6.html">es6</a>,    <a href="https://spapas.github.io/tag/spring-boot.html">spring-boot</a>,    <a href="https://spapas.github.io/tag/postgresql.html">postgresql</a>,    <a href="https://spapas.github.io/tag/kotlin.html">kotlin</a>,    <a href="https://spapas.github.io/tag/adapter.html">adapter</a>,    <a href="https://spapas.github.io/tag/filter.html">filter</a>,    <a href="https://spapas.github.io/tag/flask.html">flask</a>,    <a href="https://spapas.github.io/tag/static-html.html">static-html</a>,    <a href="https://spapas.github.io/tag/pdf.html">pdf</a>,    <a href="https://spapas.github.io/tag/react-notification.html">react-notification</a>,    <a href="https://spapas.github.io/tag/pelican.html">pelican</a>,    <a href="https://spapas.github.io/tag/tasks.html">tasks</a>,    <a href="https://spapas.github.io/tag/nodejs.html">node.js</a>,    <a href="https://spapas.github.io/tag/unix.html">unix</a>,    <a href="https://spapas.github.io/tag/google.html">google</a>,    <a href="https://spapas.github.io/tag/linux.html">linux</a>,    <a href="https://spapas.github.io/tag/pivot.html">pivot</a>,    <a href="https://spapas.github.io/tag/auditing.html">auditing</a>,    <a href="https://spapas.github.io/tag/git.html">git</a>,    <a href="https://spapas.github.io/tag/uglify.html">uglify</a>,    <a href="https://spapas.github.io/tag/introduction.html">introduction</a>,    <a href="https://spapas.github.io/tag/pusher.html">pusher</a>,    <a href="https://spapas.github.io/tag/fixed-data-tables.html">fixed-data-tables</a>,    <a href="https://spapas.github.io/tag/heroku.html">heroku</a>,    <a href="https://spapas.github.io/tag/xhtml2pdf.html">xhtml2pdf</a>,    <a href="https://spapas.github.io/tag/numpy.html">numpy</a>,    <a href="https://spapas.github.io/tag/boilerplate.html">boilerplate</a>,    <a href="https://spapas.github.io/tag/django-rest-auth.html">django-rest-auth</a>,    <a href="https://spapas.github.io/tag/wagtail.html">wagtail</a>,    <a href="https://spapas.github.io/tag/rst.html">rst</a>,    <a href="https://spapas.github.io/tag/ffmpeg.html">ffmpeg</a>,    <a href="https://spapas.github.io/tag/middleware.html">middleware</a>,    <a href="https://spapas.github.io/tag/profiles.html">profiles</a>,    <a href="https://spapas.github.io/tag/spring-security.html">spring-security</a>,    <a href="https://spapas.github.io/tag/githubio.html">github.io</a>,    <a href="https://spapas.github.io/tag/error.html">error</a>,    <a href="https://spapas.github.io/tag/asynchronous.html">asynchronous</a>,    <a href="https://spapas.github.io/tag/react-router-redux.html">react-router-redux</a>,    <a href="https://spapas.github.io/tag/select2.html">select2</a>,    <a href="https://spapas.github.io/tag/history.html">history</a>,    <a href="https://spapas.github.io/tag/django-rest-framework.html">django-rest-framework</a>,    <a href="https://spapas.github.io/tag/redux-form.html">redux-form</a>,    <a href="https://spapas.github.io/tag/cbv.html">cbv</a>,    <a href="https://spapas.github.io/tag/scheduling.html">scheduling</a>,    <a href="https://spapas.github.io/tag/plpgsql.html">plpgsql</a>,    <a href="https://spapas.github.io/tag/generic.html">generic</a>,    <a href="https://spapas.github.io/tag/babel.html">babel</a>,    <a href="https://spapas.github.io/tag/authentication.html">authentication</a>,    <a href="https://spapas.github.io/tag/android.html">android</a>,    <a href="https://spapas.github.io/tag/pandas.html">pandas</a>,    <a href="https://spapas.github.io/tag/css.html">css</a>,    <a href="https://spapas.github.io/tag/node.html">node</a>,    <a href="https://spapas.github.io/tag/phoenix.html">phoenix</a>,    <a href="https://spapas.github.io/tag/deploy.html">deploy</a>,    <a href="https://spapas.github.io/tag/mongodb.html">mongodb</a>,    <a href="https://spapas.github.io/tag/react.html">react</a>,    <a href="https://spapas.github.io/tag/autocompelte.html">autocompelte</a>,    <a href="https://spapas.github.io/tag/notebook.html">notebook</a>,    <a href="https://spapas.github.io/tag/browserify.html">browserify</a>,    <a href="https://spapas.github.io/tag/branching.html">branching</a>,    <a href="https://spapas.github.io/tag/github.html">github</a>,    <a href="https://spapas.github.io/tag/jupyter.html">jupyter</a>,    <a href="https://spapas.github.io/tag/windows.html">windows</a>,    <a href="https://spapas.github.io/tag/youtube.html">youtube</a>,    <a href="https://spapas.github.io/tag/django.html">django</a>,    <a href="https://spapas.github.io/tag/q.html">q</a>,    <a href="https://spapas.github.io/tag/react-router.html">react-router</a>,    <a href="https://spapas.github.io/tag/redux.html">redux</a>,    <a href="https://spapas.github.io/tag/boostrap-material-design.html">boostrap-material-design</a>  </section>
+  
+  <section>
+  <h1>Yearly archives</h1>
+    <a href="https://spapas.github.io/posts/2013/">2013</a>,    <a href="https://spapas.github.io/posts/2014/">2014</a>,    <a href="https://spapas.github.io/posts/2015/">2015</a>,    <a href="https://spapas.github.io/posts/2016/">2016</a>,    <a href="https://spapas.github.io/posts/2017/">2017</a>,    <a href="https://spapas.github.io/posts/2018/">2018</a>,    <a href="https://spapas.github.io/posts/2019/">2019</a>  </section>
+
+
+
+  <section>
+    <h1>GitHub Repos</h1>
+    <ul id="gh_repos">
+      <li class="loading">Status updating...</li>
+    </ul>
+      <a href="https://github.com/spapas">@spapas</a> on GitHub
+    <script  src="//code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script type="text/javascript">
+      $(function(){
+          if (!window.jXHR){
+              var jxhr = document.createElement('script');
+              jxhr.type = 'text/javascript';
+              jxhr.src = 'https://spapas.github.io/theme/js/jXHR.js';
+              var s = document.getElementsByTagName('script')[0];
+              s.parentNode.insertBefore(jxhr, s);
+          }
+
+          github.showRepos({
+              user: 'spapas',
+              count: 5,
+              skip_forks: true,
+              target: '#gh_repos'
+          });
+      });
+    </script>
+    <script src="https://spapas.github.io/theme/js/github.js" type="text/javascript"> </script>
+  </section>
+
+
+  <section>
+    <a href="https://twitter.com/_serafeim_?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @_serafeim_</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  </section>
+
+</aside>    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    Copyright &copy;  2013&ndash;2019  Serafeim Papastefanos &mdash;
+  <span class="credit">Powered by <a href="http://getpelican.com">Pelican</a></span>
+</p></footer>
+  <script src="https://spapas.github.io/theme/js/modernizr-2.0.js"></script>
+  <script src="https://spapas.github.io/theme/js/ender.js"></script>
+  <script src="https://spapas.github.io/theme/js/octopress.js" type="text/javascript"></script>
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-44750952-1', 'auto');
+
+    ga('send', 'pageview');
+    </script>
+  <script type="text/javascript">
+    var disqus_shortname = 'spapas-github-io';
+    var disqus_identifier = '/2019/06/04/phoenix-form-select2-ajax/';
+    var disqus_url = 'https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/';
+    var disqus_title = 'Phoenix forms integration with select2 and&nbsp;ajax';
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = "//" + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+  </script>
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+</body>
+</html>

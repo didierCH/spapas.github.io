@@ -1,5 +1,276 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Fri, 05 Apr 2019 12:20:00 +0300</lastBuildDate><item><title>How to create a custom filtered adapter in Android</title><link>https://spapas.github.io/2019/04/05/android-custom-filter-adapter/</link><description>&lt;div class="section" id="introduction"&gt;
+<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Tue, 04 Jun 2019 14:20:00 +0300</lastBuildDate><item><title>Phoenix forms integration with select2 and ajax</title><link>https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/</link><description>&lt;p&gt;During the past months I&amp;#8217;ve tried to implement a project using &lt;a class="reference external" href="https://elixir-lang.org/"&gt;Elixir&lt;/a&gt; and the &lt;a class="reference external" href="https://phoenixframework.org/"&gt;Phoenix framework&lt;/a&gt;. Old
+visitors of my blog will probably remember that I mainly use Django for back-end development but I decided to
+also give Phoenix a&amp;nbsp;try.&lt;/p&gt;
+&lt;p&gt;My first impressions are positive but I don&amp;#8217;t want to go into detail in this post; I&amp;#8217;ll try to add a more
+extensive post comparing Elixir / Phoenix with Python / Django&amp;nbsp;someday.&lt;/p&gt;
+&lt;p&gt;The problem that this particular post will try to explain is how to properly integrate a jQuery &lt;a class="reference external" href="https://select2.org/"&gt;select2&lt;/a&gt;
+dropdown ajax with autocomplete search to your &lt;a class="reference external" href="https://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html"&gt;Phonix Forms&lt;/a&gt;. This seems like a very common problem however I
+couldn&amp;#8217;t find a proper solution anywhere in the internet. It seems that most people using Phoenix prefer to
+implement their autocompletes using &lt;span class="caps"&gt;SPA&lt;/span&gt; like functionality (react etc). Also I found &lt;a class="reference external" href="https://github.com/nico-amsterdam/phoenix_form_awesomplete"&gt;this project&lt;/a&gt; that
+seems to be working, however it does not use select2 and I really didn&amp;#8217;t like to mess with a different
+&lt;span class="caps"&gt;JS&lt;/span&gt; library for reasons that should be too obvious to most&amp;nbsp;people.&lt;/p&gt;
+&lt;p&gt;So here we&amp;#8217;ll implement a simple solution for allowing your foreign key value to be autocompleted through ajax
+using select2. The specific example is that you have a User that belongs to an Authority i.e user has a field
+named &lt;cite&gt;authority_id&lt;/cite&gt; which is a foreign key to authority. We&amp;#8217;ll add a functionality to the user edit form to
+select the authority using&amp;nbsp;ajax-autocomplete.&lt;/p&gt;
+&lt;p&gt;Please notice that you can find a working version of this tutorial in my Phoenix Crud template project:
+&lt;a class="reference external" href="https://github.com/spapas/phxcrd"&gt;https://github.com/spapas/phxcrd&lt;/a&gt;. This project contains various other functionality that I need but you should be
+able to test the user - authority integration by following the instructions&amp;nbsp;there.&lt;/p&gt;
+&lt;div class="section" id="the-schemas"&gt;
+&lt;h2&gt;The&amp;nbsp;schemas&lt;/h2&gt;
+&lt;p&gt;For this tutorial, we&amp;#8217;ll use two schemas: A &lt;tt class="docutils literal"&gt;User&lt;/tt&gt; and an &lt;tt class="docutils literal"&gt;Authority&lt;/tt&gt;. Each &lt;tt class="docutils literal"&gt;User&lt;/tt&gt; belongs to an &lt;tt class="docutils literal"&gt;Authority&lt;/tt&gt;
+(thus will have a foreign key to &lt;tt class="docutils literal"&gt;Authority&lt;/tt&gt;; that&amp;#8217;s what we want to set using the ajax select2). Here are
+the ecto schemas for these&amp;nbsp;entities:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;defmodule&lt;/span&gt; &lt;span class="nc"&gt;Phxcrd.Auth.Authority&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="nc"&gt;Ecto.Schema&lt;/span&gt;
+
+  &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nc"&gt;Ecto.Changeset&lt;/span&gt;
+  &lt;span class="kn"&gt;alias&lt;/span&gt; &lt;span class="nc"&gt;Phxcrd.Auth.User&lt;/span&gt;
+
+  &lt;span class="n"&gt;schema&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;authorities&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+    &lt;span class="n"&gt;has_many&lt;/span&gt; &lt;span class="ss"&gt;:users&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;on_replace&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:nilify&lt;/span&gt;
+    &lt;span class="n"&gt;timestamps&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="na"&gt;@doc&lt;/span&gt; &lt;span class="no"&gt;false&lt;/span&gt;
+  &lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;authority&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:name&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;validate_required&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="ss"&gt;:name&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="ss"&gt;message&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;The field is required&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;unique_constraint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;message&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;The name already exists!&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="nc"&gt;Accessible&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;defmodule&lt;/span&gt; &lt;span class="nc"&gt;Phxcrd.Auth.User&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="nc"&gt;Ecto.Schema&lt;/span&gt;
+
+  &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nc"&gt;Ecto.Changeset&lt;/span&gt;
+  &lt;span class="kn"&gt;alias&lt;/span&gt; &lt;span class="nc"&gt;Phxcrd.Auth.Authority&lt;/span&gt;
+
+  &lt;span class="n"&gt;schema&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;users&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:username&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:password_hash&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="ss"&gt;:password&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;virtual&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="no"&gt;true&lt;/span&gt;
+
+    &lt;span class="n"&gt;belongs_to&lt;/span&gt; &lt;span class="ss"&gt;:authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;
+
+    &lt;span class="n"&gt;timestamps&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="na"&gt;@doc&lt;/span&gt; &lt;span class="no"&gt;false&lt;/span&gt;
+  &lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;user&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:username&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:email&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:authority_id&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;validate_required&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="ss"&gt;:username&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:email&lt;/span&gt; &lt;span class="p"&gt;])&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="nc"&gt;Accessible&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that both these entities are contained in the &lt;tt class="docutils literal"&gt;Auth&lt;/tt&gt; context and were created using
+&lt;tt class="docutils literal"&gt;mix phx.gen.html&lt;/tt&gt;; I won&amp;#8217;t include the migrations&amp;nbsp;here.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-search-api"&gt;
+&lt;h2&gt;The search &lt;span class="caps"&gt;API&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;Let&amp;#8217;s now take a look at the search api for &lt;tt class="docutils literal"&gt;Authority&lt;/tt&gt;. I&amp;#8217;ve added an &lt;tt class="docutils literal"&gt;ApiController&lt;/tt&gt;  which contains
+the following&amp;nbsp;function:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;search_authorities&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;q&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;q&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+    &lt;span class="n"&gt;authorities&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;
+      &lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="ss"&gt;where&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ilike&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;%&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;limit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+    &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;authorities.json&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;authorities&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;authorities&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that this retrieves a &lt;cite&gt;q&lt;/cite&gt; parameter and makes an &lt;cite&gt;ilike&lt;/cite&gt; query to &lt;cite&gt;Authority.name&lt;/cite&gt;. It then
+passes the results to the view for rendering. Here&amp;#8217;s the corresponding function for &lt;cite&gt;ApiView&lt;/cite&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;authorities.json&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;authorities&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;authorities&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;results&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;authorities&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;authority_json&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;authority_json&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;%{&lt;/span&gt;
+      &lt;span class="ss"&gt;id&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;text&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that select2 wants its results in a &lt;span class="caps"&gt;JSON&lt;/span&gt; struct with the following form &lt;tt class="docutils literal"&gt;{results: [{id: 1, name: &amp;quot;Authority &lt;span class="pre"&gt;1&amp;quot;}]}&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;To add this controller action to my routes I&amp;#8217;ve added this to &lt;tt class="docutils literal"&gt;router.ex&lt;/tt&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;scope&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/api&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;PhxcrdWeb&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="n"&gt;pipe_through&lt;/span&gt; &lt;span class="ss"&gt;:api&lt;/span&gt;
+
+    &lt;span class="n"&gt;get&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/search_authorities&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;ApiController&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:search_authorities&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Thus if you visit &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;http://127.0.0.1/search_authorities?q=A&lt;/span&gt;&lt;/tt&gt; you should retrieve authorities containing &lt;tt class="docutils literal"&gt;A&lt;/tt&gt; in their&amp;nbsp;name.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-controller"&gt;
+&lt;h2&gt;The&amp;nbsp;controller&lt;/h2&gt;
+&lt;p&gt;Concenring the &lt;tt class="docutils literal"&gt;UserController&lt;/tt&gt; I&amp;#8217;ve added the following methods to it for creating and updating&amp;nbsp;users:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;changeset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;change_user&lt;/span&gt;&lt;span class="p"&gt;(%&lt;/span&gt;&lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;{})&lt;/span&gt;
+  &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;new.html&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;user&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;user_params&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="nc"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;create_user&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;user_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+      &lt;span class="n"&gt;conn&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;put_flash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:info&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; created!&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;redirect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;to&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;Routes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user_path&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:show&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+      &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;new.html&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;edit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_user!&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;changeset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;change_user&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;edit.html&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;user&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;id&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;user&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;user_params&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;user&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_user!&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="n"&gt;user_params&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="p"&gt;(%{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;authority_id&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="no"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;user_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="nc"&gt;Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update_user&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;user_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+      &lt;span class="n"&gt;conn&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;put_flash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:info&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;User updated successfully.&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;redirect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;to&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nc"&gt;Routes&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user_path&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:show&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:error&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="nc"&gt;Ecto.Changeset&lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+      &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;edit.html&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;user&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Most of these are more or less the default things that &lt;tt class="docutils literal"&gt;mix phx.gen.html&lt;/tt&gt; creates.
+One thing that may seem a strange here is the &lt;tt class="docutils literal"&gt;user_params = &lt;span class="pre"&gt;Map.merge(%{&amp;quot;authority_id&amp;quot;&lt;/span&gt; =&amp;gt; nil}, user_params)&lt;/tt&gt;
+line of &lt;tt class="docutils literal"&gt;update&lt;/tt&gt;. What happens here is that I want to be able to clear the authority of a user (I&amp;#8217;ll
+explain how in the next sections). If I do
+that then the &lt;tt class="docutils literal"&gt;user_params&lt;/tt&gt; that is passed to &lt;tt class="docutils literal"&gt;update&lt;/tt&gt; will &lt;em&gt;not&lt;/em&gt; contain an &lt;tt class="docutils literal"&gt;authority_id&lt;/tt&gt; key thus
+the &lt;tt class="docutils literal"&gt;authority_id&lt;/tt&gt; won&amp;#8217;t be changed at all (so even though I cleared it, it will keep its previous value after
+I save it). To fix that I set a default value of &lt;tt class="docutils literal"&gt;nil&lt;/tt&gt; to &lt;tt class="docutils literal"&gt;authority_id&lt;/tt&gt;; if the user has actually selected
+an authority from the form this will be overriden when merging the two maps. So the resulting &lt;tt class="docutils literal"&gt;user_params&lt;/tt&gt; will
+&lt;em&gt;always&lt;/em&gt; contain an &lt;tt class="docutils literal"&gt;authority_id&lt;/tt&gt; key, either set to nil or to the selected&amp;nbsp;authority.&lt;/p&gt;
+&lt;p&gt;Beyond that I wont&amp;#8217; go into detail explaining the above functions,  but if something seems strange feel free to ask. I
+also won&amp;#8217;t explain the &lt;tt class="docutils literal"&gt;Auth.*&lt;/tt&gt; functions; all these are created by phoenix in the context&amp;nbsp;module.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-view"&gt;
+&lt;h2&gt;The&amp;nbsp;view&lt;/h2&gt;
+&lt;p&gt;The &lt;cite&gt;UserView&lt;/cite&gt; module contains a simple but very important&amp;nbsp;function:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;get_select_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="no"&gt;nil&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This functions gets two parameters: The changeset and the name of the attribute (&lt;tt class="docutils literal"&gt;:authority_id&lt;/tt&gt; in our case). What
+it does is to first check if this attribute is contained in the changeset.changes; if yes it will return that value. If
+it isn&amp;#8217;t contained in the changeset.changes then it will return the value of changeset.data for that&amp;nbsp;attribute.&lt;/p&gt;
+&lt;p&gt;This is a little complex but let&amp;#8217;s try to understand its logic: When you start editing a &lt;tt class="docutils literal"&gt;User&lt;/tt&gt; you want to display
+the current authority of that instance. However, when you submit an edited user and retrieve an errored form (for example
+because you forgot to fill the username) you want to display the authority that &lt;em&gt;was submitted&lt;/em&gt; in the form. So the
+&lt;tt class="docutils literal"&gt;changeset.changes&lt;/tt&gt; contains the changes that were submitted just before while the &lt;tt class="docutils literal"&gt;changeset.data&lt;/tt&gt; contain the
+initial value of the&amp;nbsp;struct.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-form-template"&gt;
+&lt;h2&gt;The form&amp;nbsp;template&lt;/h2&gt;
+&lt;p&gt;Both the &lt;tt class="docutils literal"&gt;:new&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;:edit&lt;/tt&gt; actions include a common form.html.eex&amp;nbsp;template:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= form_for @changeset, @action, fn f -&amp;gt; %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= if @changeset.action do %&amp;gt;
+  &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;quot;alert alert-danger&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= gettext(&amp;quot;Problems while saving&amp;quot;) %&amp;gt;&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;% end %&amp;gt;
+  &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;row&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;column&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= label f, :username %&amp;gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= text_input f, :username %&amp;gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= error_tag f, :username %&amp;gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;column&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= label f, :email %&amp;gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= text_input f, :email %&amp;gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= error_tag f, :email %&amp;gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+  &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;row&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt; &lt;span class="na"&gt;class&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;column&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= label f, :authority %&amp;gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= select(f,
+        :authority_id, [
+          (with sv when not is_nil(sv) &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;-&lt;/span&gt; &lt;span class="na"&gt;get_select_value&lt;/span&gt;&lt;span class="err"&gt;(@&lt;/span&gt;&lt;span class="na"&gt;changeset&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt; &lt;span class="na"&gt;:authority_id&lt;/span&gt;&lt;span class="err"&gt;),&lt;/span&gt;
+                                     &lt;span class="na"&gt;a&lt;/span&gt; &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;&lt;span class="na"&gt;-&lt;/span&gt; &lt;span class="na"&gt;Phxcrd&lt;/span&gt;&lt;span class="err"&gt;.&lt;/span&gt;&lt;span class="na"&gt;Auth&lt;/span&gt;&lt;span class="err"&gt;.&lt;/span&gt;&lt;span class="na"&gt;get_authority&lt;/span&gt;&lt;span class="err"&gt;!(&lt;/span&gt;&lt;span class="na"&gt;sv&lt;/span&gt;&lt;span class="err"&gt;),&lt;/span&gt; &lt;span class="na"&gt;do:&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="na"&gt;a&lt;/span&gt;&lt;span class="err"&gt;.&lt;/span&gt;&lt;span class="na"&gt;name&lt;/span&gt;&lt;span class="err"&gt;,&lt;/span&gt; &lt;span class="na"&gt;a&lt;/span&gt;&lt;span class="err"&gt;.&lt;/span&gt;&lt;span class="na"&gt;id&lt;/span&gt;&lt;span class="err"&gt;})&lt;/span&gt;
+        &lt;span class="err"&gt;],&lt;/span&gt;
+        &lt;span class="na"&gt;style:&lt;/span&gt; &lt;span class="err"&gt;&amp;quot;&lt;/span&gt;&lt;span class="na"&gt;width:&lt;/span&gt; &lt;span class="na"&gt;100&lt;/span&gt;&lt;span class="err"&gt;%&amp;quot;)&lt;/span&gt;
+        &lt;span class="err"&gt;%&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= error_tag f, :authority_id %&amp;gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+  &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+  &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= submit gettext(&amp;quot;Save&amp;quot;) %&amp;gt;
+  &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;div&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;% end %&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This is a custom Phoenix form but it has the following addition which is more or less the meat of this article
+(along with the &lt;tt class="docutils literal"&gt;get_select_value&lt;/tt&gt; function I explained&amp;nbsp;before):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:authority_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+        &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;with&lt;/span&gt; &lt;span class="n"&gt;sv&lt;/span&gt; &lt;span class="ow"&gt;when&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;is_nil&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sv&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="n"&gt;get_select_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="na"&gt;@changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:authority_id&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+                                   &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="nc"&gt;Phxcrd.Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_authority!&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sv&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="ss"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+      &lt;span class="p"&gt;],&lt;/span&gt;
+      &lt;span class="ss"&gt;style&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;width: 100%&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So this will create an html select element which will contain a single value (the array in the third
+parameter of &lt;tt class="docutils literal"&gt;select&lt;/tt&gt;): The authority of that object or the authority that the user had submitted
+in the form. For this it uses &lt;tt class="docutils literal"&gt;get_select_value&lt;/tt&gt; to retrieve the :authority_id and if it&amp;#8217;s not nil
+it passes it to &lt;tt class="docutils literal"&gt;get_authority!&lt;/tt&gt; to retrieve the actual authority and return a tuple with its name and&amp;nbsp;id.&lt;/p&gt;
+&lt;p&gt;By default when you create a &lt;tt class="docutils literal"&gt;select&lt;/tt&gt; element you&amp;#8217;ll pass an array of all options in the third
+parameter, for&amp;nbsp;example:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;select&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:authority_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nc"&gt;Phxcrd.Auth&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;list_authorities&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ni"&gt;&amp;amp;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ni"&gt;&amp;amp;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;}))&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Of course this beats the purpose of using ajax since all options will be&amp;nbsp;rendered.&lt;/p&gt;
+&lt;p&gt;The final step is to add the required custom javascript to convert that select to&amp;nbsp;select2-with-ajax:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;#user_authority_id&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;select2&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+      &lt;span class="nx"&gt;allowClear&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="nx"&gt;placeholder&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Select authority&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="nx"&gt;ajax&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&amp;lt;%= Routes.api_path(@conn, :search_authorities) %&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="nx"&gt;dataType&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;json&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="nx"&gt;delay&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;150&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="nx"&gt;minimumInputLength&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;span class="caps"&gt;JS&lt;/span&gt; very rather simple; the &lt;tt class="docutils literal"&gt;allowClear&lt;/tt&gt; option will display an &lt;tt class="docutils literal"&gt;x&lt;/tt&gt; so that you can clear the
+selected authority while the ajax url will be that of the &lt;tt class="docutils literal"&gt;:search_authorities&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Although this article may seem a little long, as I&amp;#8217;ve already mentioned the most important thing
+to keep is how to properly set the value that should be displayed in your &lt;tt class="docutils literal"&gt;select2&lt;/tt&gt; widget. Beyond
+that everything is a walk in the park by following the&amp;nbsp;docs.&lt;/p&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Tue, 04 Jun 2019 14:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2019-06-04:2019/06/04/phoenix-form-select2-ajax/</guid><category>elixir</category><category>phoenix</category><category>select2</category><category>autocompelte</category><category>ajax</category></item><item><title>How to create a custom filtered adapter in Android</title><link>https://spapas.github.io/2019/04/05/android-custom-filter-adapter/</link><description>&lt;div class="section" id="introduction"&gt;
 &lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;Android offers a nice component named &lt;a class="reference external" href="https://developer.android.com/reference/android/widget/AutoCompleteTextView"&gt;AutoCompleteTextView&lt;/a&gt; that can be used to auto-fill a text box from a list of values.
 In its simplest form, you just create an array adapter passing it a list of objects (that have a proper &lt;tt class="docutils literal"&gt;toString()&lt;/tt&gt; method).
