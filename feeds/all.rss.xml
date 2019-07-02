@@ -171,7 +171,7 @@ also won&amp;#8217;t explain the &lt;tt class="docutils literal"&gt;Auth.*&lt;/t
 &lt;/div&gt;
 &lt;div class="section" id="the-view"&gt;
 &lt;h2&gt;The&amp;nbsp;view&lt;/h2&gt;
-&lt;p&gt;The &lt;cite&gt;UserView&lt;/cite&gt; module contains a simple but very important&amp;nbsp;function:&lt;/p&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;UserView&lt;/tt&gt; module contains a simple but very important&amp;nbsp;function:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;get_select_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
   &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
     &lt;span class="no"&gt;nil&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -187,6 +187,14 @@ the current authority of that instance. However, when you submit an edited user 
 because you forgot to fill the username) you want to display the authority that &lt;em&gt;was submitted&lt;/em&gt; in the form. So the
 &lt;tt class="docutils literal"&gt;changeset.changes&lt;/tt&gt; contains the changes that were submitted just before while the &lt;tt class="docutils literal"&gt;changeset.data&lt;/tt&gt; contain the
 initial value of the&amp;nbsp;struct.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update 02/07/2019:&lt;/strong&gt; Please notice that instead of using the
+&lt;tt class="docutils literal"&gt;get_select_value&lt;/tt&gt; I presented before you can use the
+&lt;tt class="docutils literal"&gt;Ecto.Changeset.get_field&lt;/tt&gt; function that does exactly this! So
+&lt;tt class="docutils literal"&gt;get_select_value&lt;/tt&gt; could be defined like&amp;nbsp;this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;get_select_value&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;changeset&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Ecto.Changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;attr&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="section" id="the-form-template"&gt;
 &lt;h2&gt;The form&amp;nbsp;template&lt;/h2&gt;

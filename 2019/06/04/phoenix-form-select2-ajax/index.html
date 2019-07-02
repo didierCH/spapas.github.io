@@ -263,7 +263,7 @@ also won&#8217;t explain the <tt class="docutils literal">Auth.*</tt> functions;
 </div>
 <div class="section" id="the-view">
 <h2>The&nbsp;view</h2>
-<p>The <cite>UserView</cite> module contains a simple but very important&nbsp;function:</p>
+<p>The <tt class="docutils literal">UserView</tt> module contains a simple but very important&nbsp;function:</p>
 <div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">get_select_value</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">do</span>
   <span class="k">case</span> <span class="n">changeset</span><span class="o">.</span><span class="n">changes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="k">do</span>
     <span class="no">nil</span> <span class="o">-&gt;</span> <span class="nc">Map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">changeset</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
@@ -279,6 +279,14 @@ the current authority of that instance. However, when you submit an edited user 
 because you forgot to fill the username) you want to display the authority that <em>was submitted</em> in the form. So the
 <tt class="docutils literal">changeset.changes</tt> contains the changes that were submitted just before while the <tt class="docutils literal">changeset.data</tt> contain the
 initial value of the&nbsp;struct.</p>
+<p><strong>Update 02/07/2019:</strong> Please notice that instead of using the
+<tt class="docutils literal">get_select_value</tt> I presented before you can use the
+<tt class="docutils literal">Ecto.Changeset.get_field</tt> function that does exactly this! So
+<tt class="docutils literal">get_select_value</tt> could be defined like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><span class="kd">def</span> <span class="n">get_select_value</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">changeset</span> <span class="o">|&gt;</span> <span class="nc">Ecto.Changeset</span><span class="o">.</span><span class="n">get_field</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
 </div>
 <div class="section" id="the-form-template">
 <h2>The form&nbsp;template</h2>
