@@ -1,5 +1,339 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2019-06-04T14:20:00+03:00</updated><entry><title>Phoenix forms integration with select2 and ajax</title><link href="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/" rel="alternate"></link><published>2019-06-04T14:20:00+03:00</published><updated>2019-06-04T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2019-06-04:2019/06/04/phoenix-form-select2-ajax/</id><summary type="html">&lt;p&gt;During the past months I&amp;#8217;ve tried to implement a project using &lt;a class="reference external" href="https://elixir-lang.org/"&gt;Elixir&lt;/a&gt; and the &lt;a class="reference external" href="https://phoenixframework.org/"&gt;Phoenix framework&lt;/a&gt;. Old
+<feed xmlns="http://www.w3.org/2005/Atom"><title>/var/</title><link href="https://spapas.github.io/" rel="alternate"></link><link href="https://spapas.github.io/feeds/serafeim-papastefanos.atom.xml" rel="self"></link><id>https://spapas.github.io/</id><updated>2019-07-25T14:20:00+03:00</updated><entry><title>Declarative Ecto query filters</title><link href="https://spapas.github.io/2019/07/25/declarative-ecto-query-filters/" rel="alternate"></link><published>2019-07-25T14:20:00+03:00</published><updated>2019-07-25T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2019-07-25:2019/07/25/declarative-ecto-query-filters/</id><summary type="html">&lt;p&gt;Continuing my Elixir &lt;a class="reference external" href="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/"&gt;journey&lt;/a&gt; I&amp;#8217;d like to discuss here a method to implement one of my
+&lt;a class="reference external" href="https://spapas.github.io/2017/10/11/essential-django-packages/"&gt;favorite Django features&lt;/a&gt;: Declarative query filters. This functionality is not a core Django
+feature but it is offered
+through the excellent &lt;a class="reference external" href="https://github.com/carltongibson/django-filter/:"&gt;django-filter&lt;/a&gt; package: Using this, you can create a &lt;tt class="docutils literal"&gt;Filter&lt;/tt&gt; class which defines
+which fields are to be used for filtering the queryset and how each field will be queried (i.e using
+things like exact, like, year of date&amp;nbsp;etc).&lt;/p&gt;
+&lt;p&gt;This is a functionality I am greatly missing in Elixir/phoenix
+so I&amp;#8217;ve tried implementing it on my own. Of course, django-filter has various other capabilities that
+result from the implicit generation of things that Django offers like automatically creating the html
+for the declared fields, automatically declare the fields based on their types etc but such things are
+not supported by phoenix in any case so I won&amp;#8217;t be trying in them&amp;nbsp;here.&lt;/p&gt;
+&lt;p&gt;During my research I&amp;#8217;ve seen a bunch of blog posts or packages about this thing however they didn&amp;#8217;t
+properly support joins (i.e you could only filter on fields on a specific schema) or needed too much
+work to filter on joins (i.e define different filters for each part of the join). In the solution
+I&amp;#8217;ll present here you&amp;#8217;ll just define a filter for the specific query you need to filter no matter how
+many joins it has (just like in&amp;nbsp;django-filters).&lt;/p&gt;
+&lt;div class="section" id="what-will-it-do"&gt;
+&lt;h2&gt;What will it&amp;nbsp;do&lt;/h2&gt;
+&lt;p&gt;The solution is more or less a self contained Elixir module named &lt;tt class="docutils literal"&gt;QueryFilterEx&lt;/tt&gt; that can be used
+to declaratively filter your queries.
+To use that you&amp;#8217;ll need to declare your filters using
+a simple array of maps. The filters should then be added in your form using a different input
+for each filter; then your queryset will be filtered with all the values you&amp;#8217;ve added to the
+inputs using &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;AND&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;The module has a very simple &lt;span class="caps"&gt;API&lt;/span&gt; consisting of three&amp;nbsp;functions:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;get_changeset_from_params(params, filters)&lt;/tt&gt;: Pass it the &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;GET&lt;/span&gt;&lt;/tt&gt; request parameters you got from your form and the declared filters array to return you a proper changeset (which you can then use to build your form in your&amp;nbsp;html)&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;make_filter_changeset(filters, params)&lt;/tt&gt;: This function actually generates the changeset using the filters and a &lt;tt class="docutils literal"&gt;Map&lt;/tt&gt; of &lt;tt class="docutils literal"&gt;filter_name: value&lt;/tt&gt; pairs (it is actually used by &lt;tt class="docutils literal"&gt;get_changeset_from_params&lt;/tt&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;filter(query, changeset, filters)&lt;/tt&gt;: Filter the &lt;tt class="docutils literal"&gt;query&lt;/tt&gt; using the previously created &lt;tt class="docutils literal"&gt;changeset&lt;/tt&gt; and the declared filters&amp;nbsp;array&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can find a sample of the technique presented in this article in my &lt;span class="caps"&gt;PHXCRD&lt;/span&gt; repository:
+&lt;a class="reference external" href="https://github.com/spapas/phxcrd"&gt;https://github.com/spapas/phxcrd&lt;/a&gt;  for example in the &lt;tt class="docutils literal"&gt;user_controller&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;authority_controller&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="preparing-the-query"&gt;
+&lt;h2&gt;Preparing the&amp;nbsp;query&lt;/h2&gt;
+&lt;p&gt;In order to use the &lt;tt class="docutils literal"&gt;QueryFilterEx&lt;/tt&gt; module you&amp;#8217;ll need to properly &amp;#8220;prepare&amp;#8221; your Ecto query. By preparing
+I don&amp;#8217;t mean a big deal just the fact that you&amp;#8217;ll need to &lt;em&gt;name all your relations&lt;/em&gt;  (or at least name all
+the relations you&amp;#8217;re going to use for filtering). This is very simple to do, for example for the following&amp;nbsp;query:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ak&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;AuthorityKind&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;id&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;authority_kind_id&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="ss"&gt;preload&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;authority_kind&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ak&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;you can name the relations by adding two &lt;tt class="docutils literal"&gt;as:&lt;/tt&gt; atoms like&amp;nbsp;this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ak&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;AuthorityKind&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority_kind&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;id&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;authority_kind_id&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+  &lt;span class="ss"&gt;preload&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;authority_kind&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ak&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So after each &lt;cite&gt;join:&lt;/cite&gt; you&amp;#8217;ll add a name for your joined relation (and also add a name for your initial
+relation). Please notice that you can use any name you want for these (not related to the schema&amp;nbsp;names).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="declaring-the-filters"&gt;
+&lt;h2&gt;Declaring the&amp;nbsp;filters&lt;/h2&gt;
+&lt;p&gt;To declare the filters you&amp;#8217;ll just add an array of simple Elixir maps. Each map must have the following&amp;nbsp;fields:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:name&lt;/tt&gt; This is the name of the specific filter; it is mainly used in conjunction with the queryset and the form fields to set initial values&amp;nbsp;etc&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:type&lt;/tt&gt; This is the type of the specific filter; it should be a proper Ecto type like &lt;tt class="docutils literal"&gt;:string&lt;/tt&gt;, &lt;tt class="docutils literal"&gt;:date&lt;/tt&gt;, &lt;tt class="docutils literal"&gt;:integer&lt;/tt&gt; etc. This is needed to properly cast the values and catch&amp;nbsp;errors&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:binding&lt;/tt&gt; This is the name of the relation this filter concerns which you defined in your query using &lt;tt class="docutils literal"&gt;:as&lt;/tt&gt; (discussed in previous&amp;nbsp;section)&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:field_name&lt;/tt&gt; This is the actual name of the field you want to filter&amp;nbsp;on&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:method&lt;/tt&gt; How to filter on this field; I&amp;#8217;ve defined a couple of methods I needed but you can implement anything you&amp;nbsp;want&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The methods I&amp;#8217;ve implemented are the&amp;nbsp;following:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:eq&lt;/tt&gt; Equality&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:ilike&lt;/tt&gt; Field value starts with the input - ignore&amp;nbsp;case&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:icontains&lt;/tt&gt; Field value contains the input - ignore&amp;nbsp;case&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:year&lt;/tt&gt; Field is a date or datetime an its year is the same as the&amp;nbsp;value&lt;/li&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;:date&lt;/tt&gt; Field is a datetime and its date part is equal to the&amp;nbsp;value&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Anything else will just be compared using &lt;tt class="docutils literal"&gt;=&lt;/tt&gt; (same as &lt;tt class="docutils literal"&gt;:eq&lt;/tt&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="integrating-it-with-a-controller"&gt;
+&lt;h2&gt;Integrating it with a&amp;nbsp;controller&lt;/h2&gt;
+&lt;p&gt;As an example let&amp;#8217;s see how &lt;tt class="docutils literal"&gt;QueryFilterEx&lt;/tt&gt; is integrated it with the phxcrd user_controller.
+The query I&amp;#8217;d like to filter on is the following (see that everything I&amp;#8217;ll need is named using &lt;tt class="docutils literal"&gt;:as&lt;/tt&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;authority_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;UserPermission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;permission_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;preload&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;authority&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;To declare the filters I like to create a module attribute ending with &lt;tt class="docutils literal"&gt;filters&lt;/tt&gt;, something like
+&lt;tt class="docutils literal"&gt;&amp;#64;user_filters&lt;/tt&gt; for example. Here&amp;#8217;s the filters I&amp;#8217;m going to use for&amp;nbsp;user_controller:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="na"&gt;@user_filters&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+  &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:username&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:username&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;method&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:ilike&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;method&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:icontains&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:permission_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:string&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;method&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:ilike&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;
+  &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:last_login_date&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:date&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:last_login&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;method&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:date&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So it will check if the &lt;tt class="docutils literal"&gt;user.username&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;permission.name&lt;/tt&gt; start with the passed value,
+&lt;tt class="docutils literal"&gt;authority.name&lt;/tt&gt; contains the passed value and if the &lt;tt class="docutils literal"&gt;user.login_date&lt;/tt&gt; (which is a datetime)
+is the same as the passed date&amp;nbsp;value.&lt;/p&gt;
+&lt;p&gt;Finally, here&amp;#8217;s the full code of the index&amp;nbsp;controller:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;changeset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;QueryFilterEx&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_changeset_from_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;@user_filters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="n"&gt;users&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;
+    &lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;authority_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+      &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;UserPermission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;permission_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;preload&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;authority&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;QueryFilterEx&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;@user_filters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+  &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;index.html&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;users&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;users&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;It is very simple, it just uses the &lt;tt class="docutils literal"&gt;get_changeset_from_params&lt;/tt&gt; method I discussed before to
+generate the changeset and then uses it to filter the query. Also please notice that it passes
+the changeset to the template to be properly rendered in the filter&amp;nbsp;form.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-template"&gt;
+&lt;h2&gt;The&amp;nbsp;template&lt;/h2&gt;
+&lt;p&gt;The template for the user index action is the&amp;nbsp;following:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= form_for @changeset, AdminRoutes.user_path(@conn, :index), [method: :get, class: &amp;quot;filter-form&amp;quot;, as: :filter],  fn f -&amp;gt; %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= label f, :username, gettext &amp;quot;Username&amp;quot; %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= text_input f, :username  %&amp;gt;
+
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= label f, :authority_name, gettext &amp;quot;Authority name&amp;quot; %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= text_input f, :authority_name  %&amp;gt;
+
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= label f, :permission_name, gettext &amp;quot;Permission name&amp;quot; %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= text_input f, :permission_name  %&amp;gt;
+
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= label f, :last_login_date, gettext &amp;quot;Last login date&amp;quot; %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= text_input f, :last_login_date  %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= error_tag f, :last_login_date %&amp;gt;
+
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= submit gettext(&amp;quot;Filter&amp;quot;), class: &amp;quot;ml-5&amp;quot; %&amp;gt;
+  &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= link gettext(&amp;quot;Reset&amp;quot;), to: AdminRoutes.user_path(@conn, :index), class: &amp;quot;button button-outline ml-2&amp;quot; %&amp;gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;% end %&amp;gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= for user &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;-&lt;/span&gt; &lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="na"&gt;users&lt;/span&gt; &lt;span class="na"&gt;do&lt;/span&gt; &lt;span class="err"&gt;%&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="c"&gt;&amp;lt;!-- display the user info --&amp;gt;&lt;/span&gt;
+&lt;span class="err"&gt;&amp;lt;&lt;/span&gt;% end %&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that it gets the &lt;tt class="docutils literal"&gt;&amp;#64;changeset&lt;/tt&gt; and uses it to properly fill the initial values and display
+error messages. For this case I&amp;#8217;ve only added an error_tag for the &lt;tt class="docutils literal"&gt;:last_login_date&lt;/tt&gt; field,
+the others since are strings do not really need it since they will accept all&amp;nbsp;values.&lt;/p&gt;
+&lt;p&gt;Also, the form method  form must be &lt;tt class="docutils literal"&gt;:get&lt;/tt&gt; since we only filter (not change anything) and I&amp;#8217;ve passed
+the &lt;tt class="docutils literal"&gt;as: :filter&lt;/tt&gt; option to the &lt;tt class="docutils literal"&gt;form_for&lt;/tt&gt; to collect the parameters under the &lt;tt class="docutils literal"&gt;filter&lt;/tt&gt; server side
+parameter (this can be anything you want and can be optionally be
+passed to &lt;tt class="docutils literal"&gt;QueryFilterEx.get_changeset_from_params&lt;/tt&gt; to know which parameter the filters are collected&amp;nbsp;on).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="how-does-this-work"&gt;
+&lt;h2&gt;How does this&amp;nbsp;work?&lt;/h2&gt;
+&lt;p&gt;In this section I&amp;#8217;ll try to explain exactly how the &lt;tt class="docutils literal"&gt;QueryFilterEx&lt;/tt&gt; module works. Before continuing
+I want to thank the people at the &lt;a class="reference external" href="https://elixirforum.com/"&gt;Elixir forum&lt;/a&gt; and #elixir-lang Freenode &lt;span class="caps"&gt;IRC&lt;/span&gt; chat
+that helped me with understanding how to be able to &lt;a class="reference external" href="https://elixirforum.com/t/create-dynamic-bindings-for-where-clause/23797/7"&gt;create dynamic bindings&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;So I&amp;#8217;ll split this explanation in two parts: Explain &lt;tt class="docutils literal"&gt;QueryFilterEx.get_changeset_from_params&lt;/tt&gt;
+and &lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt; (easy) and
+then explain &lt;tt class="docutils literal"&gt;QueryFilterEx.filter&lt;/tt&gt; (more&amp;nbsp;difficult).&lt;/p&gt;
+&lt;div class="section" id="queryfilterex-get-changeset-from-params-and-make-filter-changeset"&gt;
+&lt;h3&gt;&lt;tt class="docutils literal"&gt;QueryFilterEx.get_changeset_from_params&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt;&lt;/h3&gt;
+&lt;p&gt;This function generates a changeset using the &lt;span class="caps"&gt;GET&lt;/span&gt; request parameters and the list of declared filters. The
+create changeset is a &lt;a class="reference external" href="https://hexdocs.pm/ecto/Ecto.Changeset.html#module-schemaless-changesets"&gt;schemaless one&lt;/a&gt; since it may contains fields of various schemas (or fields that
+are not even exist on a schema). To generate it it uses the &lt;a class="reference external" href="https://hexdocs.pm/ecto/Ecto.Changeset.html#cast/4"&gt;cast/4&lt;/a&gt; function passing it a &lt;tt class="docutils literal"&gt;{data, types}&lt;/tt&gt;
+first parameter to generate the schemaless changeset. It has two public methods: &lt;tt class="docutils literal"&gt;get_changeset_from_params&lt;/tt&gt;
+and &lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt;. The &lt;tt class="docutils literal"&gt;get_changeset_from_params&lt;/tt&gt; is the one we&amp;#8217;ve used to integrate
+with the controller and is used to retrieve the filter parameters from the request
+parameters based on the collect parameter of the form we mentioned before (the &lt;tt class="docutils literal"&gt;as: :filter&lt;/tt&gt;). If such
+parameters are found they will be passed to &lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt; (or else it will pass an empty
+struct). Notice that the &lt;tt class="docutils literal"&gt;filter_name&lt;/tt&gt; by default is &lt;tt class="docutils literal"&gt;&amp;quot;filter&amp;quot;&lt;/tt&gt; but you can change it to anything
+you&amp;nbsp;want.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;get_changeset_from_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filters&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filter_name&lt;/span&gt; &lt;span class="p"&gt;\\&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;filter&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;filter_name&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;filter_params&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+      &lt;span class="n"&gt;filters&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;make_filter_changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filter_params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="bp"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+      &lt;span class="n"&gt;filters&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;make_filter_changeset&lt;/span&gt;&lt;span class="p"&gt;(%{})&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt; is the function that actually creates the schemaless changeset. To do that
+it uses two private functions that operate on the passed filters array: &lt;tt class="docutils literal"&gt;make_filter_keys&lt;/tt&gt;
+to extract the &lt;tt class="docutils literal"&gt;:name&lt;/tt&gt; field of each key filter and the &lt;tt class="docutils literal"&gt;make_filter_types&lt;/tt&gt; to generate a
+&lt;tt class="docutils literal"&gt;Map&lt;/tt&gt; of &lt;tt class="docutils literal"&gt;%{name: :type}&lt;/tt&gt; as needed by the &lt;tt class="docutils literal"&gt;types&lt;/tt&gt; of the &lt;tt class="docutils literal"&gt;{data, types}&lt;/tt&gt; tuple passed
+to &lt;tt class="docutils literal"&gt;cast&lt;/tt&gt; (the &lt;tt class="docutils literal"&gt;data&lt;/tt&gt; is just an empty &lt;tt class="docutils literal"&gt;Map&lt;/tt&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;make_filter_keys&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;filters&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="ni"&gt;&amp;amp;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="kd"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;make_filter_types&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;filters&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ni"&gt;&amp;amp;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ni"&gt;&amp;amp;1&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;type&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;new&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;make_filter_changeset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filters&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;%{}&lt;/span&gt;
+  &lt;span class="n"&gt;types&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;filters&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;make_filter_types&lt;/span&gt;
+
+  &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;types&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Ecto.Changeset&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filters&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;make_filter_keys&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="p"&gt;(%{&lt;/span&gt;&lt;span class="ss"&gt;action&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:insert&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;One interesting thing here is the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;Map.merge(%{action:&lt;/span&gt; :insert})&lt;/tt&gt; that is piped to the
+generated changeset. This is needed to actually display the validation errors, if there&amp;#8217;s
+no action to the changeset (and there won&amp;#8217;t be since we aren&amp;#8217;t going do any updates to the database
+with this changeset) then the casting errors won&amp;#8217;t be&amp;nbsp;displayed.&lt;/p&gt;
+&lt;p&gt;Please notice that although I use the &lt;tt class="docutils literal"&gt;get_changeset_from_params&lt;/tt&gt; in my controller the important
+function here is the &lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt;. The &lt;tt class="docutils literal"&gt;get_changeset_from_params&lt;/tt&gt; is mainly used to
+retrieve the filter-related &lt;span class="caps"&gt;GET&lt;/span&gt; query parameter; however to use &lt;tt class="docutils literal"&gt;QueryFilterEx&lt;/tt&gt; you can just
+create (however you want) a &lt;tt class="docutils literal"&gt;Map&lt;/tt&gt; of &lt;tt class="docutils literal"&gt;filter_name: value&lt;/tt&gt; pairs  and pass it to
+&lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt; to get the&amp;nbsp;changeset.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="queryfilterex-filter"&gt;
+&lt;h3&gt;&lt;tt class="docutils literal"&gt;QueryFilterEx.filter&lt;/tt&gt;&lt;/h3&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;filter&lt;/tt&gt; method gets three parameters. The &lt;tt class="docutils literal"&gt;query&lt;/tt&gt;, the &lt;tt class="docutils literal"&gt;changeset&lt;/tt&gt; (that was created with
+&lt;tt class="docutils literal"&gt;make_filter_changeset&lt;/tt&gt;) and the declared &lt;tt class="docutils literal"&gt;filters&lt;/tt&gt;. This function will then check all declared &lt;tt class="docutils literal"&gt;filters&lt;/tt&gt;
+one by one and see if the &lt;tt class="docutils literal"&gt;changeset&lt;/tt&gt; contains a change for this filter (i.e if the field has a value).
+If yes it will append a &lt;a class="reference external" href="https://hexdocs.pm/ecto/Ecto.Query.html#where/3"&gt;where/3&lt;/a&gt; to the query based on the passed value of the &lt;tt class="docutils literal"&gt;changeset&lt;/tt&gt; and the
+declared filter &lt;tt class="docutils literal"&gt;:method&lt;/tt&gt;.&lt;/p&gt;
+&lt;p&gt;To do that it just uses &lt;tt class="docutils literal"&gt;Enum.reduce&lt;/tt&gt; starting with the initial query as an accumulator and
+reducing on all the declared &lt;tt class="docutils literal"&gt;filters&lt;/tt&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;changes&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fetch!&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:changes&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;filters&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;reduce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;query&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;creat_where_clauses_reducer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="kd"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;creat_where_clauses_reducer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="ss"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;method&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;method&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+    &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fetch&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changes&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;creat_where_clause&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="n"&gt;method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+      &lt;span class="bp"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
+        &lt;span class="n"&gt;acc&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that the &lt;tt class="docutils literal"&gt;creat_where_clauses_reducer&lt;/tt&gt; function returns a function (the reducer) that
+&lt;tt class="docutils literal"&gt;reduce&lt;/tt&gt; will use. This function checks to see if the current changes of the &lt;tt class="docutils literal"&gt;changeset&lt;/tt&gt; contain
+the &lt;tt class="docutils literal"&gt;filter_name:&lt;/tt&gt;. If yes it will pass the following values to the &lt;tt class="docutils literal"&gt;creat_where_clause&lt;/tt&gt; function:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;The accumulated query (&lt;tt class="docutils literal"&gt;acc&lt;/tt&gt;)&lt;/li&gt;
+&lt;li&gt;The &lt;tt class="docutils literal"&gt;field_name:&lt;/tt&gt;, &lt;tt class="docutils literal"&gt;:binding&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;:method&lt;/tt&gt; values of the current&amp;nbsp;filter&lt;/li&gt;
+&lt;li&gt;The value of the changes of the &lt;tt class="docutils literal"&gt;changeset&lt;/tt&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If the current &lt;tt class="docutils literal"&gt;filter_name&lt;/tt&gt; is not contained in the changes then it just returns the accumulated query as it&amp;nbsp;is.&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s now take a look at the &lt;tt class="docutils literal"&gt;creat_where_clause&lt;/tt&gt; function:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;creat_where_clause&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;  &lt;span class="n"&gt;method&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;method&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="ss"&gt;:eq&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+      &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="ss"&gt;:ilike&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+      &lt;span class="n"&gt;ilike&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;%&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="ss"&gt;:icontains&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+      &lt;span class="n"&gt;ilike&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;%&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;%&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="ss"&gt;:year&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt;  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+      &lt;span class="n"&gt;fragment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;extract (year from ?) = ?&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="ss"&gt;:date&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt;  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+      &lt;span class="n"&gt;fragment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;? &amp;gt;= cast(? as date) and ? &amp;lt; (cast(? as date) + &amp;#39;1 day&amp;#39;::interval&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="bp"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+      &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+      &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This function is just a simple &lt;tt class="docutils literal"&gt;case&lt;/tt&gt; that pipes the accumulated query to a different &lt;tt class="docutils literal"&gt;where&lt;/tt&gt; clause
+depending on the &lt;tt class="docutils literal"&gt;method:&lt;/tt&gt;. Let&amp;#8217;s take a closer look at what happens when &lt;tt class="docutils literal"&gt;:method == :eq&lt;/tt&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;acc&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+  &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This may seem a little confusing so let&amp;#8217;s take a look at a simple &lt;tt class="docutils literal"&gt;where&lt;/tt&gt; first:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Nothing fancy here, now let&amp;#8217;s add a named&amp;nbsp;query:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="ss"&gt;user&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that now we can declare that &lt;tt class="docutils literal"&gt;u&lt;/tt&gt; is an alias for the &lt;tt class="docutils literal"&gt;users&lt;/tt&gt; named binding. What if
+we used the tuples syntax for the &lt;tt class="docutils literal"&gt;user: u&lt;/tt&gt; instead of the keyword&amp;nbsp;one:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;([{&lt;/span&gt;&lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Yes this still works. What if we wanted to use a variable for the binding name in the&amp;nbsp;where?&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;
+&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;([{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;I think it starts to make sense now, let&amp;#8217;s finally use a variable for the field name&amp;nbsp;also:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;
+&lt;span class="n"&gt;field_name&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="ss"&gt;:name&lt;/span&gt;
+&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;([{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;root&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So this is exactly how this&amp;nbsp;works!&lt;/p&gt;
+&lt;p&gt;Beyond the &lt;tt class="docutils literal"&gt;:eq&lt;/tt&gt; I&amp;#8217;ve got the definitions for the other methods I described there, the most
+complex one is probably the &lt;tt class="docutils literal"&gt;:date&lt;/tt&gt; which is something&amp;nbsp;like:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;where&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+  &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt;
+  &lt;span class="n"&gt;fragment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;? &amp;gt;= cast(? as date) and ? &amp;lt; (cast(? as date) + &amp;#39;1 day&amp;#39;::interval&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;What this does is that it generates the following &lt;span class="caps"&gt;SQL&lt;/span&gt;&amp;nbsp;fragment:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;field_name&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="k"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nb"&gt;date&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AND&lt;/span&gt; &lt;span class="n"&gt;field_name&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;cast&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="nb"&gt;date&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;1 day&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="nb"&gt;interval&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;You can add your own methods by adding more clauses to the case of the &lt;tt class="docutils literal"&gt;creat_where_clause&lt;/tt&gt; function
+and following a similar&amp;nbsp;pattern.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;By using the &lt;tt class="docutils literal"&gt;QueryFilterEx&lt;/tt&gt; module presented here you can very quickly declare the fields you want
+to filter on and the method you want to use for each field no matter if these fields are in the same
+schema or are accessed through joins. You can easily extend the functionality of the module by adding
+your own methods. The only extra thing you need to do is to just add names to your&amp;nbsp;queries.&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="elixir"></category><category term="phoenix"></category><category term="ecto"></category><category term="queries"></category><category term="declarative"></category></entry><entry><title>Phoenix forms integration with select2 and ajax</title><link href="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/" rel="alternate"></link><published>2019-06-04T14:20:00+03:00</published><updated>2019-06-04T14:20:00+03:00</updated><author><name>Serafeim Papastefanos</name></author><id>tag:spapas.github.io,2019-06-04:2019/06/04/phoenix-form-select2-ajax/</id><summary type="html">&lt;p&gt;During the past months I&amp;#8217;ve tried to implement a project using &lt;a class="reference external" href="https://elixir-lang.org/"&gt;Elixir&lt;/a&gt; and the &lt;a class="reference external" href="https://phoenixframework.org/"&gt;Phoenix framework&lt;/a&gt;. Old
 visitors of my blog will probably remember that I mainly use Django for back-end development but I decided to
 also give Phoenix a&amp;nbsp;try.&lt;/p&gt;
 &lt;p&gt;My first impressions are positive but I don&amp;#8217;t want to go into detail in this post; I&amp;#8217;ll try to add a more

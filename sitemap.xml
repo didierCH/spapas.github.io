@@ -5,29 +5,36 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/</loc>
-<lastmod>2019-07-12T09:09:37-00:00</lastmod>
+<lastmod>2019-07-25T13:27:39-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/archives.html</loc>
-<lastmod>2019-07-12T09:09:37-00:00</lastmod>
+<lastmod>2019-07-25T13:27:39-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/tags.html</loc>
-<lastmod>2019-07-12T09:09:37-00:00</lastmod>
+<lastmod>2019-07-25T13:27:39-00:00</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://spapas.github.io/categories.html</loc>
-<lastmod>2019-07-12T09:09:37-00:00</lastmod>
+<lastmod>2019-07-25T13:27:39-00:00</lastmod>
 <changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/2019/07/25/declarative-ecto-query-filters/</loc>
+<lastmod>2019-07-25T14:20:00+03:00</lastmod>
+<changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
@@ -369,7 +376,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/category/elixir.html</loc>
-<lastmod>2019-06-04T14:20:00+01:35</lastmod>
+<lastmod>2019-07-25T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -459,8 +466,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/python-2.html</loc>
-<lastmod>2017-12-20T11:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/ecto.html</loc>
+<lastmod>2019-07-25T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -629,6 +636,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/fixeddatatable.html</loc>
 <lastmod>2015-12-22T15:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/queries.html</loc>
+<lastmod>2019-07-25T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -803,7 +817,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/elixir.html</loc>
-<lastmod>2019-06-04T14:20:00+01:35</lastmod>
+<lastmod>2019-07-25T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -816,8 +830,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/java.html</loc>
-<lastmod>2016-03-31T19:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/uglify.html</loc>
+<lastmod>2016-03-02T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -888,6 +902,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/flask.html</loc>
 <lastmod>2014-06-30T15:23:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/notebook.html</loc>
+<lastmod>2016-09-21T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -977,8 +998,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/uglify.html</loc>
-<lastmod>2016-03-02T11:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/java.html</loc>
+<lastmod>2016-03-31T19:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1049,6 +1070,13 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://spapas.github.io/tag/rst.html</loc>
 <lastmod>2013-10-07T10:20:00+01:35</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://spapas.github.io/tag/python-2.html</loc>
+<lastmod>2017-12-20T11:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1209,7 +1237,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/tag/phoenix.html</loc>
-<lastmod>2019-06-04T14:20:00+01:35</lastmod>
+<lastmod>2019-07-25T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1243,8 +1271,8 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </url>
 
 <url>
-<loc>https://spapas.github.io/tag/notebook.html</loc>
-<lastmod>2016-09-21T11:20:00+01:35</lastmod>
+<loc>https://spapas.github.io/tag/declarative.html</loc>
+<lastmod>2019-07-25T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -1328,7 +1356,7 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://spapas.github.io/author/serafeim-papastefanos.html</loc>
-<lastmod>2019-06-04T14:20:00+01:35</lastmod>
+<lastmod>2019-07-25T14:20:00+01:35</lastmod>
 <changefreq>weekly</changefreq>
 <priority>0.5</priority>
 </url>
