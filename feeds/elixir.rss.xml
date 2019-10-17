@@ -1,5 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Thu, 25 Jul 2019 14:20:00 +0300</lastBuildDate><item><title>Declarative Ecto query filters</title><link>https://spapas.github.io/2019/07/25/declarative-ecto-query-filters/</link><description>&lt;p&gt;Continuing my Elixir &lt;a class="reference external" href="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/"&gt;journey&lt;/a&gt; I&amp;#8217;d like to discuss here a method to implement one of my
+<rss version="2.0"><channel><title>/var/</title><link>https://spapas.github.io/</link><description>Various programming stuff</description><lastBuildDate>Thu, 17 Oct 2019 12:20:00 +0300</lastBuildDate><item><title>Declarative Ecto query sorting</title><link>https://spapas.github.io/2019/10/17/declarative-ecto-query-sorting/</link><description>&lt;p&gt;In a &lt;a class="reference external" href="https://spapas.github.io/2019/07/25/declarative-ecto-query-filters/"&gt;previous article&lt;/a&gt; I presented a method for declaring dynamic filters for your ecto queries.
+Continuing this article, I&amp;#8217;ll present here a way to allow dynamic sorting for your queries using
+fields that may even span&amp;nbsp;relations.&lt;/p&gt;
+&lt;div class="section" id="what-will-it-do"&gt;
+&lt;h2&gt;What will it&amp;nbsp;do&lt;/h2&gt;
+&lt;p&gt;The solution is a couple of function that can be put inside the &lt;tt class="docutils literal"&gt;QueryFilterEx&lt;/tt&gt; I mentioned
+in the &lt;a class="reference external" href="https://spapas.github.io/2019/07/25/declarative-ecto-query-filters/"&gt;previous article&lt;/a&gt;. Please make sure that you&amp;#8217;ve completely read and understand this
+article before continuing&amp;nbsp;here.&lt;/p&gt;
+&lt;p&gt;To use the dynamic sorting function you&amp;#8217;ll need to declare the fields that would allow sorting using
+a simple array of strings. The sort fields should then be added as links to your phoenix page which
+will then pass an &lt;tt class="docutils literal"&gt;order_by=field_name&lt;/tt&gt; query parameter to your&amp;nbsp;controller.&lt;/p&gt;
+&lt;p&gt;The module has a very simple &lt;span class="caps"&gt;API&lt;/span&gt; consisting of a single&amp;nbsp;function:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;sort_by_params(query, params, allowed_sort_fields)&lt;/tt&gt;: Pass it the query, the &lt;tt class="docutils literal"&gt;&lt;span class="caps"&gt;GET&lt;/span&gt;&lt;/tt&gt; request parameters you got from your form and the declared sort fields array to return you a sorted&amp;nbsp;query&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can find a sample of the technique presented in this article in my &lt;span class="caps"&gt;PHXCRD&lt;/span&gt; repository:
+&lt;a class="reference external" href="https://github.com/spapas/phxcrd"&gt;https://github.com/spapas/phxcrd&lt;/a&gt;  for example in the &lt;tt class="docutils literal"&gt;user_controller&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;authority_controller&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="preparing-the-query"&gt;
+&lt;h2&gt;Preparing the&amp;nbsp;query&lt;/h2&gt;
+&lt;p&gt;In order to use dynamic sorting you&amp;#8217;ll need to properly &amp;#8220;prepare&amp;#8221; your Ecto query by &lt;em&gt;naming all your relations&lt;/em&gt;
+as I&amp;#8217;ve already explained in the &lt;a class="reference external" href="https://spapas.github.io/2019/07/25/declarative-ecto-query-filters/"&gt;previous article&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="declaring-the-sort-fields"&gt;
+&lt;h2&gt;Declaring the sort&amp;nbsp;fields&lt;/h2&gt;
+&lt;p&gt;To declare the sort fields you&amp;#8217;ll just add an array of fields you&amp;#8217;ll want to allow sorting on. Each field
+should have the form &lt;tt class="docutils literal"&gt;binding_name__field_name&lt;/tt&gt; where &lt;tt class="docutils literal"&gt;binding_name&lt;/tt&gt; is the name of the table
+you&amp;#8217;ve declared in your
+query and &lt;tt class="docutils literal"&gt;field_name&lt;/tt&gt; is the name of the field that the query will be sorted by. This is the way
+that the sort
+fields will also be declared in the phoenix html page. Django users will definitely remember the
+&lt;tt class="docutils literal"&gt;model__field&lt;/tt&gt; convention.&lt;/p&gt;
+&lt;p&gt;Declaring the sort fields here and using them again in the html page may seem reduntant, however
+it is absolute necessary to declare a priori which fields are allowed because the sort http params
+will be received
+as strings and to be used in queries these strings will be converted to atoms. The number of atoms is
+finite (there&amp;#8217;s an absolute limit of allowed atoms in an erlang program; if that limit is surpassed
+your program will crash) so you can&amp;#8217;t allow the user to pass whatever he wants (so if the &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt;
+parameter does not contain one of the fields you declare here then no strings will be converted to&amp;nbsp;atoms).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="integrating-with-a-controller"&gt;
+&lt;h2&gt;Integrating with a&amp;nbsp;controller&lt;/h2&gt;
+&lt;p&gt;As an example let&amp;#8217;s see how the dynamic sort fields will be integrated with the phxcrd user_controller.
+The query I&amp;#8217;d like to filter on is the following (see that everything I&amp;#8217;ll need is named using &lt;tt class="docutils literal"&gt;:as&lt;/tt&gt;):&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;authority_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;UserPermission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;permission_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="ss"&gt;preload&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;authority&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;To declare the sort fields I like to create a module attribute ending with &lt;tt class="docutils literal"&gt;sort_fields&lt;/tt&gt;, something like
+&lt;tt class="docutils literal"&gt;&amp;#64;user_sort_fields&lt;/tt&gt; for example. Here&amp;#8217;s the sort fields I&amp;#8217;m going to use for&amp;nbsp;user_controller:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="na"&gt;@user_sort_fields&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+  &lt;span class="s2"&gt;&amp;quot;user__username&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;user__name&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;user__last_login&amp;quot;&lt;/span&gt;
+&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;So it will only allow the &lt;tt class="docutils literal"&gt;user.username&lt;/tt&gt;, &lt;tt class="docutils literal"&gt;user.name&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;user.last_login&lt;/tt&gt; fields for sorting.
+I could easily sort by &lt;tt class="docutils literal"&gt;authority.name&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;permission.name&lt;/tt&gt; in a similar&amp;nbsp;fashion.&lt;/p&gt;
+&lt;p&gt;Finally, here&amp;#8217;s the full code of the index&amp;nbsp;controller:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;index&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;changeset&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nc"&gt;QueryFilterEx&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_changeset_from_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;@user_filters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="n"&gt;users&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;
+    &lt;span class="n"&gt;from&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;User&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:user&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:authority&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;authority_id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+      &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;UserPermission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;user_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;left_join&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nc"&gt;Permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;as&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="ss"&gt;:permission&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;on&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;permission_id&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;id&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="ss"&gt;preload&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;authority&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;permissions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;QueryFilterEx&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;filter&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;@user_filters&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;QueryFilterEx&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sort_by_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="na"&gt;@user_sort_fields&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Repo&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;all&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+
+  &lt;span class="n"&gt;render&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;index.html&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;users&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;users&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;changeset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that this is exactly the
+same as the controller I discussed in the dynamic filters article with the addition of the
+&lt;tt class="docutils literal"&gt;QueryFilterEx.sort_by_params(params, &amp;#64;user_sort_fields)&lt;/tt&gt; pipe to do the&amp;nbsp;sorting.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-template"&gt;
+&lt;h2&gt;The&amp;nbsp;template&lt;/h2&gt;
+&lt;p&gt;The template for the user index action is also the same with a couple of minor changes: Instead of
+using a static header for the table title I will use a link that will change the sorting&amp;nbsp;order:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;thead&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;tr&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= link gettext(&amp;quot;Username&amp;quot;), to: create_order_url(@conn, &amp;quot;user__username&amp;quot;) %&amp;gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= link gettext(&amp;quot;Name&amp;quot;), to: create_order_url(@conn, &amp;quot;user__name&amp;quot;) %&amp;gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;First name&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Last name&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Email&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Am / Am phxcrd&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Kind&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class="err"&gt;&amp;lt;&lt;/span&gt;%= link gettext(&amp;quot;Last login&amp;quot;), to: create_order_url(@conn, &amp;quot;user__last_login&amp;quot;) %&amp;gt;
+    &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;Is enabled&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+
+    &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;th&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+  &lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;tr&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;thead&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Notice that I just used the &lt;tt class="docutils literal"&gt;create_order_url&lt;/tt&gt; function passing it the &lt;tt class="docutils literal"&gt;&amp;#64;conn&lt;/tt&gt; and the
+sort field. This &lt;tt class="docutils literal"&gt;create_order_url&lt;/tt&gt; function is implemented in a module I include in
+all my views and will properly add an &lt;tt class="docutils literal"&gt;order_by=field&lt;/tt&gt; in the url (it will also add
+an &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;order_by=-field&lt;/span&gt;&lt;/tt&gt; if the same header is clicked twice). I will explain it more
+in the following&amp;nbsp;sections.&lt;/p&gt;
+&lt;p&gt;Finally, please notice that if you use pagination and sorting you need to properly handle the &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt;
+query parameter when creating the next-previous page links. Actually, there are three things
+competing on their url parameter dominance; I&amp;#8217;d like to talk about that in the next&amp;nbsp;interlude.&lt;/p&gt;
+&lt;div class="section" id="interlude-http-get-parameter-priority"&gt;
+&lt;h3&gt;Interlude: &lt;span class="caps"&gt;HTTP&lt;/span&gt; &lt;span class="caps"&gt;GET&lt;/span&gt; parameter&amp;nbsp;priority&lt;/h3&gt;
+&lt;p&gt;Now, in an index page you will probably have three things all of which will want to put parameters
+to your urls to be&amp;nbsp;activated:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Query filtering; this will put a &lt;tt class="docutils literal"&gt;filter&lt;/tt&gt; query parameter to filter your query. Notice that because of how phoenix works (it allows maps in the query parameters) the filter can be a single query parameter but contain multiple filters (i.e the filter will be something like &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;%{&amp;quot;key1&amp;quot;&lt;/span&gt; =&amp;gt; &amp;quot;value1&amp;quot;, &amp;quot;key2&amp;quot; =&amp;gt; &amp;quot;value2&amp;quot;}&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;Order by: This will put an &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt; query parameter to denote the field that the query will be&amp;nbsp;sorted&lt;/li&gt;
+&lt;li&gt;Pagination: This will put an &lt;tt class="docutils literal"&gt;page&lt;/tt&gt; query parameter to denote the current&amp;nbsp;page&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I like to give them a priority in the order I&amp;#8217;ve listed them; when one of them is changed, it will
+&lt;em&gt;clear&lt;/em&gt; the ones following it. So if the query filters are changed both the pagination and the order by
+fields will be cleared, if the order by field is changed then only the pagination field will be cleared
+but if the pagination field is changed both the query filters and the order by fields will be kept&amp;nbsp;there.&lt;/p&gt;
+&lt;p&gt;I think that&amp;#8217;s the best way to do it from an &lt;span class="caps"&gt;UX&lt;/span&gt; point of view; try to think about it and you&amp;#8217;ll probably&amp;nbsp;agree.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="how-does-this-work"&gt;
+&lt;h2&gt;How does this&amp;nbsp;work?&lt;/h2&gt;
+&lt;p&gt;In this section I&amp;#8217;ll try to explain exactly how the dynamic sort fields&amp;nbsp;work.&lt;/p&gt;
+&lt;p&gt;So I&amp;#8217;ll split this explanation in two parts: Explain &lt;tt class="docutils literal"&gt;create_order_url&lt;/tt&gt;
+and then explain &lt;tt class="docutils literal"&gt;sort_by_params&lt;/tt&gt;.&lt;/p&gt;
+&lt;div class="section" id="create-order-url"&gt;
+&lt;h3&gt;&lt;tt class="docutils literal"&gt;create_order_url&lt;/tt&gt;&lt;/h3&gt;
+&lt;p&gt;This function receives three parameters: The current &lt;tt class="docutils literal"&gt;&amp;#64;conn&lt;/tt&gt;, the name of a &lt;tt class="docutils literal"&gt;field&lt;/tt&gt; to
+sort by and an optional list of query parameters that need to be kept while creating the
+order by links. I&amp;#8217;ve put this function in a &lt;tt class="docutils literal"&gt;ViewHelpers&lt;/tt&gt; module that I am including to
+all my views (by adding an &lt;tt class="docutils literal"&gt;import PhxcrdWeb.ViewHelpers&lt;/tt&gt; line to the &lt;tt class="docutils literal"&gt;PhxcrdWeb&lt;/tt&gt; module).&lt;/p&gt;
+&lt;p&gt;Let&amp;#8217;s take a look at the&amp;nbsp;code:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;create_order_url&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;allowed_keys&lt;/span&gt; &lt;span class="p"&gt;\\&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;filter&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="nc"&gt;Phoenix.Controller&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;current_url&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_order_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;conn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;allowed_keys&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field_name&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This doesn&amp;#8217;t do much, it just uses the phoenix&amp;#8217;s &lt;tt class="docutils literal"&gt;current_url&lt;/tt&gt; that generates a new
+url to the current page, passing it a dictionary
+of http get parameters that should be appended to the url that
+are created through &lt;tt class="docutils literal"&gt;get_order_params&lt;/tt&gt;. Notice that there&amp;#8217;s an
+&lt;tt class="docutils literal"&gt;allowed_keys&lt;/tt&gt; parameter that contains the query parameters that we need to keep after
+the sorting (see the previous interlude).
+By default I pass the &lt;tt class="docutils literal"&gt;filter&lt;/tt&gt; query parameter so if theres a filter (check
+my previous article) it will keep it when sorting (but any pagination will be cleared;
+if I sort by a new field I want to go to the first page there&amp;#8217;s no reason for me to keep
+seeing the page I was on before changing the order&amp;nbsp;by).&lt;/p&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;get_order_params&lt;/tt&gt; receives the query parameters of the current connection (as a map),
+the allowed keys I mentioned before and the actual name of the field to sort on. This method is a
+little more&amp;nbsp;complex:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;get_order_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;allowed_keys&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;order_key&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;params&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;take&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;allowed_keys&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;order_by&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;fn&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nc"&gt;String&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;to_atom&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;new&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Map&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="ss"&gt;:order_by&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;order_key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="ni"&gt;&amp;amp;1&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;-&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;order_key&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;order_key&lt;/span&gt;
+      &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;order_key&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;-&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;order_key&lt;/span&gt;
+      &lt;span class="bp"&gt;_&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;-&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;order_key&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;It only keeps the parameters in the &lt;tt class="docutils literal"&gt;allowed_keys&lt;/tt&gt; list and the current &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt; parameter
+(if there&amp;#8217;s one)  discarding everything else. It will then convert the keys of the map to atoms and
+put them in a new map. Finally, it will update the &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt; field (if exists) either by
+switching the &lt;tt class="docutils literal"&gt;-&lt;/tt&gt; in front of the field to declare asc/desc sorting or adding it for the field
+that was clicked. Actually the logic of that &lt;tt class="docutils literal"&gt;Map.update&lt;/tt&gt; is the&amp;nbsp;following:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;If there&amp;#8217;s no &lt;tt class="docutils literal"&gt;:order_by&lt;/tt&gt; key then add it and assign the passed &lt;tt class="docutils literal"&gt;order_key&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;If the current value of &lt;tt class="docutils literal"&gt;:order_by&lt;/tt&gt; is equal to &lt;tt class="docutils literal"&gt;order_key&lt;/tt&gt; with or without a &lt;tt class="docutils literal"&gt;-&lt;/tt&gt; then toggle the &lt;tt class="docutils literal"&gt;-&lt;/tt&gt; (this happens when you click on a field that is already used for&amp;nbsp;sorting)&lt;/li&gt;
+&lt;li&gt;If the current value of &lt;tt class="docutils literal"&gt;:order_by&lt;/tt&gt; is anything else (i.e not the same as the &lt;tt class="docutils literal"&gt;order_key&lt;/tt&gt;) then just change &lt;tt class="docutils literal"&gt;:order_by&lt;/tt&gt; to &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;-orderKey&lt;/span&gt;&lt;/tt&gt; (this happens when there&amp;#8217;s sorting but you click on a different field, not the one used for the&amp;nbsp;sorting)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Notice that this juggling between map, list of keywords and then map again (using &lt;tt class="docutils literal"&gt;Enum.map&lt;/tt&gt; and then
+&lt;tt class="docutils literal"&gt;Map.new&lt;/tt&gt; etc) is needed because
+the query parameters are in a map with strings as keys form (&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;%{&amp;quot;key&amp;quot;&lt;/span&gt; =&amp;gt; &amp;quot;value&amp;quot;}&lt;/tt&gt;) while
+the &lt;tt class="docutils literal"&gt;current_url&lt;/tt&gt; function needs the query params in a map with atoms as keys form
+(&lt;tt class="docutils literal"&gt;%{key: &amp;quot;value&amp;quot;}&lt;/tt&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="sort-by-params"&gt;
+&lt;h3&gt;&lt;tt class="docutils literal"&gt;sort_by_params&lt;/tt&gt;&lt;/h3&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;sort_by_params&lt;/tt&gt; method gets three parameters: The &lt;tt class="docutils literal"&gt;query&lt;/tt&gt; that will be sorted,
+the existing http parameters map (so as to retrieve the &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt; value)
+and the declared list of allowed sorting fields. Let&amp;#8217;s take a look at&amp;nbsp;it:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sort_by_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;order_by&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;-&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;allowed&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+  &lt;span class="ss"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;do_sort_by_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:asc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;allowed&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sort_by_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;order_by&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;allowed&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+  &lt;span class="ss"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;do_sort_by_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:desc&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;allowed&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="kd"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sort_by_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="bp"&gt;_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="ss"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;qs&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This multi-legged function will only do something if there&amp;#8217;s an &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt; parameter in the http
+parameters (else it will just return the query as is) and will call &lt;tt class="docutils literal"&gt;do_sort_by_params&lt;/tt&gt; passing
+it the received query,
+either &lt;tt class="docutils literal"&gt;:asc&lt;/tt&gt; or &lt;tt class="docutils literal"&gt;:desc&lt;/tt&gt; (depending if there&amp;#8217;s a &lt;tt class="docutils literal"&gt;-&lt;/tt&gt; in front of the value) and the
+received allowed fields&amp;nbsp;list.&lt;/p&gt;
+&lt;p&gt;The &lt;tt class="docutils literal"&gt;do_sort_by_params&lt;/tt&gt; makes sure that the passed parameter is in the allowed list
+and if yes
+it creates the atoms of the binding and field name (using &lt;tt class="docutils literal"&gt;String.to_atom&lt;/tt&gt;) and
+does the actual sorting to the passed&amp;nbsp;query:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kd"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;do_sort_by_params&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;qs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ord&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;allowed&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;allowed&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;val&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;String&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;__&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="nc"&gt;Enum&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="nc"&gt;String&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;to_atom&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;qs&lt;/span&gt; &lt;span class="o"&gt;|&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;order_by&lt;/span&gt;&lt;span class="p"&gt;([{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;binding&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;}],&lt;/span&gt; &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;ord&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;^&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;)}])&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="n"&gt;qs&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The line &lt;tt class="docutils literal"&gt;qs |&amp;gt; &lt;span class="pre"&gt;order_by([{^binding,&lt;/span&gt; &lt;span class="pre"&gt;t}],&lt;/span&gt; &lt;span class="pre"&gt;[{^ord,&lt;/span&gt; field(t, &lt;span class="pre"&gt;^name)}])&lt;/span&gt;&lt;/tt&gt; may seem a little
+complex but it has been thoroughly explained in the previous&amp;nbsp;article.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="conclusion"&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;By using the methods described here you can easily add a dynamic sorting to your queries
+through fields that may span relations just by creating a bunch of http &lt;span class="caps"&gt;GET&lt;/span&gt; links
+and passing them an &lt;tt class="docutils literal"&gt;order_by&lt;/tt&gt; query&amp;nbsp;parameter.&lt;/p&gt;
+&lt;/div&gt;
+</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Serafeim Papastefanos</dc:creator><pubDate>Thu, 17 Oct 2019 12:20:00 +0300</pubDate><guid isPermaLink="false">tag:spapas.github.io,2019-10-17:2019/10/17/declarative-ecto-query-sorting/</guid><category>elixir</category><category>phoenix</category><category>ecto</category><category>queries</category><category>declarative</category></item><item><title>Declarative Ecto query filters</title><link>https://spapas.github.io/2019/07/25/declarative-ecto-query-filters/</link><description>&lt;p&gt;Continuing my Elixir &lt;a class="reference external" href="https://spapas.github.io/2019/06/04/phoenix-form-select2-ajax/"&gt;journey&lt;/a&gt; I&amp;#8217;d like to discuss here a method to implement one of my
 &lt;a class="reference external" href="https://spapas.github.io/2017/10/11/essential-django-packages/"&gt;favorite Django features&lt;/a&gt;: Declarative query filters. This functionality is not a core Django
 feature but it is offered
 through the excellent &lt;a class="reference external" href="https://github.com/carltongibson/django-filter/:"&gt;django-filter&lt;/a&gt; package: Using this, you can create a &lt;tt class="docutils literal"&gt;Filter&lt;/tt&gt; class which defines
